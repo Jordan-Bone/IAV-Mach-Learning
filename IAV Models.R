@@ -1,7 +1,7 @@
-knitr::opts_chunk$set(echo=FALSE,warning=FALSE,message=FALSE,root.dir= "/Users/jordanbone/Documents/IAV.AI")
-source("functions.R")
+# source("functions.R")
 # source("MegaLibrary.R")
-# taxize_options(ncbi_sleep = 1)
+library("ggplot2")
+library("dplyr")
 reference_table <- read.csv("Reference Table 2.csv")
 
 SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
@@ -19,7 +19,7 @@ ggplot(subset(mam,N>19),aes(Family,log10(N),fill=Subtype))+geom_col(position="do
 
 ######
 
-mod_cls <- read_excel("Sequences/Clusters.xlsx")
+mod_cls <- read.csv("Sequences/Clusters.csv")
 ggplot(mod_cls,aes(Protein,Clusters,fill=Group))+geom_col(position="dodge")+
   facet_wrap(~Identity,scales = "free")+
   theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))
