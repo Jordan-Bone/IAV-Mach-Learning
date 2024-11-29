@@ -59,6 +59,13 @@ grid.text("HA Segment", x=.5, y=.98, just="top",gp=gpar(cex=1.5, fontface="bold"
 
 ######
 
+num_clus <- read.csv("Sequences/Clustering Tests.csv")
+subset(num_clus,Identity!=100 & Group=="Avian")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(15507,15507,15447,15447,15441,15441,15380,15380,14682,14682,15442,15442,15335,15335,15124,15124,15228,15228,15293,15293)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Avian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% collapse_rows(c(1:18))
+
+subset(num_clus,Identity!=100 & Group=="Mammal")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(21880,21880,21829,21829,21856,21856,22106,22106,21865,21865,21845,21845,21791,21791,21770,21770,21760,21760,21737,21737)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Mammalian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% collapse_rows(c(1:18))
+
+
+######
 fea <- list.files("feats",pattern = ".csv",full.names = T,recursive = T)
 # fea <- fea[c(25,31)]
 # 
@@ -114,28 +121,39 @@ for(i in 1:length(modc)){
   assign(MoDo, readRDS(modc[i]))
 }
 
-# Stack_ha_95_c50_cov1
-summary(Stack_ha_95_c50_cov1)
-# Stack_ha_95_c50_cov0
-summary(Stack_ha_95_c50_cov0)
-# Stack_ha_95_c70_cov1
-summary(Stack_ha_95_c70_cov1)
-# Stack_ha_95_c70_cov0
-summary(Stack_ha_95_c70_cov0)
-# Stack_ha_95_c80_cov1
-summary(Stack_ha_95_c80_cov1)
-# Stack_ha_95_c80_cov0
-summary(Stack_ha_95_c80_cov0)
+# # Stack_ha_95_c50_cov1
+# summary(Stack_ha_95_c50_cov1)
+# # Stack_ha_95_c50_cov0
+# summary(Stack_ha_95_c50_cov0)
+# # Stack_ha_95_c70_cov1
+# summary(Stack_ha_95_c70_cov1)
+# # Stack_ha_95_c70_cov0
+# summary(Stack_ha_95_c70_cov0)
+# # Stack_ha_95_c80_cov1
+# summary(Stack_ha_95_c80_cov1)
+# # Stack_ha_95_c80_cov0
+# summary(Stack_ha_95_c80_cov0)
+# 
+# # Ensemble_ha_95_c50_cov1
+# summary(Ensemble_ha_95_c50_cov1)
+# # Ensemble_ha_95_c50_cov0
+# summary(Ensemble_ha_95_c50_cov0)
+# # Ensemble_ha_95_c70_cov1
+# summary(Ensemble_ha_95_c70_cov1)
+# # Ensemble_ha_95_c70_cov0
+# summary(Ensemble_ha_95_c70_cov0)
+# # Ensemble_ha_95_c80_cov1
+# summary(Ensemble_ha_95_c80_cov1)
+# # Ensemble_ha_95_c80_cov0
+# summary(Ensemble_ha_95_c80_cov0)
 
-# Ensemble_ha_95_c50_cov1
-summary(Ensemble_ha_95_c50_cov1)
-# Ensemble_ha_95_c50_cov0
-summary(Ensemble_ha_95_c50_cov0)
-# Ensemble_ha_95_c70_cov1
-summary(Ensemble_ha_95_c70_cov1)
-# Ensemble_ha_95_c70_cov0
-summary(Ensemble_ha_95_c70_cov0)
-# Ensemble_ha_95_c80_cov1
-summary(Ensemble_ha_95_c80_cov1)
-# Ensemble_ha_95_c80_cov0
-summary(Ensemble_ha_95_c80_cov0)
+stack_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Stacks")
+ensemb_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Ensemble")
+
+ggplot(subset(stack_res,Model!="ensemble"),aes(paste(Coverage,Mode),Importance,colour=Model))+
+  geom_point()
+ggplot(stack_res,aes(paste(Coverage,Mode),ymin=ROC-sdROC,y=ROC,ymax=ROC+sdROC,fill=Model))+
+  geom_crossbar(position="dodge")
+
+stack_res %>% kbl() %>% kable_styling()
+ensemb_res %>% kbl() %>% kable_styling()
