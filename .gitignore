@@ -51,3 +51,7 @@ rsconnect/
 *.fasta
 RefTable.csv
 RefTable.csv
+RefTable.csv
+RefTable.csv
+*.csv
+*.rds
