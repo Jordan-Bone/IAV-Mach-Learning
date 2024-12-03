@@ -2,10 +2,7 @@ import iFeatureOmegaCLI
 import os
 import glob
 
-#group = raw_input("Folder of sequences: ")
-folder = glob.glob("*.fasta")
-#folder = glob.glob("Mammal/*.fasta")
-
+folder = glob.glob("combo/*.fasta")
 for fl in folder:
         print(fl)
         prot = iFeatureOmegaCLI.iProtein(fl)

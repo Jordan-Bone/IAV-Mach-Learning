@@ -55,3 +55,6 @@ RefTable.csv
 RefTable.csv
 *.csv
 *.rds
+*.fasta
+*.tsv
+*.fasta

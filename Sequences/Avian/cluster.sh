@@ -52,3 +52,8 @@ do
 	echo $h "," >> sizes.txt
 	grep -o '>' $h | wc -l >> sizes.txt;
 done
+
+for j in *rep_seq.fasta;
+do cp $j ../../feats/avian/.
+done
+
