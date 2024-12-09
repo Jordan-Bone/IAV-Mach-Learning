@@ -58,3 +58,6 @@ RefTable.csv
 *.fasta
 *.tsv
 *.fasta
+*.fasta
+*.tsv
+*.faa

@@ -66,52 +66,56 @@ subset(num_clus,Identity!=100 & Group=="Mammal")[,-1] %>% pivot_wider(names_from
 
 ######
 fea <- list.files("feats",pattern = ".csv",full.names = T,recursive = T)
-# fea <- fea[c(25,31)]
-# 
-# for(i in 1:length(fea)){
-#   print(fea[i])
-#   tmp_ft <- read.csv(fea[i])
-#   tmp_ft$ptAcc <- tmp_ft$X %>% str_split_i(":",1)
-#   tmp_ft <- right_join(reference_table,tmp_ft)
-#   fold_indices <- createMultiFolds(tmp_ft$UID, k = 5, times = 1)
-#   preds <- tmp_ft[,c(-1:-16)] %>% remove_constant %>% names
-#   # tmp_ft[,c(-2:-16)] %>% remove_constant %>% pivot_longer(cols = -1, names_to = "Ft",values_to = "Val") %>% subset(Val==0) %>% print()
-#   
-#   mo1 <- suppressWarnings(train(x = tmp_ft %>% select(all_of(preds)),y = tmp_ft %>% pull(Class),
-#                          method="ranger",metric="ROC",
-#                          preProc=c("center","scale"),num.trees=1000,importance="impurity",
-#                          # weights=ifelse(tmp_ft$Class =="Aves",1,
-#                          # (table(tmp_ft$Class)[1]/table(tmp_ft$Class)[2])),
-#                          trControl = trainControl(method = "repeatedcv",number = 5,
-#                                                   repeats = 1,index = fold_indices,
-#                                                   classProbs = TRUE,savePredictions = TRUE,
-#                          summaryFunction=twoClassSummary),
-#                          tuneGrid = expand.grid(.splitrule = "gini",
-#                                                 .min.node.size = seq(from = 5, to = 45, length = 3),
-#                                                 .mtry = round(sqrt(length(preds))))))
-#   
-#   mo_nm <- fea[i] %>% str_split_i("\\/",2) %>% str_split("\\_")
-#   saveRDS(mo1, file=paste0("Models/",mo_nm[[1]][1],"_",mo_nm[[1]][3],"_",
-#                            mo_nm[[1]][4],"_",mo_nm[[1]][5],"_",str_replace_all(mo_nm[[1]][8], ".csv",""),".rds"))
-# }
-# 
+fea <- fea[7:60]
+for(i in 1:length(fea)){
+  print(fea[i])
+  tmp_ft <- read.csv(fea[i])
+  tmp_ft$ptAcc <- tmp_ft$X %>% str_split_i(":",1)
+  tmp_ft <- right_join(reference_table,tmp_ft)
+  tmp_ft <- subset(tmp_ft,!str_contains(Sample,pattern = "reassort"))
+  #print(table(tmp_ft$Class))
+  fold_indices <- createMultiFolds(tmp_ft$UID, k = 5, times = 1)
+  preds <- tmp_ft[,c(-1:-15)] %>% remove_constant %>% names
+  # tmp_ft[,c(-2:-16)] %>% remove_constant %>% pivot_longer(cols = -1, names_to = "Ft",values_to = "Val") %>% subset(Val==0) %>% print()
+  # subset(tmp_ft,is.na(Class))[,1:15] %>% write.csv(paste0(substr(fea[i],1,10),"Lost.csv"))
+
+  mo1 <- suppressWarnings(train(x = tmp_ft %>% select(all_of(preds)),y = tmp_ft %>% pull(Class),
+                         method="ranger",metric="ROC",
+                         preProc=c("center","scale"),num.trees=1000,importance="impurity",
+                         # weights=ifelse(tmp_ft$Class =="Aves",1,
+                         # (table(tmp_ft$Class)[1]/table(tmp_ft$Class)[2])),
+                         trControl = trainControl(method = "repeatedcv",number = 5,
+                                                  repeats = 1,index = fold_indices,
+                                                  classProbs = TRUE,savePredictions = TRUE,
+                         summaryFunction=twoClassSummary),
+                         tuneGrid = expand.grid(.splitrule = "gini",
+                                                .min.node.size = seq(from = 5, to = 45, length = 3),
+                                                .mtry = round(sqrt(length(preds))))))
+
+  mo_nm <- fea[i] %>% str_split_i("\\/",2) %>% str_split("\\_")
+  saveRDS(mo1, file=paste0("Models/",mo_nm[[1]][1],"_",mo_nm[[1]][3],"_",
+                           mo_nm[[1]][4],"_",mo_nm[[1]][5],"_",str_replace_all(mo_nm[[1]][8], ".csv",""),".rds"))
+}
+
+# reference_table[324919,]
+
 # ### 
 
 mods <- list.files("Models",pattern = ".rds",full.names = T,recursive = F)
 mods <- unique(substr(mods,1,21))
-# for(i in 1:length(mods)){
-#   print(mods[i])
-#   tmer_mod <- readRDS(paste0(mods[i],"_2mer.rds"))
-#   ctdc_mod <- readRDS(paste0(mods[i],"_ctdc.rds"))
-#   ctdd_mod <- readRDS(paste0(mods[i],"_ctdd.rds"))
-#   ctdt_mod <- readRDS(paste0(mods[i],"_ctdt.rds"))
-#   ctri_mod <- readRDS(paste0(mods[i],"_ctriad.rds"))
-#   psea_mod <- readRDS(paste0(mods[i],"_pseaac.rds"))
-# 
-#   caretEnsemble(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Ensemble/",mods[i],".rds"))
-#   caretStack(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Stack/",mods[i],".rds"))
-# }
-# 
+for(i in 1:length(mods)){
+  print(mods[i])
+  tmer_mod <- readRDS(paste0(mods[i],"_2mer.rds"))
+  ctdc_mod <- readRDS(paste0(mods[i],"_ctdc.rds"))
+  ctdd_mod <- readRDS(paste0(mods[i],"_ctdd.rds"))
+  ctdt_mod <- readRDS(paste0(mods[i],"_ctdt.rds"))
+  ctri_mod <- readRDS(paste0(mods[i],"_ctriad.rds"))
+  psea_mod <- readRDS(paste0(mods[i],"_pseaac.rds"))
+
+  caretEnsemble(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Ensemble/",mods[i],".rds"))
+  caretStack(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Stack/",mods[i],".rds"))
+}
+
 modc <- list.files("Comp",pattern = ".rds",full.names = T,recursive = T)
 for(i in 1:length(modc)){
   ModMeth <- str_split_i(modc[i],"\\/",2)
@@ -121,7 +125,7 @@ for(i in 1:length(modc)){
 }
 
 # # Stack_ha_95_c50_cov1
-summary(Stack_ha_95_c50_cov1)
+# summary(Stack_ha_95_c50_cov1)
 # # Stack_ha_95_c50_cov0
 # summary(Stack_ha_95_c50_cov0)
 # # Stack_ha_95_c70_cov1
@@ -130,8 +134,8 @@ summary(Stack_ha_95_c50_cov1)
 # summary(Stack_ha_95_c70_cov0)
 # # Stack_ha_95_c80_cov1
 # summary(Stack_ha_95_c80_cov1)
-# # Stack_ha_95_c80_cov0
-# summary(Stack_ha_95_c80_cov0)
+Stack_ha_95_c80_cov0
+summary(Stack_ha_95_c80_cov0)
 # 
 # # Ensemble_ha_95_c50_cov1
 # summary(Ensemble_ha_95_c50_cov1)
@@ -143,9 +147,10 @@ summary(Stack_ha_95_c50_cov1)
 # summary(Ensemble_ha_95_c70_cov0)
 # # Ensemble_ha_95_c80_cov1
 # summary(Ensemble_ha_95_c80_cov1)
-# # Ensemble_ha_95_c80_cov0
-# summary(Ensemble_ha_95_c80_cov0)
+Ensemble_ha_95_c80_cov0
+summary(Ensemble_ha_95_c80_cov0)
 
+###### Cluster Tests
 stack_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Stacks")
 ensemb_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Ensemble")
 
