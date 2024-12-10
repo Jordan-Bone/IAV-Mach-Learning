@@ -2,6 +2,16 @@
 source("MegaLibrary.R")
 
 reference_table <- read.csv("RefTable.csv")
+
+# for(i in 1:length(reference_table$UID)){
+#   if(reference_table[i,1] %in% sty$UID){
+#     subs <- subset(sty,UID==reference_table[i,1])
+# 
+#     # reference_table[i,12] <- ifelse(reference_table[i,12]!=subs$Protein|is.na(reference_table[i,12]),subs$Protein,reference_table[i,12])
+#     # reference_table[i,13] <- ifelse(reference_table[i,13]!=subs$Length|is.na(reference_table[i,13]),subs$Length,reference_table[i,13])
+#     reference_table[i,14] <- ifelse(reference_table[i,14]!=subs$Subtype|is.na(reference_table[i,14]),subs$Subtype,reference_table[i,14])
+#   }
+# }
 # write.csv(reference_table,"RefTable.csv",row.names = F)
 
 SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
@@ -60,19 +70,47 @@ grid.text("HA Segment", x=.5, y=.98, just="top",gp=gpar(cex=1.5, fontface="bold"
 ######
 
 num_clus <- read.csv("Sequences/Clustering Tests.csv")
-subset(num_clus,Identity!=100 & Group=="Avian")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(15507,15507,15447,15447,15441,15441,15380,15380,14682,14682,15442,15442,15335,15335,15124,15124,15228,15228,15293,15293)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Avian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
+# subset(num_clus,Identity!=100 & Group=="Avian")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(15507,15507,15447,15447,15441,15441,15380,15380,14682,14682,15442,15442,15335,15335,15124,15124,15228,15228,15293,15293)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Avian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
 
-subset(num_clus,Identity!=100 & Group=="Mammal")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(21880,21880,21829,21829,21856,21856,22106,22106,21865,21865,21845,21845,21791,21791,21770,21770,21760,21760,21737,21737)) %>% arrange(Protein) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Mammalian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
+# subset(num_clus,Identity!=100 & Group=="Mammal")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(21880,21880,21829,21829,21856,21856,22106,22106,21865,21865,21845,21845,21791,21791,21770,21770,21760,21760,21737,21737)) %>% arrange(Protein) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Mammalian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
 
-######
+clu <- list.files("feats",pattern = "pseaac.csv",full.names = T,recursive = T)
+cls <- data.frame()
+for(i in 1:length(clu)){
+  clts <- data.frame(ptAcc=read.csv(clu[i])[,1] %>% str_split_i(":",1),
+                     prt=clu[i] %>% str_split_i("\\/",2) %>% str_split_i("_",1))
+  cls <- rbind(cls,clts)
+}
+
+cls2 <- left_join(cls,reference_table)
+subset(cls2,Protein!="02PB1-F2"&Protein!="03PA-X"&Protein!="07M2"&Protein!="08NEP") %>% group_by(Protein,Subtype,Class) %>% summarise(N=length(UID)) %>% pivot_wider(names_from = Protein,values_from = N) %>% 
+  # write.csv("Cluster Selection.csv",row.names = F)
+  print(n=130) %>% kbl() %>% kable_styling(full_width = F)
+
+cls3 <- subset(cls2,Protein!="02PB1-F2"&Protein!="03PA-X"&Protein!="07M2"&Protein!="08NEP") %>% group_by(Subtype,Class,Family,Superorder,Infraclass) %>% summarise(N=length(UID))
+
+ggplot(subset(cls3,Class=="Mammalia"),aes(Family,N,fill=Subtype))+
+  geom_col(position="dodge")+geom_text(aes(y=N+20,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
+  theme(legend.position = "none")
+
+ggplot(subset(cls3,Class=="Aves"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
+  theme(legend.position = "none")+facet_wrap(Infraclass~Superorder, scales = "free")
+
+ggplot(subset(cls3,Superorder=="Galloanserae"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
+  theme(legend.position = "none")
+ggplot(subset(cls3,Superorder=="Neoaves"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
+  theme(legend.position = "none",axis.text.x = element_text(angle = 90))
+
+###### Feature Models 
+
 fea <- list.files("feats",pattern = ".csv",full.names = T,recursive = T)
-fea <- fea[7:60]
+# fea <- fea[1:18]
 for(i in 1:length(fea)){
   print(fea[i])
   tmp_ft <- read.csv(fea[i])
   tmp_ft$ptAcc <- tmp_ft$X %>% str_split_i(":",1)
   tmp_ft <- right_join(reference_table,tmp_ft)
-  tmp_ft <- subset(tmp_ft,!str_contains(Sample,pattern = "reassort"))
+  tmp_ft <- subset(tmp_ft, str_to_lower(str_split_i(tmp_ft$Sample,"\\/",2))!="reassortant")
   #print(table(tmp_ft$Class))
   fold_indices <- createMultiFolds(tmp_ft$UID, k = 5, times = 1)
   preds <- tmp_ft[,c(-1:-15)] %>% remove_constant %>% names
@@ -82,8 +120,9 @@ for(i in 1:length(fea)){
   mo1 <- suppressWarnings(train(x = tmp_ft %>% select(all_of(preds)),y = tmp_ft %>% pull(Class),
                          method="ranger",metric="ROC",
                          preProc=c("center","scale"),num.trees=1000,importance="impurity",
-                         # weights=ifelse(tmp_ft$Class =="Aves",1,
-                         # (table(tmp_ft$Class)[1]/table(tmp_ft$Class)[2])),
+                         weights=ifelse(tmp_ft$Class =="Aves",
+                                        (1/table(tmp_ft$Class)[1]) * 0.5,
+                                        (1/table(tmp_ft$Class)[2]) * 0.5),
                          trControl = trainControl(method = "repeatedcv",number = 5,
                                                   repeats = 1,index = fold_indices,
                                                   classProbs = TRUE,savePredictions = TRUE,
@@ -97,14 +136,12 @@ for(i in 1:length(fea)){
                            mo_nm[[1]][4],"_",mo_nm[[1]][5],"_",str_replace_all(mo_nm[[1]][8], ".csv",""),".rds"))
 }
 
-# reference_table[324919,]
-
-# ### 
+# Model Stacks
 
 mods <- list.files("Models",pattern = ".rds",full.names = T,recursive = F)
-mods <- unique(substr(mods,1,21))
+mods <- unique(str_split_i(mods,"_",1))
 for(i in 1:length(mods)){
-  print(mods[i])
+  print(str_to_upper(str_split_i(mods[i],"\\/",2)))
   tmer_mod <- readRDS(paste0(mods[i],"_2mer.rds"))
   ctdc_mod <- readRDS(paste0(mods[i],"_ctdc.rds"))
   ctdd_mod <- readRDS(paste0(mods[i],"_ctdd.rds"))
@@ -112,43 +149,20 @@ for(i in 1:length(mods)){
   ctri_mod <- readRDS(paste0(mods[i],"_ctriad.rds"))
   psea_mod <- readRDS(paste0(mods[i],"_pseaac.rds"))
 
-  caretEnsemble(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Ensemble/",mods[i],".rds"))
-  caretStack(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Stack/",mods[i],".rds"))
+  # caretEnsemble(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc = c("scale"),metric = "ROC") %>% saveRDS(paste0("Comp/Ensemble/",mods[i],".rds"))
+  caretStack(c("two_mer"=tmer_mod,"CTDc"=ctdc_mod,"CTDd"=ctdd_mod,"CTDt"=ctdt_mod,"triad"=ctri_mod,"pseaac"=psea_mod),preProc=c("center","scale"),metric = "ROC",method="glmnet") %>% saveRDS(paste0("Comp/Stack/",mods[i],".rds"))
 }
 
-modc <- list.files("Comp",pattern = ".rds",full.names = T,recursive = T)
+modc <- list.files("Comp/Stack/Models",pattern = ".rds",full.names = T,recursive = F)
 for(i in 1:length(modc)){
-  ModMeth <- str_split_i(modc[i],"\\/",2)
+  # ModMeth <- str_split_i(modc[i],"\\/",2)
   ModParam <- str_split_i(modc[i],"\\/",4) %>% str_replace_all(".rds","")
-  MoDo <- paste0(ModMeth,"_",ModParam)
+  MoDo <- paste0(str_to_upper(ModParam),"_complete")
   assign(MoDo, readRDS(modc[i]))
 }
 
-# # Stack_ha_95_c50_cov1
-# summary(Stack_ha_95_c50_cov1)
-# # Stack_ha_95_c50_cov0
-# summary(Stack_ha_95_c50_cov0)
-# # Stack_ha_95_c70_cov1
-# summary(Stack_ha_95_c70_cov1)
-# # Stack_ha_95_c70_cov0
-# summary(Stack_ha_95_c70_cov0)
-# # Stack_ha_95_c80_cov1
-# summary(Stack_ha_95_c80_cov1)
 Stack_ha_95_c80_cov0
 summary(Stack_ha_95_c80_cov0)
-# 
-# # Ensemble_ha_95_c50_cov1
-# summary(Ensemble_ha_95_c50_cov1)
-# # Ensemble_ha_95_c50_cov0
-# summary(Ensemble_ha_95_c50_cov0)
-# # Ensemble_ha_95_c70_cov1
-# summary(Ensemble_ha_95_c70_cov1)
-# # Ensemble_ha_95_c70_cov0
-# summary(Ensemble_ha_95_c70_cov0)
-# # Ensemble_ha_95_c80_cov1
-# summary(Ensemble_ha_95_c80_cov1)
-Ensemble_ha_95_c80_cov0
-summary(Ensemble_ha_95_c80_cov0)
 
 ###### Cluster Tests
 stack_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Stacks")
@@ -161,3 +175,11 @@ ggplot(stack_res,aes(paste(Coverage,Mode),ymin=ROC-sdROC,y=ROC,ymax=ROC+sdROC,fi
 
 stack_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
 ensemb_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
+
+###### Model Outputs
+# protes <- c("pb2","pb1","pa","ha","np","na","m1","ns1")
+
+mos_out <- rbind(data.frame(protein="07M1",feature=str_split_i(names(summary(M1_complete)$imp),"\\.",1),imp=summary(M1_complete)$imp,summary(M1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="04HA",feature=str_split_i(names(summary(HA_complete)$imp),"\\.",1),imp=summary(HA_complete)$imp,summary(HA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="06NA",feature=str_split_i(names(summary(NA_complete)$imp),"\\.",1),imp=summary(NA_complete)$imp,summary(NA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="03PA",feature=str_split_i(names(summary(PA_complete)$imp),"\\.",1),imp=summary(PA_complete)$imp,summary(PA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="08NS1",feature=str_split_i(names(summary(NS1_complete)$imp),"\\.",1),imp=summary(NS1_complete)$imp,summary(NS1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="02PB1",feature=str_split_i(names(summary(PB1_complete)$imp),"\\.",1),imp=summary(PB1_complete)$imp,summary(PB1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="05NP",feature=str_split_i(names(summary(NP_complete)$imp),"\\.",1),imp=summary(NP_complete)$imp,summary(NP_complete)$results[2:7],row.names = NULL),data.frame(protein="01PB2",feature=str_split_i(names(summary(PB2_complete)$imp),"\\.",1),imp=summary(PB2_complete)$imp,summary(PB2_complete)$results[2:7],row.names = NULL))))))))
+
+ggplot(mos_out,aes(feature,ymin=value-sd,y=value,ymax=value+sd,colour=imp))+
+  geom_pointrange()+facet_wrap(~protein,ncol=4)+scale_colour_gradient(low="grey",high="red")+theme(legend.position = "bottom",axis.text.x = element_text(angle = 45))
