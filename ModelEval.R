@@ -9,7 +9,7 @@ predict_prob <- data.frame()
 VALD <- data.frame()
 
 # for(j in 1:length(mods)){
-for(j in c(1:3)){
+for(j in c(1:25)){
   MOD <- readRDS(mods[j])
   STY <- mods[j] %>% str_split_i("_",3)
   FEA <- mods[j] %>% str_split_i("_",2)
@@ -22,6 +22,7 @@ for(j in c(1:3)){
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
+  predict_class <- predict_class %>% str_replace_all(1,"Avian") %>% "Canidae","Equidae","Hominidae","Phyllostomidae","Suidae")
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
   VALD <- bind_rows(VALD,validate)
 }
