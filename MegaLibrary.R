@@ -135,6 +135,7 @@ suppressMessages(library(tidytree))
 # suppressMessages(library(trackViewer))
 suppressMessages(library(taxize))
 # suppressMessages(library(taxizedb))
+suppressMessages(library(tictoc))
 ### U
 ### V
 suppressMessages(library(VIM))

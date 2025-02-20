@@ -1,3 +1,4 @@
+setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
 
 reference_table <- read.csv("RefTable.csv")
@@ -30,9 +31,6 @@ for(i in 1:length(fea)){
 }
 write.csv(mod_stats,"Models/Mod Stats.csv",row.names = F)
 
-subset(mod_stats,FeatSet=="ctdd") %>% pivot_longer(cols=4:5,names_to = "Class",values_to = "N") %>% ggplot(aes(Holdout,N,colour=Class))+geom_point(alpha=0.6)
-subset(mod_stats,Avian+Mammal!=2325)
-
 # # Model Stacks
 
 mods <- list.files("Models",pattern = ".rds",full.names = T,recursive = F)
@@ -63,7 +61,7 @@ modc <- list.files("Comp/Stack/Models",pattern = ".rds",full.names = T,recursive
 moli <- c()
 for(i in 1:length(modc)){
   a <- readRDS("Comp/Stack/Models/ha_H10N1.rds") 
-  b <- readRDS("Comp/Stack/Models/ha_H10N2.rds") 
+  b <- readRDS("Comp/Stack/Models/ha_H10N2.rds")
   caretStack(c(a,b),
              # weights=ifelse(tmp_ft$Class =="Aves",
              #                (1/table(tmp_ft$Class)[1]) * 0.5,
@@ -72,17 +70,36 @@ for(i in 1:length(modc)){
     saveRDS(paste0("Comp/Stack/",str_split_i(mods[i],"_",1),".rds"))
 }
 
-
-
-modc <- list.files("Comp/Stack/Models",pattern = ".rds",full.names = T,recursive = F)
+modc <- list.files("Models",pattern = ".rds",full.names = T,recursive = F)
+mostat <- data.frame()
 for(i in 1:length(modc)){
-  # ModMeth <- str_split_i(modc[i],"\\/",2)
-  ModParam <- str_split_i(modc[i],"\\/",4) %>% str_replace_all(".rds","")
-  MoDo <- paste0(str_to_upper(ModParam),"_complete")
-  assign(MoDo, readRDS(modc[i]))
+  afd <- data.frame(P=str_split_i(modc[i],"\\/",2) %>% str_split_i("_",1),
+             "F"=str_split_i(modc[i],"_",3) %>% str_split_i("\\.",1),
+             X=str_split_i(modc[i],"_",2),
+             N=readRDS(modc[i])$finalModel$num.samples)
+  mostat <- rbind(mostat,afd)
 }
 
+# modc <- modc[1:24]
+# caretStack(c(readRDS(modc[1]),readRDS(modc[7]),
+#              readRDS(modc[13]),readRDS(modc[19])),
+#            preProc=c("center","scale"), metric = "ROC", method="glmnet")
+
+ 
+# modc <- list.files("Comp/Stack/Models",pattern = ".rds",full.names = T,recursive = F)
+# for(i in 1:length(modc)){
+#   # ModMeth <- str_split_i(modc[i],"\\/",2)
+#   ModParam <- str_split_i(modc[i],"\\/",4) %>% str_replace_all(".rds","")
+#   MoDo <- paste0(str_to_upper(ModParam),"_complete")
+#   assign(MoDo, readRDS(modc[i]))
+# }
+
 #######
+msta <- read.csv("Models/Mod Stats.csv")
+msta$Tot <- msta$Avian+msta$Mammal
+
+ggplot(msta,aes(Tot,fill=Holdout))+geom_histogram()+xlim(c(2300,2327))+
+  theme(legend.position="none")
 
 ha_exH11N3_ctdd_mod <- readRDS("Models/ha_exH11N3_ctdd.rds")
 ha_exH10N5_ctdd_mod <- readRDS("Models/ha_exH10N5_ctdd.rds")
@@ -102,20 +119,33 @@ ha_exH10N8_2mer_mod <- readRDS("Models/ha_exH10N8_2mer.rds")
 ha_exH13N8_2mer_mod <- readRDS("Models/ha_exH13N8_2mer.rds")
 ha_exH3N1_2mer_mod <- readRDS("Models/ha_exH3N1_2mer.rds")
 
-ha_exH3N1_2mer_mod$finalModel$num.samples
+# ha_exH3N1_2mer_mod$finalModel$num.samples
+ha_exH11N3_ctdt_mod <- readRDS("Models/ha_exH11N3_ctdt.rds")
+ha_exH10N5_ctdt_mod <- readRDS("Models/ha_exH10N5_ctdt.rds")
+ha_exH10N8_ctdt_mod <- readRDS("Models/ha_exH10N8_ctdt.rds")
+ha_exH13N8_ctdt_mod <- readRDS("Models/ha_exH13N8_ctdt.rds")
+ha_exH3N1_ctdt_mod <- readRDS("Models/ha_exH3N1_ctdt.rds")
 
-tstmo <- caretStack(c(ha_exH11N3_ctdd_mod,ha_exH10N5_ctdd_mod,ha_exH10N8_ctdd_mod,
-                      ha_exH13N8_ctdd_mod,ha_exH3N1_ctdd_mod,
-                      ha_exH11N3_ctdc_mod,ha_exH10N5_ctdc_mod,ha_exH10N8_ctdc_mod,
-                      ha_exH13N8_ctdc_mod,ha_exH3N1_ctdc_mod,
-                      ha_exH11N3_2mer_mod,ha_exH10N5_2mer_mod,ha_exH10N8_2mer_mod,
-                      ha_exH13N8_2mer_mod,ha_exH3N1_2mer_mod),
-                    weights=ifelse(tmp_ft$Class =="Aves",(1/table(tmp_ft$Class)[1]) * 0.5,(1/table(tmp_ft$Class)[2]) * 0.5),
+ha_exH11N3_ctriad_mod <- readRDS("Models/ha_exH11N3_ctriad.rds")
+ha_exH10N5_ctriad_mod <- readRDS("Models/ha_exH10N5_ctriad.rds")
+ha_exH10N8_ctriad_mod <- readRDS("Models/ha_exH10N8_ctriad.rds")
+ha_exH13N8_ctriad_mod <- readRDS("Models/ha_exH13N8_ctriad.rds")
+ha_exH3N1_ctriad_mod <- readRDS("Models/ha_exH3N1_ctriad.rds")
+
+ha_exH11N3_pseaac_mod <- readRDS("Models/ha_exH11N3_pseaac.rds")
+ha_exH10N5_pseaac_mod <- readRDS("Models/ha_exH10N5_pseaac.rds")
+ha_exH10N8_pseaac_mod <- readRDS("Models/ha_exH10N8_pseaac.rds")
+ha_exH13N8_pseaac_mod <- readRDS("Models/ha_exH13N8_pseaac.rds")
+ha_exH3N1_pseaac_mod <- readRDS("Models/ha_exH3N1_pseaac.rds")
+
+tstmo <- caretStack(c(ha_exH11N3_ctdd_mod,ha_exH10N5_ctdd_mod,ha_exH10N8_ctdd_mod,ha_exH13N8_ctdd_mod,ha_exH3N1_ctdd_mod,ha_exH11N3_ctdc_mod,ha_exH10N5_ctdc_mod,ha_exH10N8_ctdc_mod,ha_exH13N8_ctdc_mod,ha_exH3N1_ctdc_mod,ha_exH11N3_2mer_mod,ha_exH10N5_2mer_mod,ha_exH10N8_2mer_mod,ha_exH13N8_2mer_mod,ha_exH3N1_2mer_mod,ha_exH11N3_ctdt_mod,ha_exH10N5_ctdt_mod,ha_exH10N8_ctdt_mod,ha_exH13N8_ctdt_mod,ha_exH3N1_ctdt_mod,ha_exH11N3_ctriad_mod,ha_exH10N5_ctriad_mod,ha_exH10N8_ctriad_mod,ha_exH13N8_ctriad_mod,ha_exH3N1_ctriad_mod,ha_exH11N3_pseaac_mod,ha_exH10N5_pseaac_mod,ha_exH10N8_pseaac_mod,ha_exH13N8_pseaac_mod,ha_exH3N1_pseaac_mod),
+                    # weights=ifelse(tmp_ft$Class =="Aves",(1/table(tmp_ft$Class)[1]) * 0.5,(1/table(tmp_ft$Class)[2]) * 0.5),
                     preProc=c("center","scale"), metric = "ROC", method="glmnet")
 
-tstmoS <- data.frame(protein="ha",holdout=c(rep(c("H11N3","H10N5","H10N8","H13N8","H3N1"),3)),feature=c(rep("CTDd",5),rep("CTDc",5),rep("2mer",5)),imp=summary(tstmo)$imp,summary(tstmo)$results[-1],row.names = NULL)
+tstmoS <- data.frame(protein="ha",holdout=c(rep(c("H11N3","H10N5","H10N8","H13N8","H3N1"),6)),
+                     feature=c(rep("CTDd",5),rep("CTDc",5),rep("2mer",5),
+                               rep("CTDt",5),rep("ctriad",5),rep("pseaac",5)),
+                     imp=summary(tstmo)$imp,summary(tstmo)$results[-1],row.names = NULL)
 
 ggplot(tstmoS,aes(feature,ymin=value-sd,y=value,ymax=value+sd,colour=imp))+geom_pointrange()
-ggplot(tstmoS,aes(feature,value))+geom_violin(scale = "area")+geom_jitter(aes(colour=holdout),height = 0, width=0.1,alpha=0.8)
-
-
+ggplot(tstmoS,aes(feature,value))+geom_violin(scale = "area")+geom_jitter(aes(colour=holdout),height = 0, width=0.1,alpha=0.8)+theme(legend.position = "bottom")

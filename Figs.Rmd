@@ -1,9 +1,34 @@
+---
+title: "Figs"
+author: "JBone"
+date: "2025-02-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
 setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
 
 reference_table <- read.csv("RefTable.csv")
 rep_uids <- read.csv("USED UIDS.txt")
+uid_ref <- read.csv("USED UIDS.txt")
+uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
+SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
+PRT <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07M1","08NS1")
+FET <- c("pseaac","2mer","ctdc","ctdd","ctdt","ctriad")
+```
 
+```{r}
+a <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ntAcc,Sample,Classification,Date)
+names(a) <- c("UID","Acc","Sample","Classification","Date")
+b <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ptAcc.x,Sample,Classification,Date)
+names(b) <- c("UID","Acc","Sample","Classification","Date")
+rbind(a,b) %>% write.csv("feats/combo/Timings.csv",row.names = F)
+
+```
+
+
+```{r Reference Builder}
 clu <- list.files("feats/combo",pattern = ".csv",full.names = T,recursive = T)
 cls <- data.frame()
 for(i in 1:length(clu)){
@@ -32,12 +57,9 @@ for(i in 1:length(reference_table$UID)){
 }
 beep(2)
 write.csv(reference_table[,-16],"RefTable.csv",row.names = F)
+```
 
-SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
-PRT <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07M1","08NS1","07M2","08NEP")
-FET <- c("pseaac","2mer","ctdc","ctdd","ctdt","ctriad")
-######
-
+```{r}
 mam <- subset(reference_table,Class=="Mammalia") %>%
   group_by(Order,Family,Subtype) %>% summarise(N=length(Subtype)) %>%
   subset(Family %in% c("Hominidae","Suidae","Canidae","Equidae","Phyllostomidae"))
@@ -45,8 +67,9 @@ mam <- subset(reference_table,Class=="Mammalia") %>%
 ggplot(subset(mam,N>19),aes(Family,log10(N),fill=Subtype))+geom_col(position="dodge")+
   geom_text(aes(label=Subtype,group=Subtype),position = position_dodge(width = .9),size=3)
 # ggsave("Mammal Subtypes.pdf",width=13,height=8)
-######
+```
 
+```{r}
 fetc <- list.files("feats",pattern = ".csv",full.names = T,recursive = F)
 for(i in 1:length(fetc)){
   FeatParam <- str_split_i(fetc[i],"\\/",2) %>% str_replace_all(".csv","")
@@ -56,12 +79,18 @@ for(i in 1:length(fetc)){
 
 ha_ctdc$Seg <- "HA"
 ha_ctdc$Feat <- "CTDc"
+```
 
-######
+```{r}
+uid_ref %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Num<15))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="29 of which appear\nmore than 15 times"),fill="#F8766D")+ theme(legend.position = "none",axis.text.x = element_text(angle = 90))+labs(title = "95 Unique Subtypes")
+```
+
+```{r}
 # ssnl <- read_xlsx("Human Seasonals.xlsx",sheet="Sheet5")
 # ggplot(ssnl,aes(Release_Date,WGS,colour=Genotype))+geom_point(alpha=0.7)
+```
 
-######
+```{r}
 mod_cls <- read.csv("Sequences/Clusters.csv")
 ggplot(mod_cls,aes(Protein,Clusters,fill=Group))+geom_col(position="dodge")+
   facet_wrap(~Identity,scales = "free")+
@@ -73,10 +102,9 @@ mod_cls %>% pivot_wider(names_from = c("Group","Identity"),values_from = "Cluste
 # a minimum coverage (option -c [0,1], which is defined by the number of aligned residue pairs divided by either the maximum of the length of query/centre and target/non-centre sequences alnRes/max(qLen,tLen) (default mode, --cov-mode 0), or by the length of the target/non-centre sequence alnRes/tLen (--cov-mode 1), or by the length of the query/centre alnRes/qLen (--cov-mode 2).
 
 # a minimum sequence identity (--min-seq-id [0,1]) with option --alignment-mode 3 defined as the number of identical aligned residues divided by the number of aligned columns including internal gap columns, or, by default, defined by a highly correlated measure, the equivalent similarity score of the local alignment (including gap penalties) divided by the maximum of the lengths of the two locally aligned sequence segments. The score per residue equivalent to a certain sequence identity is obtained by a linear regression using thousands of local alignments as training set.
-######
+```
 
-### Sequence Diversity
-
+```{r Sequence Diversity, include=FALSE}
 # haBifas <- seqinr::read.fasta("Sequences/Avian/ha_cluster_95_c80_cov0_rep_seq.fasta")
 # haBi <- data.frame("Base"=1:567,"Entropy"=Bios2cor::entropy(haBifas),row.names = NULL)
 # haMafas <- seqinr::read.fasta("Sequences/Mammals/04HA/HA_cluster_95.fasta")
@@ -85,8 +113,9 @@ mod_cls %>% pivot_wider(names_from = c("Group","Identity"),values_from = "Cluste
 # ggplot(haBi,aes(Base,Entropy))+geom_line(colour="indianred",alpha=0.8)+geom_line(data=haMa,colour="slateblue",alpha=0.8)+
 #   geom_label(aes(300,0.58,label="Avian\nH = 93.13"),colour="indianred")+
 #   geom_label(aes(400,0.4,label="Mammalian\nH = 90.30"),colour="slateblue")+labs(title="Sitewise Diversity in Avian and Mammalian Haemagglutinin Clusters")
+```
 
-### Lolliplots
+```{r Lolliplots, include=FALSE}
 # HASNPcon <- c(144,467)
 # sample.HAcon <- GRanges("HA", IRanges(HASNPcon, width=1, names=c("Gly 144 Asp","Arg 467 Ser")))
 # features.HA <- GRanges("HA", IRanges(c(1,1,17,52,276,330,347,514),width=c(565,16,51,223,53,16,166,20),names=c("HA","Signal Peptide","HA1 - Stalk","HA1 - Head","HA1 - Stalk","Fusion Peptide","HA2 - Stalk","Transmembrane Domain")))
@@ -96,9 +125,9 @@ mod_cls %>% pivot_wider(names_from = c("Group","Identity"),values_from = "Cluste
 # sample.HAcon$shape <- rep("circle",2)
 # trackViewer::lolliplot(sample.HAcon,features.HA,legend = legend)
 # grid.text("HA Segment", x=.5, y=.98, just="top",gp=gpar(cex=1.5, fontface="bold"))
+```
 
-######
-
+```{r}
 # num_clus <- read.csv("Sequences/Clustering Tests.csv")
 # subset(num_clus,Identity!=100 & Group=="Avian")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(15507,15507,15447,15447,15441,15441,15380,15380,14682,14682,15442,15442,15335,15335,15124,15124,15228,15228,15293,15293)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Avian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
 
@@ -133,8 +162,9 @@ ggsave("Subtype Frequencies zoom.pdf",width=33,height=19,units = "cm")
 cls3$Classification <- ifelse(cls3$Class=="Mammalia",cls3$Family,str_replace_all(cls3$Superorder,"Aves","Galloanserae"))
 cls4 <- cls3 %>% group_by(Subtype,Classification) %>% summarise(N=sum(N))
 ggplot(cls4,aes(x=reorder(Subtype,-N),y=N,fill=Classification))+geom_col()+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))
+```
 
-###### Cluster Tests
+```{r Cluster Tests, include=FALSE}
 stack_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Stacks")
 ensemb_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Ensemble")
 
@@ -145,9 +175,44 @@ ggplot(stack_res,aes(paste(Coverage,Mode),ymin=ROC-sdROC,y=ROC,ymax=ROC+sdROC,fi
 
 # stack_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
 # ensemb_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
+```
 
-###### Model Outputs
+```{r Model Check}
+mo_list <- list.files("Models/",pattern=".rds",full.names = T)
+mod_stats_2 <- data.frame()
+mod_stats_M <- data.frame()
+for(i in 1:length(mo_list)){
+  tmp_mo <- readRDS(mo_list[i])
+  if(str_split_i(mo_list[i],"_",5)=="Mclass.rds"){
+    temp_df_M <- data.frame(Protein=str_split_i(mo_list[i],"_",1) %>% str_split_i("\\/",3),
+                            Feature=str_split_i(mo_list[i],"_",2),
+                            Holdout=str_split_i(mo_list[i],"_",3),
+                            ModelType=str_split_i(mo_list[i],"_",5) %>% str_split_i("l",1),
+                            Samples=tmp_mo$finalModel$num.samples,
+                          subset(tmp_mo$results,min.node.size==tmp_mo$finalModel$tuneValue$min.node.size))
+    mod_stats_M <- rbind(mod_stats_M,temp_df_M)
+  }
+  else{
+    temp_df_2 <- data.frame(Protein=str_split_i(mo_list[i],"_",1) %>% str_split_i("\\/",3),
+                            Feature=str_split_i(mo_list[i],"_",2),
+                            Holdout=str_split_i(mo_list[i],"_",3),
+                            ModelType=str_split_i(mo_list[i],"_",5) %>% str_split_i("l",1),
+                            Samples=tmp_mo$finalModel$num.samples,
+                            subset(tmp_mo$results,min.node.size==tmp_mo$finalModel$tuneValue$min.node.size))
+    mod_stats_2 <- rbind(mod_stats_2,temp_df_2)
+  }
+  ifelse(is.wholenumber(i/100),print(i),"")
+}
 
+ggplot(mod_stats_M,aes(Feature,Accuracy,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Protein)
+ggplot(mod_stats_M,aes(Mean_Specificity,Mean_Sensitivity,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Feature)
+
+ggplot(mod_stats_2,aes(Feature,ROC,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Protein)
+ggplot(mod_stats_2,aes(Spec,Sens,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Feature)
+```
+
+
+```{r Model Outputs}
 # mos_out <- rbind(data.frame(protein="07M1",feature=str_split_i(names(summary(M1_complete)$imp),"\\.",1),imp=summary(M1_complete)$imp,summary(M1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="04HA",feature=str_split_i(names(summary(HA_complete)$imp),"\\.",1),imp=summary(HA_complete)$imp,summary(HA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="06NA",feature=str_split_i(names(summary(NA_complete)$imp),"\\.",1),imp=summary(NA_complete)$imp,summary(NA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="03PA",feature=str_split_i(names(summary(PA_complete)$imp),"\\.",1),imp=summary(PA_complete)$imp,summary(PA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="08NS1",feature=str_split_i(names(summary(NS1_complete)$imp),"\\.",1),imp=summary(NS1_complete)$imp,summary(NS1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="02PB1",feature=str_split_i(names(summary(PB1_complete)$imp),"\\.",1),imp=summary(PB1_complete)$imp,summary(PB1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="05NP",feature=str_split_i(names(summary(NP_complete)$imp),"\\.",1),imp=summary(NP_complete)$imp,summary(NP_complete)$results[2:7],row.names = NULL),data.frame(protein="01PB2",feature=str_split_i(names(summary(PB2_complete)$imp),"\\.",1),imp=summary(PB2_complete)$imp,summary(PB2_complete)$results[2:7],row.names = NULL))))))))
 
 # data.frame(protein="01PB2",feature=str_split_i(names(summary(PB2_complete)$imp),"\\.",1),imp=summary(PB2_complete)$imp,summary(PB2_complete)$results[2:7],row.names = NULL)
@@ -155,9 +220,9 @@ ggplot(stack_res,aes(paste(Coverage,Mode),ymin=ROC-sdROC,y=ROC,ymax=ROC+sdROC,fi
 mos_out <- read.csv("Comp/Model Outputs.csv")
 ggplot(mos_out,aes(feature,ymin=value-sd,y=value,ymax=value+sd,colour=imp))+
   geom_pointrange()+facet_wrap(~protein,ncol=4)+scale_colour_gradient(low="grey",high="red")+theme(legend.position = "bottom",axis.text.x = element_text(angle = 45))
-#####
+```
 
-# Subtype Distribution
+```{r Subtype Distribution, include=FALSE}
 sbd <- cls2 %>% group_by(Order,Class,Superorder,Subtype) %>% summarise(N=length(UID))
 sbd$Classification <- ifelse(sbd$Class=="Mammalia",sbd$Order,sbd$Superorder)
 # sbd %>% group_by(Classification,Subtype) %>% summarise(N=sum(N)) %>% pivot_wider(names_from = "Classification",values_from = N) %>% write.csv("Subtype Distribution.csv",row.names = F)
@@ -192,3 +257,18 @@ ggsave("HA Holdouts.pdf",width=30,height=19,units = "cm")
 ha2324 <- subset(mostat,P=="ha"&N==2324&F=="2mer")$X
 
 ggplot(subset(mostat,F=="ctdd"&P=="ha"&N<2300),aes(str_replace_all(X,"ex",""),y=max(mostat$N)-N))+geom_point(alpha=0.9)+labs(x="Excluded Subtype",y="Number of Sequences")
+```
+
+# BEAST
+```{r}
+subset(reference_table,(UID %in% rep_uids$UID) & (Protein %in% PRT)) %>% group_by(UID,Protein) %>% summarise(ntAcc) %>% pivot_wider(names_from = Protein, values_from = ntAcc) %>% write.csv("BEAST/Timesheet.csv",row.names = F)
+
+# subset(reference_table, Protein %in% PRT) |>
+#   dplyr::summarise(n = dplyr::n(), .by = c(UID, Protein)) |>
+#   dplyr::filter(n > 1L)`
+```
+
+```{r}
+read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/BEAST/Acc_meta/ncbi_dataset/data/data_report.jsonl",sep="{",header = F)
+```
+
