@@ -6,6 +6,7 @@ names(uid_ref)[3] <- "label"
 mods <- list.files("Models",pattern="Mclass.rds",full.names = T)
 predict_class <- data.frame()
 predict_prob <- data.frame()
+VALD <- data.frame()
 
 # for(j in 1:length(mods)){
 for(j in c(1:12)){
@@ -22,8 +23,9 @@ for(j in c(1:12)){
   
   predict_class <- rbind(predict_class,predict_class_test)
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
+  VALD <- bind_rows(VALD,validate)
 }
-  matrix_test <- confusionMatrix(predict_class_test %>% droplevels,
+  matrix_test <- confusionMatrix(predict_class %>% droplevels,
                                  validate %>% pull(label) %>% as.factor %>% droplevels)
   
   matrix_one_vs_all <- vector("list", length(levels(MOD$trainingData$.outcome)))
