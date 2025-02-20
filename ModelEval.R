@@ -22,7 +22,7 @@ for(j in c(1:25)){
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
-  levels(predict_class) <- c("Avian","Canidae","Equidae","Hominidae","Phyllostomidae","Suidae")
+  predict_class <- predict_class %>% replace(1,"Avian")
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
   VALD <- bind_rows(VALD,validate)
 }
