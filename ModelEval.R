@@ -22,12 +22,16 @@ for(j in c(1:25)){
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
-  predict_class <- predict_class %>% replace(1,"Avian")
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
   VALD <- bind_rows(VALD,validate)
 }
-  matrix_test <- confusionMatrix(predict_class %>% droplevels,
-                                 VALD %>% pull(label) %>% as.factor %>% droplevels)
+
+predict_class <- predict_class %>% as.character() %>%
+  str_replace_all("1","Avian") %>% str_replace_all("2","Canidae") %>% str_replace_all("3","Equidae") %>%
+  str_replace_all("4","Hominidae") %>% str_replace_all("5","Phyllostomidae") %>% str_replace_all("6","Suidae")
+
+matrix_test <- confusionMatrix(predict_class %>% as.factor %>% droplevels,
+                              VALD %>% pull(label) %>% as.factor %>% droplevels)
   
   matrix_one_vs_all <- vector("list", length(levels(MOD$trainingData$.outcome)))
   for (i in seq_along(matrix_one_vs_all)) {
