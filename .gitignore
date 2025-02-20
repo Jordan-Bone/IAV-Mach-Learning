@@ -48,17 +48,7 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 *.fasta
-*.fasta
-RefTable.csv
-RefTable.csv
-RefTable.csv
 RefTable.csv
 *.csv
-*.rds
-*.fasta
 *.tsv
-*.fasta
-*.fasta
-*.tsv
-*.faa
 Models/Unweighted.zip
