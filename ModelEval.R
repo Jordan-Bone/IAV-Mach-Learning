@@ -8,8 +8,8 @@ predict_class <- c()
 predict_prob <- data.frame()
 VALD <- data.frame()
 
-# for(j in 1:length(mods)){
-for(j in c(1:25)){
+for(j in 1:length(mods)){
+# for(j in c(1:25)){
   MOD <- readRDS(mods[j])
   STY <- mods[j] %>% str_split_i("_",3)
   FEA <- mods[j] %>% str_split_i("_",2)
