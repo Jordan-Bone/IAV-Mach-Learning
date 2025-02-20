@@ -9,7 +9,7 @@ predict_prob <- data.frame()
 VALD <- data.frame()
 
 # for(j in 1:length(mods)){
-for(j in c(1:12)){
+for(j in c(1:3)){
   MOD <- readRDS(mods[j])
   STY <- mods[j] %>% str_split_i("_",3)
   FEA <- mods[j] %>% str_split_i("_",2)
@@ -18,7 +18,7 @@ for(j in c(1:12)){
   validate <- og_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>% select("UID",ends_with(PRT))
   validate <- left_join(validate,uid_ref)
   
-  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist
+  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% as.factor
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
