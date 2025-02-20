@@ -4,7 +4,7 @@ source("MegaLibrary.R")
 uid_ref <- read.csv("USED UIDS.csv")
 names(uid_ref)[3] <- "label"
 mods <- list.files("Models",pattern="Mclass.rds",full.names = T)
-predict_class <- data.frame()
+predict_class <- c()
 predict_prob <- data.frame()
 VALD <- data.frame()
 
@@ -18,15 +18,15 @@ for(j in c(1:12)){
   validate <- og_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>% select("UID",ends_with(PRT))
   validate <- left_join(validate,uid_ref)
   
-  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% data.frame
+  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
-  predict_class <- rbind(predict_class,predict_class_test)
+  predict_class <- c(predict_class,predict_class_test)
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
   VALD <- bind_rows(VALD,validate)
 }
   matrix_test <- confusionMatrix(predict_class %>% droplevels,
-                                 validate %>% pull(label) %>% as.factor %>% droplevels)
+                                 VALD %>% pull(label) %>% as.factor %>% droplevels)
   
   matrix_one_vs_all <- vector("list", length(levels(MOD$trainingData$.outcome)))
   for (i in seq_along(matrix_one_vs_all)) {
