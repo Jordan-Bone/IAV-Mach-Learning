@@ -25,6 +25,9 @@ for(j in 1:length(mods)){
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
   VALD <- bind_rows(VALD,validate)
 }
+#Error: vector memory limit of 16.0 Gb reached, see mem.maxVSize()
+#Boosted to 20GB just to get this all done
+#DEFAULT mem.maxVSize(vsize = 16384) i.e. Jordan set this back to default 
 
 predict_class <- predict_class %>% as.character() %>%
   str_replace_all("1","Avian") %>% str_replace_all("2","Canidae") %>% str_replace_all("3","Equidae") %>%
