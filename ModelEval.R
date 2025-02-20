@@ -4,11 +4,11 @@ source("MegaLibrary.R")
 uid_ref <- read.csv("USED UIDS.csv")
 names(uid_ref)[3] <- "label"
 mods <- list.files("Models",pattern="Mclass.rds",full.names = T)
-predict_class <- c()
-predict_prob <- c()
+predict_class <- data.frame()
+predict_prob <- data.frame()
 
 # for(j in 1:length(mods)){
-for(j in c(1:5)){
+for(j in c(1:12)){
   MOD <- readRDS(mods[j])
   STY <- mods[j] %>% str_split_i("_",3)
   FEA <- mods[j] %>% str_split_i("_",2)
@@ -17,10 +17,10 @@ for(j in c(1:5)){
   validate <- og_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>% select("UID",ends_with(PRT))
   validate <- left_join(validate,uid_ref)
   
-  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% as.factor
+  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% data.frame
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
-  predict_class <- bind_rows(predict_class,predict_class_test)
+  predict_class <- rbind(predict_class,predict_class_test)
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
 }
   matrix_test <- confusionMatrix(predict_class_test %>% droplevels,
