@@ -3,13 +3,12 @@ source("MegaLibrary.R")
 
 uid_ref <- read.csv("USED UIDS.csv")
 names(uid_ref)[3] <- "label"
-mods <- list.files("Models",pattern="Mclass.rds",full.names = T)
+mods <- list.files("Comp",pattern="mclass.rds",full.names = T)
 predict_class <- c()
 predict_prob <- data.frame()
 VALD <- data.frame()
 
-for(j in 1:length(mods)){
-# for(j in c(1:25)){
+for(j in c(1:3)){
   MOD <- readRDS(mods[j])
   STY <- mods[j] %>% str_split_i("_",3)
   FEA <- mods[j] %>% str_split_i("_",2)

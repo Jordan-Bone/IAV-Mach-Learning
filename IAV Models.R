@@ -2,7 +2,17 @@ setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
 
 reference_table <- read.csv("RefTable.csv")
+uid_ref <- read.csv("USED UIDS.csv")
 prez_subs <- c("H10N1","H10N2","H10N3","H10N4","H10N5","H10N6","H10N7","H10N8","H10N9","H11N1","H11N2","H11N3","H11N4","H11N6","H11N7","H11N8","H11N9","H12N3","H12N5","H12N7","H12N9","H13N2","H13N6","H13N8","H13N9","H14N5","H14N7","H15N5","H15N9","H16N3","H16N9","H17N10","H18N11","H1N1","H1N2","H1N3","H1N5","H1N8","H1N9","H2N1","H2N2","H2N3","H2N4","H2N5","H2N6","H2N7","H2N9","H3N1","H3N2","H3N3","H3N6","H3N7","H3N8","H4N1","H4N2","H4N3","H4N4","H4N5","H4N6","H4N8","H4N9","H5N1","H5N2","H5N3","H5N4","H5N5","H5N6","H5N7","H5N8","H5N9","H6N1","H6N2","H6N3","H6N4","H6N5","H6N6","H6N8","H6N9","H7N1","H7N2","H7N3","H7N4","H7N5","H7N6","H7N7","H7N8","H7N9","H8N3","H8N4","H9N1","H9N2","H9N3","H9N5","H9N6","H9N7","H9N8","H9N9")
+
+ft_tri <- read.csv("feats/triad.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+ft_pac <- read.csv("feats/paac.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+ft_2mr <- read.csv("feats/2mer.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+ft_ctdc <- read.csv("feats/ctdc.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+ft_ctdd <- read.csv("feats/ctdd.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+ft_ctdt <- read.csv("feats/ctdt.csv") %>% left_join(uid_ref,by="UID") %>% distinct
+
+ft_tot <- left_join(ft_tri,left_join(ft_pac,left_join(ft_2mr,left_join(ft_ctdc,left_join(ft_ctdd,ft_ctdt,by="UID"),by="UID"),by="UID"),by="UID"),by="UID")
 
 fea <- list.files("feats",pattern = ".csv",full.names = T,recursive = T)
 # fea <- fea[4:48]
