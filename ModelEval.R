@@ -1,6 +1,7 @@
 setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
 
+ft_data <- read.csv("feats/All_Features.csv")
 uid_ref <- read.csv("USED UIDS.csv")
 names(uid_ref)[3] <- "label"
 mods <- list.files("Comp",pattern="mclass.rds",full.names = T)
@@ -10,11 +11,11 @@ VALD <- data.frame()
 
 for(j in c(1:3)){
   MOD <- readRDS(mods[j])
-  STY <- mods[j] %>% str_split_i("_",3)
-  FEA <- mods[j] %>% str_split_i("_",2)
+  STY <- mods[j] %>% str_split_i("_",2)
+  # FEA <- mods[j] %>% str_split_i("_",2)
   PRT <- mods[j] %>% str_split_i("_",1) %>% str_split_i("\\/",2)
-  og_data <- read.csv(paste0("feats/",FEA,".csv"))
-  validate <- og_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>% select("UID",ends_with(PRT))
+  validate <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>%
+    select("UID",ends_with(PRT))
   validate <- left_join(validate,uid_ref)
   
   predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% as.factor
