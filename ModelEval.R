@@ -16,9 +16,10 @@ for(j in c(1:3)){
   PRT <- mods[j] %>% str_split_i("_",1) %>% str_split_i("\\/",2)
   validate <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>%
     select("UID",ends_with(PRT)&!starts_with("ptAcc"))
-  validate <- left_join(validate,uid_ref) %>% filter(complete.cases(.)) %>% select(-"Subtype",-"UID")
+  validate <- validate %>% filter(complete.cases(.)) %>% select(-"UID")
   
-  predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% as.factor
+  predict_class_test <- predict(MOD, newdata=validate, type="raw")
+  # %>% unlist %>% as.factor
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
