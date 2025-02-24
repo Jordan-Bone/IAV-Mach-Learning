@@ -13,22 +13,18 @@ reference_table <- read.csv("RefTable.csv")
 rep_uids <- read.csv("USED UIDS.txt")
 uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
-SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
-PRT <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07M1","08NS1")
-FET <- c("pseaac","2mer","ctdc","ctdd","ctdt","ctriad")
 ```
 
-```{r}
+```{r, eval=FALSE}
 a <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ntAcc,Sample,Classification,Date)
 names(a) <- c("UID","Acc","Sample","Classification","Date")
 b <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ptAcc.x,Sample,Classification,Date)
 names(b) <- c("UID","Acc","Sample","Classification","Date")
 rbind(a,b) %>% write.csv("feats/combo/Timings.csv",row.names = F)
-
 ```
 
 
-```{r Reference Builder}
+```{r Reference Builder, eval=FALSE}
 clu <- list.files("feats/combo",pattern = ".csv",full.names = T,recursive = T)
 cls <- data.frame()
 for(i in 1:length(clu)){
@@ -38,7 +34,10 @@ for(i in 1:length(clu)){
 }
 
 cls2 <- left_join(cls,reference_table, relationship = "many-to-many")
+```
 
+
+```{r Reference Builder, eval=FALSE}
 ####
 usrs <- read_xlsx("/Users/jordanbone/Documents/IAV.AI/Used Seqs.xlsx")[,c(2:10)]
 us2 <- usrs %>% pivot_longer(2:9, names_to = "Protein", values_to = "ptAcc2")
@@ -82,7 +81,21 @@ ha_ctdc$Feat <- "CTDc"
 ```
 
 ```{r}
-uid_ref %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Num<15))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="29 of which appear\nmore than 15 times"),fill="#F8766D")+ theme(legend.position = "none",axis.text.x = element_text(angle = 90))+labs(title = "95 Unique Subtypes")
+# subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Num<25))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="20 of which appear\nmore than 25 times"),fill="#F8766D")+ theme(legend.position = "none",axis.text.x = element_text(angle = 90))+labs(title = "95 Unique Subtypes")
+
+subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Subtype %in% held_subtypes))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="23 of which appear\nmore than 25 times"),fill="#53CCCD")+
+  geom_segment(aes(x=70,xend=59.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+
+  geom_segment(aes(x=70,xend=79.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+
+  geom_label(aes(x=70,y=300,label="Plus two bat\nsequences"),fill="#53CCCD")+
+  theme(legend.position = "none",
+        text=element_text(size=20), #change font size of all text
+        axis.title=element_text(size=20), #change font size of axis titles
+        plot.title=element_text(size=20), #change font size of plot title
+        legend.text=element_text(size=20), #change font size of legend text
+        legend.title=element_text(size=20),
+        axis.text.x = element_text(size=8,angle = 90),)+
+  labs(title = "95 Unique IAV Subtypes",x="Subtypes",y="Quantity")
+ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
 ```
 
 ```{r}
@@ -258,6 +271,35 @@ ha2324 <- subset(mostat,P=="ha"&N==2324&F=="2mer")$X
 
 ggplot(subset(mostat,F=="ctdd"&P=="ha"&N<2300),aes(str_replace_all(X,"ex",""),y=max(mostat$N)-N))+geom_point(alpha=0.9)+labs(x="Excluded Subtype",y="Number of Sequences")
 ```
+
+# Model Stats
+```{r}
+# all_mods <- list.files("Comp",pattern=".rds",full.names = T)
+# mod_stats <- data.frame()
+# for(i in 1:length(all_mods)){
+# # for(i in 1:2){
+#   STY <- all_mods[i] %>% str_split_i("_",2)
+#   PRT <- all_mods[i] %>% str_split_i("_",1) %>% str_split_i("\\/",2)
+#   MTY <- all_mods[i] %>% str_split_i("_",3) %>% str_sub(1,1)
+#   MOD <- summary(readRDS(all_mods[i]))
+#   mod_df <- data.frame(STY,PRT,MTY,MOD$imp)
+#   mod_df$MDL <- rownames(mod_df) %>% str_split_i("\\.",1)
+#   mod_df$HST <- rownames(mod_df) %>% str_replace("_mer.r","mer.r") %>% str_split_i("_",2)
+#   mod_stats <- rbind(mod_stats,mod_df)
+# }
+```
+
+```{r}
+mod_imp <- read.csv("Models/Model Importance.csv")
+
+a2 <- ggplot(subset(mod_imp,MTY=="2"),aes(MDL,MOD.imp))+geom_violin(scale="area")+
+  theme(axis.text.x = element_text(angle = 90))
+am <- ggplot(subset(mod_imp,MTY=="m"),aes(MDL,MOD.imp))+geom_violin(scale="area")+
+  facet_wrap(~HST)+theme(axis.text.x = element_text(angle = 90))
+ggarrange(a2,am)
+ggsave("Model Importance.pdf",width=33,height=19,units = "cm")
+```
+
 
 # BEAST
 ```{r}

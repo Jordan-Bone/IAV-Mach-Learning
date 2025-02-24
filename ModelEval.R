@@ -3,7 +3,7 @@ source("MegaLibrary.R")
 
 ft_data <- read.csv("feats/All_Features.csv")
 uid_ref <- read.csv("USED UIDS.csv")
-names(uid_ref)[3] <- "label"
+# names(uid_ref)[3] <- "label"
 mods <- list.files("Comp",pattern="mclass.rds",full.names = T)
 predict_class <- c()
 predict_prob <- data.frame()
@@ -15,20 +15,16 @@ for(j in c(1:3)){
   # FEA <- mods[j] %>% str_split_i("_",2)
   PRT <- mods[j] %>% str_split_i("_",1) %>% str_split_i("\\/",2)
   validate <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>%
-    select("UID",ends_with(PRT))
-  validate <- left_join(validate,uid_ref)
+    select("UID",ends_with(PRT)&!starts_with("ptAcc"))
+  validate <- left_join(validate,uid_ref) %>% filter(complete.cases(.)) %>% select(-"Subtype",-"UID")
   
   predict_class_test <- predict(MOD, newdata=validate, type="raw") %>% unlist %>% as.factor
   predict_prob_test <- predict(MOD, newdata=validate, type="prob") %>% bind_rows
   
   predict_class <- c(predict_class,predict_class_test)
   predict_prob <- bind_rows(predict_prob,predict_prob_test)
-  VALD <- bind_rows(VALD,validate)
+  VALD <- bind_rows(VALD,validate %>% pull(Classification))
 }
-#Error: vector memory limit of 16.0 Gb reached, see mem.maxVSize()
-#Boosted to 20GB just to get this all done
-#DEFAULT mem.maxVSize(vsize = 16384) i.e. Jordan set this back to default 
-
 predict_class <- predict_class %>% as.character() %>%
   str_replace_all("1","Avian") %>% str_replace_all("2","Canidae") %>% str_replace_all("3","Equidae") %>%
   str_replace_all("4","Hominidae") %>% str_replace_all("5","Phyllostomidae") %>% str_replace_all("6","Suidae")
@@ -63,3 +59,4 @@ matrix_test <- confusionMatrix(predict_class %>% as.factor %>% droplevels,
   temp_split <- data.frame(STY,FEA,PRT,MOD_TYPE,
                            Class=rownames(matrix_test$byClass) %>% str_split_i(":",2) %>% str_trim,
                            matrix_test$byClass)
+#####

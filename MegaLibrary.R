@@ -162,3 +162,8 @@ sl <- data.frame(Segment=c("08NS","04HA","05NP","01PB2","06NA","03PA","02PB1","0
 # <span style="background-color: #7CAE01">V~M~</span>
 # <span style="background-color: #53CCCD">N~S~</span>
 # <span style="background-color: #C77CFF">V~S~</span>
+
+SEG <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07MP","08NS")
+PRT <- c("01PB2","02PB1","03PA","04HA","05NP","06NA","07M1","08NS1")
+FET <- c("pseaac","2mer","ctdc","ctdd","ctdt","ctriad")
+held_subtypes <- c("H10N7","H16N3","H17N10","H18N11","H1N1","H1N2","H3N2","H3N6","H3N8","H4N2","H4N6","H5N1","H5N2","H5N3","H5N5","H5N6","H5N8","H6N1","H6N2","H6N6","H7N1","H7N3","H7N7","H7N9","H9N2")
