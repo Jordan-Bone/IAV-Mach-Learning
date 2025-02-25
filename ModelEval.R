@@ -29,7 +29,7 @@ for(j in c(1:3)){
   PRT <- mods[j] %>% str_split_i("_",1) %>% str_split_i("\\/",2)
   validate <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>%
     select("UID",ends_with(PRT)&!starts_with("ptAcc"))
-  validate <- validate %>% filter(complete.cases(.)) %>% select(-"UID")
+  validate <- validate %>% filter(complete.cases(.)) %>% select(-"UID") %>% mutate_if(is.character,as.numeric)
   
   predict_class_test <- predict(MOD, newdata=validate, type="raw")
   # %>% unlist %>% as.factor
