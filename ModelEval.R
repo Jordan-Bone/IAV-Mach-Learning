@@ -1,9 +1,22 @@
 setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
-source("MegaLibrary.R")
+# source("MegaLibrary.R")
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(caret)
+library(caretEnsemble)
 
-ft_data <- read.csv("feats/All_Features.csv")
 uid_ref <- read.csv("USED UIDS.csv")
-# names(uid_ref)[3] <- "label"
+ft_data <- read.csv("Comp/Validata.csv") %>% left_join(uid_ref,by="UID",keep = F)
+# ft_data %>% filter(!complete.cases(.)) %>% write.csv("Bad cases.csv")
+# for(i in 1:length(ft_data)){
+#   if(!is.numeric(ft_data[,i])){
+#     # print(ft_data[,i])
+#     print(i)
+#   }
+# }
+
+
 mods <- list.files("Comp",pattern="mclass.rds",full.names = T)
 predict_class <- c()
 predict_prob <- data.frame()
@@ -61,3 +74,24 @@ matrix_test <- confusionMatrix(predict_class %>% as.factor %>% droplevels,
                            Class=rownames(matrix_test$byClass) %>% str_split_i(":",2) %>% str_trim,
                            matrix_test$byClass)
 #####
+  
+
+MOD3 <- readRDS(mods[3])
+MOD4 <- readRDS(mods[4])
+MOD5 <- readRDS(mods[5])
+
+validate3 <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype=="H17N10")$UID) %>%
+  select(ends_with(".ha")&!starts_with("ptAcc")) %>% filter(complete.cases(.))
+validate4 <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype=="H18N11")$UID) %>%
+  select(ends_with(".ha")&!starts_with("ptAcc")) %>% filter(complete.cases(.))
+validate5 <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype=="H1N1")$UID) %>%
+    select("Classification",ends_with(".ha")&!starts_with("ptAcc")) %>% filter(complete.cases(.))
+
+# predict_class <- predict(object=MOD5, newdata=validate5) %>% unlist
+predict_class <- predict(object=MOD5, newdata=validate5)
+
+predict_class$Prediction <- apply(predict_class, 1, function(x) colnames(predict_class)[which.max(x)])
+
+
+confusionMatrix(predict_class$Prediction %>% as.factor %>% droplevels,
+                validate5$Classification %>% as.factor %>% droplevels)
