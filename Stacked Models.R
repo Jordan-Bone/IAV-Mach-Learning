@@ -5,8 +5,8 @@ source("MegaLibrary.R")
 
 ft_mods <- list.files("Models", pattern=".rds",full.names = T)
 stacks_ls <- unique(paste0(str_split_i(ft_mods,"_",1) %>% str_split_i("/",2),"_",str_split_i(ft_mods,"_",3)))
-for(i in 1:length(stacks_ls)){
-# for(i in 2:10){
+# for(i in 1:length(stacks_ls)){
+for(i in 101:125){
   tic(paste("Stacking",stacks_ls[i]))
   print(percent(i/length(stacks_ls)))
   print(stacks_ls[i])
