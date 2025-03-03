@@ -331,6 +331,65 @@ ggplot(overall,aes(x=Model,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+
 ggsave("Figures & Presentables/Overall Conf.pdf",width=33,height=19,units = "cm")
 ```
 
+### Protein by Protein
+```{r,eval=FALSE}
+  overall_2c <- c()
+  byClass_2c <- c()
+  overall_Mc <- c()
+  byClass_Mc <- c()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  cm2c <- readRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
+  cmMc <- readRDS(paste0("Comp/",PRT," Mclass ConfMatrix.rds"))
+  
+  # cm2c$table
+  ovr2 <- data.frame(PRT,t(cm2c$overall))
+  byc2 <- data.frame(PRT,Val=cm2c$byClass) %>% rownames_to_column()
+  
+  # cmMc$table
+  ovrM <- data.frame(PRT,t(cmMc$overall))
+  bycM <- data.frame(PRT,cmMc$byClass) %>% rownames_to_column()
+  
+  overall_2c <- bind_rows(overall_2c,ovr2)
+  byClass_2c <- bind_rows(byClass_2c,byc2)
+  overall_Mc <- bind_rows(overall_Mc,ovrM)
+  byClass_Mc <- bind_rows(byClass_Mc,bycM)
+}
+
+overall_2c
+byClass_2c <- byClass_2c %>% pivot_wider(names_from = rowname,values_from = Val)
+overall_Mc
+byClass_Mc$rowname <- byClass_Mc$rowname %>% str_split_i(":",2) %>% str_trim()
+```
+
+```{r}
+overall_results <- read.csv("Comp/Model results.csv")
+tc_byc <- read.csv("Comp/Two class breakdown.csv")
+mc_byc <- read.csv("Comp/Multiclass breakdown.csv")
+
+ggplot(overall_results,aes(Protein,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+geom_pointrange()+facet_wrap(~ModelType)
+ggplot(overall_results,aes(Protein,Kappa))+geom_point()+facet_wrap(~ModelType)
+
+ggplot(tc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point()
+ggplot(tc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()
+ggplot(tc_byc,aes(Protein,Precision))+geom_point()
+ggplot(tc_byc,aes(Protein,F1))+geom_point()
+ggplot(tc_byc,aes(Protein,Balanced.Accuracy))+geom_point()
+
+ggplot(mc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point(alpha=0.6)+facet_wrap(~Host)
+ggplot(mc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()+facet_wrap(~Host)
+ggplot(mc_byc,aes(Protein,Precision,colour=Host))+geom_jitter(height=0,width=0.2)
+ggplot(mc_byc,aes(Protein,F1,colour=Host))+geom_point()
+ggplot(mc_byc,aes(Protein,Balanced.Accuracy,colour=Host))+geom_point()
+```
+
+```{r}
+ggplot(mc_byc,aes(Protein,Host,fill=F1))+geom_tile()+geom_text(aes(label=percent(F1,accuracy=0.01)))+
+  scale_fill_gradient(low="grey90",high="forestgreen",na.value = "white")+ theme(legend.position="none")+ labs(title = "F1 Values of Multiclass Models")
+
+ggplot(mc_byc,aes(Protein,Host,fill=Balanced.Accuracy))+geom_tile()+scale_fill_gradient(low="grey90",high="forestgreen")+geom_text(aes(label=percent(F1,accuracy=0.01)))+
+  scale_fill_gradient(low="grey90",high="forestgreen",na.value = "white")+ theme(legend.position="none")+ labs(title = "Balanced Accuracy of Multiclass Models")
+```
+
 
 # BEAST
 ```{r}

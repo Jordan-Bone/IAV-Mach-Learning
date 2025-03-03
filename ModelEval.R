@@ -1,16 +1,12 @@
 setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
 library(MLmetrics)
-library(foreach) # enables use of the %do% operator. This is another way of applying a function over and over to different items of a list or vector. But it has a parallelisable version to run these tasks in parallel (best done on a computing cluster, we can do this with %dopar%)
 
 # Run variable importances? NB will take 6hrs per protein = 48 hours for all proteins on single LB desktop
 run_varimp <- TRUE
 
 # Select 2class or mclass models
-MODTYPE <- "mclass"
-
-# Set random seed for reproducibility
-set.seed(1303)
+MODTYPE <- "2class"
 
 uid_ref <- read.csv("USED UIDS.csv")
 ft_data <- read.csv("Comp/Validata.csv") %>% left_join(uid_ref,by="UID",keep = F)
@@ -19,9 +15,9 @@ ft_data <- read.csv("Comp/Validata.csv") %>% left_join(uid_ref,by="UID",keep = F
 master2 <- readRDS("Comp/ConfMatrix 2class Master.rds")
 masterM <- readRDS("Comp/ConfMatrix Multiclass Master.rds")
 
-
 # Select protein
-for (PRT in c("PB1","PB2","PA","HA","NP","NA","M1","NS1")){
+
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   
   prps <- c()
   prds <- c()
@@ -30,7 +26,6 @@ for (PRT in c("PB1","PB2","PA","HA","NP","NA","M1","NS1")){
   
   mods <- list.files("Comp",pattern=paste0(MODTYPE,".rds"),full.names = T) %>% .[grepl(PRT, .)]     # select protein
   for(j in c(1:length(mods))){
-    print(j)
     print(mods[j])
     
     MOD <- readRDS(mods[j])
@@ -46,20 +41,13 @@ for (PRT in c("PB1","PB2","PA","HA","NP","NA","M1","NS1")){
     prvals <- predict_class %>% unlist
     predict_class$Prediction <- apply(predict_class, 1, function(x) colnames(predict_class)[which.max(x)])
     
-    # try({
-    #   cm <- confusionMatrix(predict_class$Prediction %>% as.factor %>% droplevels,
-    #                         validate$Classification %>% as.factor %>% droplevels)
-    #   saveRDS(cm,file=paste0(mods[j] %>% str_replace(".rds","_CoMa"),".rds"))
-    # },silent = T)
-    # 
-    # predict_class <- c()
-    # validate <- c()
     prds <- append(prds,predict_class$Prediction)
     vlis <- append(vlis,validate$Classification)
     pred_vals <- append(pred_vals,prvals)
+    
   }
-  
-  # confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS("ConfMatrix Master 2class.rds")
+  confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
+}
   
   # matrix_one_vs_all <- vector("list", length(levels(MOD$models$CTDc.ranger$trainingData$.outcome)))
   # for (i in seq_along(matrix_one_vs_all)) {
@@ -79,19 +67,15 @@ for (PRT in c("PB1","PB2","PA","HA","NP","NA","M1","NS1")){
   # else {return(as.data.frame(t1_df))}
   # }
   
-  #F1_Score_micro(vlis,prds) %>% percent(accuracy=0.01) %>% print # 83.57%
-  #F1_Score_macro(vlis,prds) %>% percent(accuracy=0.01) %>% print # 47.94%
-  
-  # AUC = multiclass.roc(response = vlis %>% as.factor, predictor = prds %>% as.factor,
-  # levels=levels(as.factor(prds)))
-  # %>% .$auc %>% as.numeric() %>% round(3)
-  
+  F1_Score_micro(vlis,prds) %>% percent(accuracy=0.01) %>% print
+  F1_Score_macro(vlis,prds) %>% percent(accuracy=0.01) %>% print
   
   ###############
   # VARIABLE IMPORTANCE
   ###############
   
   if(run_varimp == TRUE){
+    
     
     AUC_base = multiclass.roc(response = vlis,
                               predictor = prps) %>%
@@ -100,14 +84,15 @@ for (PRT in c("PB1","PB2","PA","HA","NP","NA","M1","NS1")){
     
     
     varnames <- ft_data %>% select(ends_with(PRT)&!starts_with("ptAcc")) %>% filter(complete.cases(.)) %>% names
-
+    
+    library(foreach) # enables use of the %do% operator. This is another way of applying a function over and over to different items of a list or vector. But it has a parallelisable version to run these tasks in parallel (best done on a computing cluster, we can do this with %dopar%)
+    
     varimp_perm <- foreach(varname = varnames) %do% {
       
       start <- Sys.time()
       
       valid_shuffle <- ft_data %>%
         select("UID","Classification",ends_with(PRT)&!starts_with("ptAcc")) %>%
-        filter(complete.cases(.)) %>%
         mutate_at(vars(varname), sample) # permute the single given column
       
       # initalise empty vectors
