@@ -392,22 +392,6 @@ ggplot(mc_byc,aes(Protein,Host,fill=Balanced.Accuracy))+geom_tile()+scale_fill_g
 
 # Phylogenetics
 
-01PB2: nohup iqtree2 -s PB2_alignment.fasta -m FLU+R4 -B 1000 > PB2.out &
-02PB1: nohup iqtree2 -s PB1_alignment.fasta -B 1000 > PB1.out &
-03PA: nohup iqtree2 -s PA_alignment.fasta -B 1000 > PA.out &
-04HA: nohup iqtree2 -s HA_alignment.fasta -m FLU+R8 -B 1000 > HA.out &
-05NP: nohup iqtree2 -s NP_alignment.fasta -m Q.mammal+R4 -B 1000 > NP.out &
-<!-- 06NA: nohup iqtree2 -s NA_alignment.fasta -m FLU+R5 -B 1000 > NA.out & -->
-<!-- 07M1: nohup iqtree2 -s M1_alignment.fasta -m Q.mammal+R3 -B 1000 > M1.out & -->
-08NS1: nohup iqtree2 -s NS1_alignment.fasta -m HIVw+R6 -B 1000 > NS1.out &
-
-FLU: Influenza virus (Dang et al., 2010).
-Q.mammal: Q matrix (Minh et al., 2021) estimated for mammals (Wu et al., 2018).
-HIVw: HIV within-patient matrix HIV-Wm (Nickle et al., 2007).
-
-+R: FreeRate model (Yang, 1995; Soubrier et al., 2012) that generalizes the +G model by relaxing the assumption of Gamma-distributed rates. The number of categories can be specified with e.g. +R6 (default 4 categories if not specified). The FreeRate model typically fits data better than the +G model and is recommended for analysis of large data sets.
-To fix the FreeRate model parameters, use the syntax +R_k[w_{1:k},r_{1:k}] (replacing k with the number of categories). Here, w_{1:k} are the weights and r_{1:k} the rates for each category.
-
 ## BayesTraits
 ```{r}
 
