@@ -50,5 +50,6 @@ rsconnect/
 *.fasta
 RefTable.csv
 *.csv
+!varimp*.csv
 *.tsv
 Models/Unweighted.zip
