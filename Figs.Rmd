@@ -5,7 +5,7 @@ date: "2025-02-03"
 output: html_document
 ---
 
-# Data Collection
+
 ```{r setup, include=FALSE}
 setwd("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning")
 source("MegaLibrary.R")
@@ -15,7 +15,7 @@ rep_uids <- read.csv("USED UIDS.txt")
 uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
 ```
-
+# Data Collection
 ```{r, eval=FALSE}
 a <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ntAcc,Sample,Classification,Date)
 names(a) <- c("UID","Acc","Sample","Classification","Date")
@@ -366,6 +366,12 @@ overall_results <- read.csv("Comp/Model results.csv")
 tc_byc <- read.csv("Comp/Two class breakdown.csv")
 mc_byc <- read.csv("Comp/Multiclass breakdown.csv")
 
+overall_results$Accuracy <- percent(overall_results$Accuracy,accuracy = 0.01)
+overall_results[,c(2,1,3)] %>% arrange(Protein) %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(1)
+```
+
+
+```{r}
 ggplot(overall_results,aes(Protein,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+geom_pointrange()+facet_wrap(~ModelType)
 ggplot(overall_results,aes(Protein,Kappa))+geom_point()+facet_wrap(~ModelType)
 
@@ -389,6 +395,51 @@ ggplot(mc_byc,aes(Protein,Host,fill=F1))+geom_tile()+geom_text(aes(label=percent
 ggplot(mc_byc,aes(Protein,Host,fill=Balanced.Accuracy))+geom_tile()+scale_fill_gradient(low="grey90",high="forestgreen")+geom_text(aes(label=percent(F1,accuracy=0.01)))+
   scale_fill_gradient(low="grey90",high="forestgreen",na.value = "white")+ theme(legend.position="none")+ labs(title = "Balanced Accuracy of Multiclass Models")
 ```
+
+
+# VarImp
+```{r}
+PB2v <- read.csv("Varimp/varimp_PB2_mclass.csv") %>% mutate(Protein="01PB2")
+PB1v <- read.csv("Varimp/varimp_PB1_mclass.csv") %>% mutate(Protein="02PB1")
+PAv <- read.csv("Varimp/varimp_PA_mclass.csv") %>% mutate(Protein="03PA")
+HAv <- read.csv("Varimp/varimp_HA_mclass.csv") %>% mutate(Protein="04HA")
+NPv <- read.csv("Varimp/varimp_NP_mclass.csv") %>% mutate(Protein="05NP")
+NAv <- read.csv("Varimp/varimp_NA_mclass.csv") %>% mutate(Protein="06NA")
+M1v <- read.csv("Varimp/varimp_M1_mclass.csv") %>% mutate(Protein="07M1")
+NS1v <- read.csv("Varimp/varimp_NS1_mclass.csv") %>% mutate(Protein="07NS1")
+
+var_imps <- rbind(PB2v,rbind(PB1v,rbind(PAv,rbind(HAv,rbind(NPv,rbind(NAv,rbind(M1v,NS1v))))))) %>% select(-X)
+write.csv(var_imps,"Varimp/VarImps.csv",row.names = F)
+```
+
+```{r}
+var_imps <- read.csv("Varimp/VarImps.csv")
+
+# ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+ ylim(0,500)
+ggplot(subset(var_imps,AUC_loss>0.001),aes(AUC_loss,colour = Protein))+ geom_density()
+
+ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+facet_wrap(~str_split_i(var,"_",1))+ ylim(0,500)
+
+ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+facet_wrap(~str_split_i(var,"_",1),scales="free_y")
+```
+
+```{r}
+ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc2.lambda2")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="01PB2"|Protein=="03PA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc2.lambda2")
+ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
+
+ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc1.Q")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="03PA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc1.Q")
+ggsave("Figures & Presentables/VarImp2.pdf",width=33,height=19,units = "cm")
+
+ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc1.E")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="06NA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc1.E")
+ggsave("Figures & Presentables/VarImp3.pdf",width=33,height=19,units = "cm")
+
+ggplot(subset(var_imps,var %>% startsWith("CTDD_hydrophobicity_ENGD860101.1.residue25")), aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="07M1"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="CTDD_hydrophobicity_ENGD860101.1.residue25")
+ggsave("Figures & Presentables/VarImp4.pdf",width=33,height=19,units = "cm")
+
+ggplot(subset(var_imps,var %>% startsWith("CTDC_normwaalsvolume.G2")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="06NA"|Protein=="07M1"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="CTDC_normwaalsvolume.G2")
+ggsave("Figures & Presentables/VarImp5.pdf",width=33,height=19,units = "cm")
+```
+
 
 # Phylogenetics
 
