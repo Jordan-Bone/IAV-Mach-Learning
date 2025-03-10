@@ -302,7 +302,7 @@ ggsave("Model Importance.pdf",width=33,height=19,units = "cm")
 
 ## Confusion Matrices
 ```{r}
-master_conf <- readRDS("Comp/ConfMatrix Master Multiclass.rds")
+master_conf <- readRDS("Comp/ConfMatrix Multiclass Master.rds")
 
 master_conf$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+
   geom_tile(colour="grey10")+geom_text(aes(label=ifelse(Freq<=0," ",percent(Freq/sum(master_conf$table),accuracy = 0.001))))+
@@ -417,6 +417,7 @@ var_imps <- read.csv("Varimp/VarImps.csv")
 
 # ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+ ylim(0,500)
 ggplot(subset(var_imps,AUC_loss>0.001),aes(AUC_loss,colour = Protein))+ geom_density()
+ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+facet_wrap(~str_split_i(var,"_",1))+ ylim(0,500)
 

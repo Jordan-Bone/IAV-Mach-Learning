@@ -1,0 +1,1160 @@
+IQ-TREE multicore version 2.1.3 COVID-edition for Linux 64-bit built Apr 21 2021
+Developed by Bui Quang Minh, James Barbetti, Nguyen Lam Tung,
+Olga Chernomor, Heiko Schmidt, Dominik Schrempf, Michael Woodhams.
+
+Host:    alpha2.cvr.gla.ac.uk (AVX512, FMA3, 4031 GB RAM)
+Command: iqtree2 -s PA_alignment.fasta -B 1000
+Seed:    494711 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Tue Mar  4 12:00:32 2025
+Kernel:  AVX+FMA - 1 threads (224 CPU cores detected)
+
+HINT: Use -nt option to specify number of threads because your CPU has 224 cores!
+HINT: -nt AUTO will automatically determine the best number of threads to use.
+
+Reading alignment file PA_alignment.fasta ... Fasta format detected
+Alignment most likely contains protein sequences
+WARNING: 1 sites contain only gaps or ambiguous characters.
+Alignment has 692 sequences with 744 columns, 739 distinct patterns
+392 parsimony-informative, 241 singleton sites, 111 constant sites
+                                               Gap/Ambiguity  Composition  p-value
+   1  YJG809BOV_AAN84287_Avian_2000                   78.63%    passed     41.11%
+   2  TUE197HPI_AAT65284_Avian_1997                   45.30%    passed     99.87%
+   3  MMJ612VFQ_AAT65286_Avian_2000                   45.16%    passed     99.92%
+   4  SMP554DPC_AAT65288_Avian_1991                   38.58%    passed     99.64%
+   5  AJG288AOB_AAT65294_Avian_1998                   53.90%    passed     99.61%
+   6  OQK684DPF_AAT65295_Avian_1999                   45.56%    passed     99.67%
+   7  FKZ344CLW_AAT65296_Avian_1998                   38.04%    passed     99.95%
+   8  VPS462VUA_AAT65298_Avian_1998                   38.84%    passed     99.95%
+   9  OXE038QKG_AAT65302_Avian_1988                   45.97%    passed     99.85%
+  10  RTB615JPR_AAT65306_Avian_1985                   26.08%    passed     99.98%
+  11  WSS230QNW_AAT65307_Avian_1985                   25.00%    passed     99.99%
+  12  RQV329TDO_AAT65310_Avian_1997                   45.56%    passed     99.86%
+  13  FGY103XYK_AAT65311_Avian_1999                   69.49%    passed     75.72%
+  14  FCV278QXN_ABD23974_Avian_2005                   80.11%    failed      1.77%
+  15  MNN501HAC_ABD61020_Avian_2003                   80.51%    passed     10.11%
+  16  HYG758IGC_ABD62801_Suidae_2002                   3.76%    passed    100.00%
+  17  ISP033NXB_ABD65978_Avian_2002.002778             4.84%    passed    100.00%
+  18  ZRQ516XWY_ABD65985_Avian_1998                   67.07%    passed     98.79%
+  19  OKM496KBD_ABD79262_Suidae_1931                   3.76%    passed    100.00%
+  20  PXA907LLR_ABD95719_Suidae_1977                   3.76%    passed    100.00%
+  21  IWL073TLR_ABE27171_Suidae_2004                   3.76%    passed    100.00%
+  22  KPH754OJQ_ABO44042_Suidae_2002                   3.76%    passed    100.00%
+  23  RVZ654UEC_ABQ45454_Suidae_1976                   3.90%    passed    100.00%
+  24  AGM063UJN_ABQ45540_Suidae_1976                   3.76%    passed    100.00%
+  25  VIR921UFM_ABR15826_Suidae_1976                   3.76%    passed    100.00%
+  26  EMF965XNS_ABR28555_Suidae_1977                   3.76%    passed    100.00%
+  27  WZW961MRU_ABR28566_Suidae_1977                   3.76%    passed    100.00%
+  28  GHK623NJB_ABR28610_Suidae_1975                   3.76%    passed    100.00%
+  29  JME731NXG_ABR28632_Suidae_1976                   3.76%    passed    100.00%
+  30  BRF315ANF_ABR28665_Suidae_1981                   3.76%    passed    100.00%
+  31  KCH101UOU_ABR28676_Suidae_1981                   3.76%    passed    100.00%
+  32  SQF645XMX_ABR28687_Suidae_1975                   3.76%    passed    100.00%
+  33  VAS360SUQ_ABR28698_Suidae_1978                   3.76%    passed    100.00%
+  34  UJN825KSU_ABR28709_Suidae_1971                   3.76%    passed    100.00%
+  35  ONW260HFM_ABR28731_Suidae_1970                   3.76%    passed    100.00%
+  36  GSD684LJY_ABR29572_Suidae_1991                   3.76%    passed    100.00%
+  37  ALP289REA_ABR29582_Suidae_1987                   3.76%    passed    100.00%
+  38  IMV758WID_ABR29602_Suidae_1988                   3.76%    passed    100.00%
+  39  BQG377HKC_ABS49928_Suidae_1977                   3.76%    passed    100.00%
+  40  JQE849VAG_ABS49961_Suidae_1980                   3.90%    passed    100.00%
+  41  DPV083ZQP_ABS50118_Suidae_1987                   3.76%    passed    100.00%
+  42  STH302JHX_ABS50128_Suidae_1988                   3.76%    passed    100.00%
+  43  ZTC957DTX_ABU80294_Suidae_1977                   3.76%    passed    100.00%
+  44  CUB683MWD_ABU80427_Suidae_1987                   3.76%    passed    100.00%
+  45  RZI120CQD_ABV46326_Avian_2001                   38.31%    passed     99.49%
+  46  EIG243OTN_ABV46337_Avian_2001                   38.31%    passed     99.85%
+  47  PBM688DPK_ABV46348_Avian_2002                   38.31%    passed     99.76%
+  48  JPL477ZFF_ABV46458_Avian_2003                   38.31%    passed     99.47%
+  49  YMB775SNT_ABV46480_Avian_2003                   38.31%    passed     99.59%
+  50  PPW356IIA_ABV46864_Avian_2004                   38.31%    passed     98.28%
+  51  LPU066BMD_ABV46992_Avian_2005                   38.31%    passed     99.43%
+  52  HSI336WPI_ABV47475_Avian_2005                   38.84%    passed     99.57%
+  53  CUZ541WQZ_ABV47497_Avian_2002                   39.78%    passed     98.72%
+  54  UEV630JSE_ABV47508_Avian_2002                   38.31%    passed     99.16%
+  55  BES990SJK_ABV47563_Avian_2004                   38.31%    passed     99.48%
+  56  TGB241KEK_ABV47574_Avian_2004                   38.31%    passed     99.31%
+  57  MRB732SZE_ABV47585_Avian_2001                   52.55%    passed     98.27%
+  58  MHB243DLB_ABV47673_Avian_2000                   38.31%    passed     99.44%
+  59  NRN780GCH_ABV47783_Avian_2002                   45.97%    passed     99.82%
+  60  CQP667AEU_ABV47992_Avian_2000                   38.31%    passed     99.49%
+  61  WLM715JGC_ABV48355_Avian_2001                   38.71%    passed     99.85%
+  62  WTY037EIE_ABV48463_Avian_2005                   38.31%    passed     99.71%
+  63  JQK430PMM_ABV48474_Avian_2001                   38.31%    passed     99.63%
+  64  WBI040NQL_ABV48507_Avian_2000                   38.31%    passed     99.83%
+  65  NNJ970OOM_ABV48562_Avian_2000                   38.31%    passed     99.67%
+  66  MAG474MWA_ABV48584_Avian_2001                   38.31%    passed     99.40%
+  67  XLK392WWQ_ABV48661_Avian_2001                   38.31%    passed     98.91%
+  68  OZP565LLM_ABV56837_Avian_2007                   70.70%    passed     95.06%
+  69  DUF919PBO_ABV82591_Suidae_1967                   3.76%    passed    100.00%
+  70  HZJ685LIP_ABV82602_Suidae_1966                   3.76%    passed    100.00%
+  71  HKP958HHR_ABW36362_Suidae_1981                   3.76%    passed    100.00%
+  72  EOU699RBG_ABW36384_Suidae_1977                   3.76%    passed    100.00%
+  73  CFL517XKG_ABW71488_Suidae_1935                   3.76%    passed    100.00%
+  74  FSL155LGX_ABW86581_Suidae_1978                   3.76%    passed    100.00%
+  75  SIZ746SHW_ABX58664_Suidae_1978                   3.76%    passed    100.00%
+  76  TPF831HTJ_ABY51211_Suidae_1978                   3.76%    passed    100.00%
+  77  ZYJ377YRN_ABY51222_Suidae_1978                   3.76%    passed    100.00%
+  78  ZBM614SUS_ABY81695_Avian_2004                   40.99%    passed     99.97%
+  79  QZM628PNK_ABY81696_Avian_2005                   40.86%    passed     99.94%
+  80  BXU152OZK_ABY81697_Avian_2006                   40.86%    passed     99.94%
+  81  BMZ208WCQ_ABY81699_Avian_2006                   40.86%    passed     99.93%
+  82  CXA968RPP_ABY81701_Avian_2005                   40.86%    passed     99.95%
+  83  GSU468DYD_ABY81702_Avian_2005                   40.86%    passed     99.96%
+  84  GLA198OXS_ABY81703_Avian_2005                   62.37%    passed     93.03%
+  85  VKW499CIW_ABY81705_Avian_2004                   40.19%    passed     99.93%
+  86  BIV902FYK_ABY81706_Avian_2004                   40.19%    passed     99.96%
+  87  VZE088WEC_ABY81707_Avian_2004                   40.19%    passed     99.89%
+  88  XEU317MDP_ABY81711_Avian_2005                   40.19%    passed     99.93%
+  89  QAY496BRR_ABY81712_Avian_2005                   36.42%    passed     99.83%
+  90  HKA117HTH_ABY81713_Avian_2005                   36.69%    passed     99.73%
+  91  ZMJ688EIO_ABY81714_Avian_2005                   40.19%    passed     99.85%
+  92  JYE958TYX_ABY81715_Avian_2005                   40.19%    passed     99.97%
+  93  ULN175DDZ_ABY81717_Avian_2005                   40.05%    passed     99.94%
+  94  BIE032ZPL_ABY81718_Avian_2005                   40.19%    passed     99.87%
+  95  VZT972NAZ_ABY81720_Avian_2006                   40.19%    passed     99.96%
+  96  JKA863BMW_ABY81721_Avian_2006                   40.59%    passed     99.84%
+  97  GBJ710RUY_ABY81722_Avian_2006                   40.59%    passed     99.91%
+  98  EMT550JQX_ABY81723_Avian_2006                   40.73%    passed     99.66%
+  99  VWC153TZZ_ABY81724_Avian_2006                   40.59%    passed     99.56%
+ 100  GIX319LET_ACA25345_Suidae_2005.502778            3.76%    passed    100.00%
+ 101  IWW957QVM_ACD85161_Suidae_1961                   3.76%    passed    100.00%
+ 102  BMK292RYL_ACD88634_Avian_1999                   44.76%    passed     99.90%
+ 103  QSJ277BAX_ACD88699_Avian_1991.002778             3.76%    passed    100.00%
+ 104  TRQ727JDU_ACE73592_Avian_2008                    3.76%    passed    100.00%
+ 105  ISM055SWS_ACF25599_Avian_1992                    3.76%    passed    100.00%
+ 106  VAO240MWS_ACF25609_Avian_1990                    3.76%    passed    100.00%
+ 107  PZO353FMH_ACG80366_Avian_2005                   48.79%    passed     99.65%
+ 108  WZA731BUQ_ACG80368_Avian_2007                   49.06%    passed     99.54%
+ 109  MWV082QIE_ACH43163_Avian_2006.138889            38.17%    passed     99.99%
+ 110  VNZ360EAT_ACH43174_Avian_2006.130556            38.17%    passed    100.00%
+ 111  ZVA445GAI_ACH95676_Suidae_2005.955556            3.76%    passed    100.00%
+ 112  NJT063VGK_ACI26611_Suidae_1990                   3.76%    passed    100.00%
+ 113  QCB036AJK_ACJ14485_Avian_2003                    3.63%    passed    100.00%
+ 114  WYO900RZR_ACK57704_Suidae_2008.25               77.42%    passed     21.53%
+ 115  MWA036UMH_ACL11951_Suidae_2004.716667            3.76%    passed    100.00%
+ 116  OOQ059NLT_ACM18054_Avian_2006.394444            10.08%    passed    100.00%
+ 117  TGN687FSQ_ACN50274_Suidae_2005.5                 3.76%    passed    100.00%
+ 118  VQD073WMH_ACN59675_Avian_1999.191667            44.76%    passed     97.09%
+ 119  MQS160IVA_ACN59685_Avian_1998.525               44.76%    passed     97.03%
+ 120  CLQ589EQA_ACN59695_Avian_2004.858333            44.76%    passed     99.00%
+ 121  YIN531WHZ_ACN59705_Avian_2003.219444            44.76%    passed     97.04%
+ 122  OGE007MLW_ACN59715_Avian_2000.469444            44.76%    passed     96.45%
+ 123  CLU180JKX_ACN59735_Avian_1999.275               44.76%    passed     99.81%
+ 124  TGM108BDI_ACN59745_Avian_1998.302778            44.76%    passed     96.30%
+ 125  DVS562DNA_ACN59785_Avian_2005.052778            44.76%    passed     99.57%
+ 126  CDF645HXL_ACN59795_Avian_2004.955556            44.76%    passed     99.30%
+ 127  GHB462GGK_ACN59805_Avian_2003.219444            44.76%    passed     99.72%
+ 128  EAQ873MRE_ACN59815_Avian_2002.108333            44.76%    passed     99.77%
+ 129  KLF152STR_ACN59835_Avian_1998.219444            44.76%    passed     93.75%
+ 130  LCR502SRF_ACN85422_Avian_2006                   78.63%    passed     90.47%
+ 131  JHS641LKF_ACN85526_Suidae_1992.686111           57.53%    passed     99.92%
+ 132  JYB759VJM_ACN90986_Suidae_2003.583333            3.76%    passed    100.00%
+ 133  CTM634UFX_ACQ77607_Suidae_2003.916667           66.80%    passed     89.73%
+ 134  KTM823PRI_ACR27189_Avian_2005                   82.12%    passed     72.46%
+ 135  VPA841NMJ_ACR39174_Suidae_2003.772222            3.76%    passed    100.00%
+ 136  YJF260BOP_ACR84010_Suidae_1993.533333            3.76%    passed    100.00%
+ 137  BCE025BFZ_ACR84011_Suidae_2001.161111            3.76%    passed    100.00%
+ 138  AGA050DRV_ACR84012_Suidae_2001.969444            3.76%    passed    100.00%
+ 139  FFB524LSY_ACR84016_Suidae_2007.963889            3.76%    passed    100.00%
+ 140  BSU276JTY_ACT36340_Avian_2002                   44.76%    passed     99.77%
+ 141  JMX433TME_ACT36342_Avian_2008                   44.76%    passed     99.92%
+ 142  GOM879ULW_ACT36343_Avian_2006                   44.76%    passed     99.48%
+ 143  LJO218KZB_ACT36344_Avian_2007                   44.76%    passed     99.45%
+ 144  KPJ026MKA_ACT83242_Avian_2007.675                3.90%    passed    100.00%
+ 145  HXS605TKL_ACT84469_Avian_2008.397222            51.48%    passed     99.83%
+ 146  OQI944ODZ_ACT84505_Avian_2008.391667            50.00%    passed     99.76%
+ 147  EQI942MSJ_ACT84540_Avian_2008.408333            50.00%    passed     99.90%
+ 148  FMM863MKZ_ACT84626_Avian_2008.408333            50.54%    passed     99.94%
+ 149  VBM647JDY_ACT97066_Suidae_2004                   3.76%    passed    100.00%
+ 150  PUI379QZQ_ACU82394_Suidae_2009.152778            3.76%    passed    100.00%
+ 151  DAN360OTG_ACU82469_Avian_2005.655556            37.37%    passed     99.98%
+ 152  DSO857BLD_ACV74304_Suidae_2003                  36.69%    passed     98.89%
+ 153  HPV773RYV_ACV86887_Avian_2005.605556             3.49%    passed    100.00%
+ 154  DQF458HEU_ACY06465_Suidae_2006                   3.76%    passed    100.00%
+ 155  LSR315ANT_ACY06466_Suidae_2006                   3.76%    passed    100.00%
+ 156  SSB752HLG_ACY06468_Suidae_2006                   3.76%    passed    100.00%
+ 157  KZB008ZFA_ACY06469_Suidae_2006                   3.76%    passed    100.00%
+ 158  NNK432TDU_ACY06471_Suidae_2009                   3.76%    passed    100.00%
+ 159  LMP343WOY_ACY06475_Suidae_2007                  77.42%    passed     28.44%
+ 160  QFN029SHL_ACY06476_Suidae_2007                  77.42%    passed      6.12%
+ 161  ZQY121FPU_ACY06481_Suidae_2006                  77.42%    passed     69.04%
+ 162  HZT699ETG_ACY79981_Avian_2006                    7.80%    passed    100.00%
+ 163  RNZ622EYS_ACY80036_Avian_2002                   40.46%    passed     99.76%
+ 164  JFL316TCH_ACZ46021_Avian_2003                   49.87%    passed     99.85%
+ 165  QIK085IRO_ACZ46046_Avian_2004                   36.02%    passed     99.99%
+ 166  ZZT906VGY_ACZ46223_Avian_2001                   58.74%    passed     95.97%
+ 167  TEM724YPP_ACZ46234_Avian_1949                   36.42%    passed     99.96%
+ 168  CLT107DAO_ACZ46244_Suidae_1988                   5.24%    passed    100.00%
+ 169  PTV395KED_ACZ46298_Avian_1983                   45.97%    passed     99.77%
+ 170  BQE339VHB_ACZ46345_Avian_2002                   45.97%    passed     99.44%
+ 171  NWU417KZN_ACZ46347_Avian_2002                   45.16%    passed     99.98%
+ 172  GRU707ZLG_ACZ46351_Avian_1967                   52.15%    passed     99.52%
+ 173  APE736HXK_ACZ46360_Avian_2002.633333            48.92%    passed     99.99%
+ 174  VJE891ALH_ACZ46363_Avian_2002.633333            49.73%    passed     99.56%
+ 175  BZN041WEJ_ACZ53966_Suidae_2007.855556           59.41%    passed     99.24%
+ 176  RKV879USN_ACZ53977_Suidae_2008.830556           59.41%    passed     99.25%
+ 177  LIQ523WUH_ACZ62764_Suidae_2002.113889           69.62%    passed     90.40%
+ 178  KUU607CZP_ACZ62774_Suidae_1983.377778           35.62%    passed     99.53%
+ 179  OVT951DAK_ADC32525_Suidae_2009.480556           77.28%    passed     55.09%
+ 180  LHO451TDU_ADD21464_Suidae_2008.863889            3.76%    passed    100.00%
+ 181  VZV585TTK_ADG01926_Suidae_2009.916667            3.76%    passed    100.00%
+ 182  JUC704DRE_ADG01937_Suidae_2010                   4.44%    passed    100.00%
+ 183  ZGK938ZIX_ADG08219_Suidae_2009.561111            3.76%    passed    100.00%
+ 184  UAL944NUQ_ADG08241_Suidae_2009.561111            3.76%    passed    100.00%
+ 185  XHR155TBP_ADG08296_Suidae_2009.616667            3.90%    passed    100.00%
+ 186  YHX730BSH_ADG08461_Suidae_2009.844444            3.76%    passed    100.00%
+ 187  XOW518JFO_ADG23204_Suidae_2009.833333            3.76%    passed    100.00%
+ 188  NGO249AJA_ADG59388_Avian_2006                    3.76%    passed    100.00%
+ 189  TUE864ONF_ADG59393_Avian_2004                    3.76%    passed     99.97%
+ 190  DZC458LLB_ADG59395_Avian_2008                    3.76%    passed    100.00%
+ 191  RIR564QVX_ADG59399_Avian_2006                    3.76%    passed    100.00%
+ 192  DZX793GUN_ADG85808_Avian_2006.297222            11.56%    passed    100.00%
+ 193  KPK138CJO_ADH83326_Suidae_2008.666667            3.76%    passed    100.00%
+ 194  WJU630FQR_ADH83327_Suidae_2009.344444            3.76%    passed    100.00%
+ 195  HOI079HCA_ADH83329_Suidae_2009.505556            3.76%    passed    100.00%
+ 196  LHW619IPM_ADH96135_Avian_2007.591667            18.95%    passed     99.99%
+ 197  PGI142WYE_ADI79247_Avian_2006.15                 2.82%    passed    100.00%
+ 198  HFJ738UAI_ADJ80233_Suidae_2010.069444            3.76%    passed    100.00%
+ 199  ZGY993URS_ADK22461_Avian_2010.230556            34.54%    passed     99.97%
+ 200  CLP381CGY_ADK26596_Suidae_2006.833333            3.76%    passed    100.00%
+ 201  YCR619IWJ_ADK35404_Avian_2009.644444             7.66%    passed    100.00%
+ 202  VRG088KPZ_ADK48776_Suidae_2010                   3.76%    passed    100.00%
+ 203  ECT046MLO_ADK89126_Suidae_2007.583333            3.76%    passed    100.00%
+ 204  BXJ817WSR_ADL64056_Avian_2004.144444            65.73%    passed     98.53%
+ 205  VOZ836JPZ_ADM32994_Hominidae_2009.805556         3.63%    passed    100.00%
+ 206  NUC449FVB_ADN87272_Canidae_2006.066667          58.87%    passed     99.89%
+ 207  CXV175UCY_ADQ43702_Avian_2009.25                 3.76%    passed    100.00%
+ 208  GWF042DKD_ADQ43703_Avian_2009.333333             3.76%    passed    100.00%
+ 209  HGZ770UKI_ADQ43707_Avian_2009.583333             3.76%    passed    100.00%
+ 210  SLU006BJO_ADT79029_Hominidae_1982.25            20.56%    passed    100.00%
+ 211  TYE212FWR_ADT80605_Avian_2010.933333            36.16%    passed     99.95%
+ 212  BMG985EUO_ADU02112_Suidae_2007.916667            3.76%    passed    100.00%
+ 213  NSN184GCM_ADU59931_Hominidae_2009.558333        27.69%    passed     99.99%
+ 214  NCB544YJD_ADU59948_Hominidae_2009.511111        35.08%    passed     99.97%
+ 215  EVL690ABO_ADU85869_Suidae_1999                   3.76%    passed    100.00%
+ 216  LOX265NQD_ADV58888_Avian_2005.402778             3.76%    passed    100.00%
+ 217  FZF711IJN_ADV58889_Avian_2008.355556             3.76%    passed    100.00%
+ 218  OND949FJK_ADV69011_Suidae_2010.75                3.76%    passed    100.00%
+ 219  FMQ567AET_ADV69012_Suidae_2005.586111            3.76%    passed    100.00%
+ 220  CVH838HWC_ADV69013_Suidae_2005.833333            3.76%    passed    100.00%
+ 221  KWR415PVS_ADV74753_Suidae_2009.647222           68.01%    passed     97.05%
+ 222  EBD576GFZ_ADV78481_Suidae_2009.219444            4.17%    passed    100.00%
+ 223  EIX723ILV_ADW01462_Suidae_2009.219444            4.17%    passed    100.00%
+ 224  AAA000AAA_ADW82142_Hominidae_2009.786111        23.39%    passed     99.94%
+ 225  KOC453KGW_ADW93767_Hominidae_2009.786111        24.19%    passed     99.85%
+ 226  OVS041DTJ_ADX06967_Avian_1998                   33.33%    passed     99.99%
+ 227  IXI013ZHW_ADX06983_Avian_1963                   33.87%    passed     99.88%
+ 228  KAH290UIV_ADX21076_Hominidae_2009.786111        25.00%    passed     99.78%
+ 229  FAG172ASO_ADX21085_Hominidae_2009.788889        24.19%    passed     99.89%
+ 230  NJL411MCX_ADX21095_Hominidae_2009.788889        22.72%    passed     99.99%
+ 231  TYQ760VXL_ADX36116_Hominidae_2009.788889        22.31%    passed     99.99%
+ 232  LCA181EGN_ADX98672_Hominidae_2009.836111         3.90%    passed    100.00%
+ 233  ZQO755WFB_ADY16814_Suidae_2009.833333           85.75%    passed     61.43%
+ 234  KSA221PQP_ADY69860_Suidae_1977.002778            3.76%    passed    100.00%
+ 235  YXC389ZFG_ADY69871_Suidae_1977                   4.03%    passed    100.00%
+ 236  XME308VPQ_ADY69882_Suidae_1977.280556            3.76%    passed    100.00%
+ 237  EMY673KPH_ADY69914_Suidae_1977.283333            3.76%    passed    100.00%
+ 238  JAZ647ORR_ADY70167_Suidae_1977.297222            3.76%    passed    100.00%
+ 239  UQX193IIE_ADY70189_Suidae_1977.316667            3.76%    passed    100.00%
+ 240  TFU505SRL_ADY70211_Suidae_1977.316667            3.76%    passed    100.00%
+ 241  ORQ411HUZ_ADY70222_Suidae_1977.316667            3.76%    passed    100.00%
+ 242  QCN406ZFT_ADY70233_Suidae_1977.316667            3.76%    passed    100.00%
+ 243  DNS024GKY_ADY70244_Suidae_1977.316667            3.76%    passed    100.00%
+ 244  TCI391SLN_ADY70266_Suidae_1977.316667            3.76%    passed    100.00%
+ 245  LLD990GUX_ADY70288_Suidae_1977.327778            3.76%    passed    100.00%
+ 246  JYW269CZL_ADY70393_Suidae_1979.908333            3.76%    passed    100.00%
+ 247  GLR391UOE_ADY70524_Suidae_1993.55                3.76%    passed    100.00%
+ 248  XYJ118KBS_ADY70544_Suidae_1993.591667            3.76%    passed    100.00%
+ 249  SBU349LWX_ADY70574_Suidae_1993.7                 3.76%    passed    100.00%
+ 250  FBZ008ZCH_ADY70626_Suidae_1993.861111            3.76%    passed    100.00%
+ 251  VKX987QFX_ADY70665_Suidae_1993.913889            3.76%    passed    100.00%
+ 252  QCL661XLG_ADY70705_Suidae_1994.097222            3.76%    passed    100.00%
+ 253  LVB299NMB_ADY70725_Suidae_1994.15                3.76%    passed    100.00%
+ 254  YKQ900IHT_ADY70855_Suidae_2000.247222            3.76%    passed    100.00%
+ 255  SGB271WKE_ADY70875_Suidae_2000.527778            3.76%    passed    100.00%
+ 256  NAQ367DNB_ADY70885_Suidae_2000.575               3.76%    passed    100.00%
+ 257  KLY271UUJ_ADY70895_Suidae_2000.622222            3.76%    passed    100.00%
+ 258  VJJ554PLS_ADY70905_Suidae_2000.661111            3.76%    passed    100.00%
+ 259  LXC706RWU_ADY70925_Suidae_2000.802778            3.76%    passed    100.00%
+ 260  UHM334RXS_ADY70955_Suidae_2001.083333            3.76%    passed    100.00%
+ 261  SII457HBK_ADY70985_Suidae_2001.238889            3.76%    passed    100.00%
+ 262  ABL015BDR_ADY70995_Suidae_2001.313889            3.76%    passed    100.00%
+ 263  WTJ569SXR_ADY71005_Suidae_2001.397222            3.76%    passed    100.00%
+ 264  DOB817ZWV_ADY71015_Suidae_2001.455556            3.76%    passed    100.00%
+ 265  FFQ441HFD_ADY71025_Suidae_2001.583333            3.76%    passed    100.00%
+ 266  UBW059IOB_ADY71035_Suidae_2001.663889            3.76%    passed    100.00%
+ 267  AXG371HLI_ADY71045_Suidae_2001.713889            3.76%    passed    100.00%
+ 268  GMU272LYC_ADY71065_Suidae_2001.991667            3.76%    passed    100.00%
+ 269  CPG374FEZ_ADY71075_Suidae_2001.991667            3.76%    passed    100.00%
+ 270  MTC141PRO_ADY71085_Suidae_2002.055556            3.76%    passed    100.00%
+ 271  QNP506WBZ_ADY71095_Suidae_2002.133333            3.76%    passed    100.00%
+ 272  NJL580RDY_ADY71115_Suidae_2002.45                3.76%    passed    100.00%
+ 273  JGK696MOK_ADY71125_Suidae_2002.616667            3.76%    passed    100.00%
+ 274  RWS783OMM_ADY71135_Suidae_2002.688889            3.76%    passed    100.00%
+ 275  PQG929THN_ADY71146_Suidae_2002.908333            3.76%    passed    100.00%
+ 276  WQL814KXI_ADY71156_Suidae_2002.938889            3.76%    passed    100.00%
+ 277  UBT989ZAX_ADY71167_Suidae_2003.097222            3.76%    passed    100.00%
+ 278  LQX880KHB_ADY71211_Suidae_2003.619444            3.76%    passed    100.00%
+ 279  CFQ918WRG_ADY71222_Suidae_2003.741667            3.76%    passed    100.00%
+ 280  BPL423QWG_ADY71232_Suidae_2003.791667            3.76%    passed    100.00%
+ 281  TUE897UWU_ADY71253_Suidae_2003.955556            3.76%    passed    100.00%
+ 282  PVC886ZRH_ADY71274_Suidae_2004.144444            3.76%    passed    100.00%
+ 283  XXV243NCR_ADY71284_Suidae_2004.213889            3.76%    passed    100.00%
+ 284  ZOX775ONV_ADY71328_Suidae_2004.722222            3.76%    passed    100.00%
+ 285  WNE473DKQ_ADY71338_Suidae_2004.786111            3.76%    passed    100.00%
+ 286  GLH109HFU_ADY71349_Suidae_2004.955556            3.76%    passed    100.00%
+ 287  RQZ235SVL_ADY71448_Suidae_2006.105556            3.63%    passed    100.00%
+ 288  JDW260QRU_ADY71459_Suidae_2006.241667            3.76%    passed    100.00%
+ 289  SQK333YXK_ADY71525_Suidae_2007.022222            3.76%    passed    100.00%
+ 290  LII098KWJ_ADY71568_Suidae_2008.025               3.90%    passed    100.00%
+ 291  QWR042HDD_ADY71589_Suidae_2008.411111           36.02%    passed     99.92%
+ 292  PLJ474QEV_ADY71611_Suidae_2008.847222            3.76%    passed    100.00%
+ 293  YSM371BYZ_ADY71677_Suidae_2009.133333            3.76%    passed    100.00%
+ 294  HHB687KGD_ADY71743_Suidae_2009.133333            3.76%    passed    100.00%
+ 295  LBF457WBF_ADY71754_Suidae_2009.133333            3.76%    passed    100.00%
+ 296  ICZ109OCF_ADY71765_Suidae_2009.216667            3.76%    passed    100.00%
+ 297  RMW904PYL_ADY80148_Suidae_2009.833333            3.76%    passed    100.00%
+ 298  YPS112NSU_ADZ04697_Hominidae_2009.388889        26.21%    passed    100.00%
+ 299  THS001UYB_ADZ04776_Suidae_1994.316667            3.76%    passed    100.00%
+ 300  LRT835TIG_ADZ04786_Suidae_1994.316667            3.76%    passed    100.00%
+ 301  AKW063VGW_ADZ04816_Suidae_1994.336111            3.76%    passed    100.00%
+ 302  MUD924YPA_ADZ04826_Suidae_1999.972222            3.76%    passed    100.00%
+ 303  SBX954EQR_ADZ04836_Suidae_1999.972222            3.76%    passed    100.00%
+ 304  SQD889IHJ_AEA02268_Suidae_2010.052778           66.80%    passed     91.22%
+ 305  VQZ245YGB_AEA03814_Hominidae_2008.825           26.75%    passed    100.00%
+ 306  XNZ269ZMG_AEA03825_Hominidae_2008.833333        33.06%    passed     99.99%
+ 307  MWT376PTC_AEA03846_Hominidae_2008.833333        29.17%    passed    100.00%
+ 308  TAS892TSE_AEA03886_Hominidae_2008.85            42.34%    passed     99.98%
+ 309  MSP256GDL_AEA03906_Hominidae_2008.858333        24.60%    passed    100.00%
+ 310  AIB645ALQ_AEA03932_Hominidae_2008.877778        41.26%    passed    100.00%
+ 311  POY480GFN_AEA03986_Hominidae_2008.886111         7.93%    passed    100.00%
+ 312  JQB578YHR_AEA04008_Hominidae_2008.886111        60.08%    passed     99.04%
+ 313  TBW268WLM_AEB71285_Avian_1998                    3.76%    passed    100.00%
+ 314  ZGG104VQL_AEB71390_Hominidae_2009.388889        69.22%    passed     96.61%
+ 315  QZB875DAA_AEB80449_Suidae_2010.666667            3.76%    passed    100.00%
+ 316  OBU408QNT_AEF59370_Avian_2007.416667             3.76%    passed    100.00%
+ 317  BOF309GZI_AEH42740_Suidae_2008.580556            3.76%    passed    100.00%
+ 318  PJW573HGU_AEI98755_Avian_1984                   11.56%    passed    100.00%
+ 319  MBZ189UPM_AEI98757_Avian_1987                    6.45%    passed    100.00%
+ 320  OYT446SKE_AEK49522_Avian_2008.844444            23.52%    passed     99.76%
+ 321  VRG535SDF_AEK65256_Avian_1984                    6.72%    passed    100.00%
+ 322  LCA897ZYS_AEK70738_Avian_2002                   32.39%    passed     99.92%
+ 323  NMD779JTP_AEK84696_Avian_2009.916667             8.20%    passed     99.99%
+ 324  EMR151UWK_AEK86083_Suidae_2010.155556            3.76%    passed    100.00%
+ 325  YZT649NJR_AEK86088_Suidae_2010.408333            3.76%    passed    100.00%
+ 326  HGR148QTJ_AEL23176_Avian_2006.002778            12.90%    passed    100.00%
+ 327  TOH994YWG_AEL23179_Avian_2004                   10.62%    passed    100.00%
+ 328  QGG114BWK_AEL23181_Avian_2002                   18.01%    passed    100.00%
+ 329  CZB980QND_AEM00330_Avian_1979.002778            10.75%    passed    100.00%
+ 330  LGR697SMD_AEM00332_Avian_1978                    6.72%    passed    100.00%
+ 331  DUW586GXO_AEM00336_Avian_1980                    6.99%    passed    100.00%
+ 332  YRW098JOK_AEM00345_Avian_2006                   71.10%    passed     44.92%
+ 333  RYO235HZS_AEM60098_Suidae_1990                   3.90%    passed    100.00%
+ 334  GRF190IMC_AEM60109_Suidae_1986                   3.76%    passed    100.00%
+ 335  ZGY783VST_AEM60131_Equidae_1979                  3.76%    passed    100.00%
+ 336  ATB639FJH_AEM60154_Equidae_1971                  4.17%    passed    100.00%
+ 337  QWA310QAU_AEM98294_Avian_2007.669444            21.91%    passed     99.97%
+ 338  ZBA182YQP_AEN94613_Avian_2010.166667             4.17%    passed    100.00%
+ 339  OXB164CJE_AEN94808_Avian_2010.166667             4.03%    passed    100.00%
+ 340  OVS947GPZ_AEO16285_Hominidae_2011.636111        51.61%    passed     99.91%
+ 341  FXU851SUJ_AEO52388_Avian_2010.777778             5.91%    passed    100.00%
+ 342  HUB441XHF_AEQ61328_Suidae_2011                   3.76%    passed    100.00%
+ 343  ZYJ081DIK_AEQ61368_Suidae_2010.916667            3.76%    passed    100.00%
+ 344  VOO089VHB_AEQ61378_Suidae_2010.916667            3.76%    passed    100.00%
+ 345  KTQ361DUK_AEQ61418_Suidae_2010.916667            3.76%    passed    100.00%
+ 346  UVT006NTU_AER09357_Avian_2008.916667            56.59%    passed     99.43%
+ 347  CVN203VTM_AER09367_Avian_2009.166667            45.16%    passed     98.39%
+ 348  RWZ202FNS_AER09397_Avian_2009.083333            34.95%    passed     99.94%
+ 349  THE441XHB_AER09437_Avian_2010.083333            21.64%    passed     99.99%
+ 350  JLQ506RRS_AER09447_Avian_2010.083333            56.05%    passed     99.32%
+ 351  KVQ234ULZ_AER09467_Avian_2011.083333            55.24%    passed     99.06%
+ 352  ZXQ813FFK_AER09483_Avian_2010.916667            35.89%    passed     99.96%
+ 353  JTJ975YXM_AER09659_Avian_2011                   36.02%    passed     99.95%
+ 354  JBN622KNB_AER34917_Avian_2011.413889             6.45%    passed    100.00%
+ 355  ELD235QSY_AER40322_Hominidae_2011.266667        25.94%    passed     99.65%
+ 356  WJF413WTH_AET74517_Avian_1994.605556            48.25%    passed     99.71%
+ 357  LGA991BTH_AEX92917_Hominidae_1934                7.39%    passed    100.00%
+ 358  ZGH509KCU_AEX92926_Hominidae_1934               20.16%    passed     99.99%
+ 359  BWF675MYA_AEZ67234_Avian_2010.833333             3.76%    passed    100.00%
+ 360  ZXM461GOQ_AF508676_Avian_2000                   38.31%    passed     99.79%
+ 361  GEY974HBJ_AF508677_Avian_1999                    3.76%    passed    100.00%
+ 362  NPT105FKE_AFC17982_Avian_2011.344444            81.45%    passed     88.57%
+ 363  SWQ956AWX_AFC35417_Phyllostomidae_2009.333333    4.17%    passed     93.19%
+ 364  CKM881LIZ_AFF18503_Hominidae_2011.088889        23.39%    passed    100.00%
+ 365  KAJ874BSK_AFG72654_Hominidae_1995                4.30%    passed    100.00%
+ 366  QTO547WJJ_AFJ20189_Hominidae_2011.222222        25.81%    passed    100.00%
+ 367  APR516JBL_AFJ74532_Hominidae_1998.411111        78.09%    passed     88.46%
+ 368  VNP506RAQ_AFJ75098_Hominidae_2006.822222        44.35%    passed     99.36%
+ 369  IJB280OZO_AFK75132_Avian_2010.608333            43.82%    passed     98.49%
+ 370  HRN550GXT_AFM09019_Avian_2006.405556             3.76%    passed    100.00%
+ 371  ISH447VDP_AFM09377_Avian_2007.369444             3.90%    passed    100.00%
+ 372  SXO315THH_AFM71762_Hominidae_2009               36.69%    passed     97.96%
+ 373  ONS550SMX_AFM71786_Hominidae_2009               13.71%    passed    100.00%
+ 374  CKV128SLD_AFM71798_Hominidae_1979                8.74%    passed    100.00%
+ 375  FRK198WKY_AFM71809_Hominidae_2009               11.42%    passed    100.00%
+ 376  HLN602JER_AFM71842_Hominidae_2009               48.39%    passed     99.54%
+ 377  SQR307EZY_AFN06478_Suidae_2008.833333            3.76%    passed    100.00%
+ 378  CBN326EDR_AFQ60221_Avian_2010.083333             3.76%    passed    100.00%
+ 379  NDI261JBN_AFR75870_Suidae_2000                   3.76%    passed    100.00%
+ 380  CRF097KRY_AFR75902_Suidae_2007.847222            3.76%    passed    100.00%
+ 381  ASK530QSX_AFR75977_Suidae_2004.686111            3.76%    passed    100.00%
+ 382  ZDA608UYA_AFR75988_Suidae_1990.933333            3.76%    passed    100.00%
+ 383  GHR676UJG_AFR75999_Suidae_1986                   3.76%    passed    100.00%
+ 384  JRO311IJP_AFR76111_Suidae_1992.794444            3.76%    passed    100.00%
+ 385  KVV624NGQ_AFR76154_Suidae_1993.305556            3.76%    passed    100.00%
+ 386  DDA452HHS_AFR76172_Suidae_2009.272222            3.76%    passed    100.00%
+ 387  KSD049DMK_AFR76226_Suidae_2005.269444            3.76%    passed    100.00%
+ 388  NBH814EKE_AFR76448_Suidae_1990.461111            3.90%    passed    100.00%
+ 389  YUH823PEN_AFR76531_Suidae_2009                   3.76%    passed    100.00%
+ 390  TEX851HBC_AFR76549_Suidae_1999                   3.76%    passed    100.00%
+ 391  HPQ242ZEG_AFR76559_Suidae_2002                   3.76%    passed    100.00%
+ 392  BQJ616WKI_AFR76633_Suidae_2002                   3.76%    passed    100.00%
+ 393  VGN474PBK_AFR76655_Suidae_1998                   4.03%    passed    100.00%
+ 394  QZD749DGE_AFR76677_Suidae_2001                   3.76%    passed    100.00%
+ 395  OIP844ZXT_AFR76716_Suidae_2002                   3.76%    passed    100.00%
+ 396  EKR914UNG_AFR76727_Suidae_2003                   3.76%    passed    100.00%
+ 397  USZ990JVK_AFT64426_Avian_2009.758333            52.42%    passed     99.89%
+ 398  GFF682PXW_AFT64516_Avian_2009.75                52.42%    passed     99.90%
+ 399  OSH225CQT_AFU83145_Suidae_2008.983333            3.76%    passed    100.00%
+ 400  QYO871SMU_AFU92401_Suidae_2012.188889            3.76%    passed    100.00%
+ 401  GPM529JDH_AFV33826_Suidae_2011.083333            3.76%    passed    100.00%
+ 402  JVT363DPK_AFV33848_Suidae_2011.083333            3.76%    passed    100.00%
+ 403  WYA131XRA_AFV33870_Suidae_2011.5                 3.76%    passed    100.00%
+ 404  EQS541BLU_AFV33881_Suidae_2011.416667            3.76%    passed    100.00%
+ 405  PTM899HPY_AFV68331_Suidae_2009.5                 5.11%    passed    100.00%
+ 406  CRW198SDC_AFV68367_Suidae_2009.666667            5.11%    passed    100.00%
+ 407  VPT596RNH_AFV77709_Suidae_2011.933333            3.76%    passed    100.00%
+ 408  MJA265OXJ_AFW17329_Avian_2009.416667            84.41%    passed     57.36%
+ 409  RYA305HDZ_AFW17363_Avian_2009.833333             9.95%    passed    100.00%
+ 410  EEJ889QVN_AFW17418_Avian_2010.305556            23.25%    passed    100.00%
+ 411  LGZ128TRL_AFX88507_Avian_1988.372222            42.74%    passed     99.93%
+ 412  VKA204OPJ_AFX88560_Avian_1986.619444            39.65%    passed     99.24%
+ 413  UNA340MLB_AFX88610_Avian_1989.597222            36.29%    passed     98.43%
+ 414  YOA191OKX_AFY05926_Avian_2007.636111             4.03%    passed    100.00%
+ 415  RWT187LVF_AFY05959_Avian_2007.675               17.88%    passed     99.99%
+ 416  JVA128LRC_AFY06015_Avian_2007.675               34.68%    passed     99.99%
+ 417  WUC121FGW_AFY24019_Hominidae_2009.838889        11.96%    passed    100.00%
+ 418  YIL177JZP_AFY24030_Hominidae_2009.858333        22.98%    passed    100.00%
+ 419  COT741VVQ_AFY24058_Hominidae_2009.913889        48.52%    passed     99.99%
+ 420  TVO578ZJJ_AFY24086_Hominidae_2010.047222        35.08%    passed     99.83%
+ 421  SGJ360PKA_AFY24096_Hominidae_2010.105556        12.37%    passed    100.00%
+ 422  PXB260WDF_AFY24128_Hominidae_2005               22.04%    passed    100.00%
+ 423  EKW542IWB_AGB12982_Hominidae_2011.088889        49.73%    passed     99.99%
+ 424  MSE434HCO_AGB12993_Hominidae_2011.05            11.96%    passed    100.00%
+ 425  TKC504SFU_AGB13003_Hominidae_2011.147222        11.16%    passed    100.00%
+ 426  UMJ977MLI_AGB51385_Equidae_1956                  3.76%    passed    100.00%
+ 427  VTF091FSN_AGB98030_Avian_2010.475               29.17%    passed     99.93%
+ 428  SXP802TWK_AGG12522_Avian_2009.747222            70.97%    passed     83.43%
+ 429  TPW948XYE_AGG23586_Avian_2009.577778            22.98%    passed     99.95%
+ 430  AIU780ZBD_AGG26632_Avian_1986.633333            20.83%    passed     99.92%
+ 431  VBD865ZWN_AGG53087_Suidae_2010.608333            3.76%    passed    100.00%
+ 432  HSO118CDP_AGG53098_Suidae_2010.608333            3.76%    passed    100.00%
+ 433  YCO807XGV_AGI00398_Hominidae_2005.005556         5.78%    passed    100.00%
+ 434  ZDD763WOV_AGI02451_Suidae_2011.458333           63.31%    passed     97.95%
+ 435  CEC877SFP_AGI02474_Avian_2011.283333            73.66%    passed     88.02%
+ 436  WKX525IHV_AGI02503_Suidae_2011.575              75.13%    passed     88.77%
+ 437  HLB577OLN_AGI55562_Avian_2007.983333             3.76%    passed    100.00%
+ 438  OTA503MBH_AGI55669_Suidae_2009.502778            3.76%    passed    100.00%
+ 439  SSP289WBI_AGI55671_Suidae_2009.783333            3.76%    passed    100.00%
+ 440  TMT214ETD_AGJ73012_Avian_2009.441667            62.90%    passed     93.58%
+ 441  ANT400YEG_AGJ73460_Suidae_2009.880556            3.76%    passed    100.00%
+ 442  JPN070IWK_AGJ73470_Suidae_2009.877778            5.11%    passed    100.00%
+ 443  BJA230TRL_AGK24137_Avian_2010.755556            21.64%    passed    100.00%
+ 444  TPK816RQH_AGK24186_Suidae_2010.441667            5.24%    passed    100.00%
+ 445  IJX006MEJ_AGK24196_Suidae_2010.441667            5.24%    passed    100.00%
+ 446  RNR174SNE_AGK24206_Suidae_2010.441667            5.38%    passed    100.00%
+ 447  GBK397COR_AGK24286_Suidae_2009.877778            4.03%    passed    100.00%
+ 448  DUC809HKG_AGK24296_Suidae_2009.877778            4.17%    passed    100.00%
+ 449  HGD071CWD_AGK24316_Suidae_2010.441667            5.24%    passed    100.00%
+ 450  XPY214KMU_AGK24396_Suidae_2009.877778            3.90%    passed    100.00%
+ 451  YDF266XUQ_AGK24406_Suidae_2009.880556            3.76%    passed    100.00%
+ 452  RUW906PIU_AGK24416_Suidae_2009.877778            5.11%    passed    100.00%
+ 453  ZZI475LQG_AGL04347_Suidae_2004                   3.76%    passed    100.00%
+ 454  BHH641EWW_AGL04363_Suidae_2003                   3.76%    passed    100.00%
+ 455  QEM705GVX_AGL52489_Avian_2009                   17.07%    passed    100.00%
+ 456  GEF335SMT_AGL52499_Avian_2009                   20.97%    passed    100.00%
+ 457  WCX388ZCM_AGL52705_Avian_2010.619444             9.14%    passed    100.00%
+ 458  IRE490MBX_AGL56503_Avian_2010.586111             4.03%    passed    100.00%
+ 459  BQP335EPM_AGL96838_Avian_2006.666667             3.76%    passed    100.00%
+ 460  AOW546YFQ_AGL96924_Suidae_2012.833333           36.69%    passed     99.60%
+ 461  IVL692HII_AGN69265_Suidae_1992                   3.76%    passed    100.00%
+ 462  AWT954RTL_AGN69276_Suidae_1991                   3.76%    passed    100.00%
+ 463  LOP791QXW_AGQ47877_Hominidae_1976                3.76%    passed    100.00%
+ 464  WJB547ZOV_AGT18809_Equidae_1964                  3.76%    passed    100.00%
+ 465  GBX883AHB_AGT18926_Avian_2009.705556            20.43%    passed    100.00%
+ 466  LNP059RGS_AGT37100_Suidae_2012.138889            3.76%    passed    100.00%
+ 467  QRK481DPV_AGX84933_Phyllostomidae_2010           4.17%    passed     84.73%
+ 468  QBM923NWT_AGY42008_Equidae_2012.627778          36.16%    passed     99.83%
+ 469  JCT025XIW_AHA57071_Avian_2009.688889            57.53%    passed     98.72%
+ 470  ISS590MND_AHB23201_Suidae_2004.655556           46.64%    passed     99.88%
+ 471  ZRY873DPQ_AHB23237_Suidae_2005.341667           87.23%    passed     84.93%
+ 472  EHR409KCZ_AHB23763_Suidae_2007.627778           77.42%    passed     53.58%
+ 473  NEO606LRR_AHB23806_Suidae_2009.263889           52.42%    passed     99.94%
+ 474  BBQ651RZP_AHB23841_Suidae_2009.094444           50.40%    passed     99.91%
+ 475  KLQ745VNM_AHB24519_Suidae_2010.588889           36.69%    passed     98.22%
+ 476  GUQ027VFD_AHB24632_Suidae_2011.347222           36.69%    passed     99.27%
+ 477  GXJ821XGV_AHB24642_Suidae_2011.652778           32.93%    passed     99.34%
+ 478  OAV239OCY_AHB51882_Suidae_2003.977778           11.83%    passed    100.00%
+ 479  HLX772DQN_AHB51928_Suidae_2003.502778           90.46%    passed     78.52%
+ 480  RLP792FLZ_AHB51968_Suidae_2003.691667           80.91%    passed     81.19%
+ 481  TRF505VVI_AHB52058_Suidae_2004.725              69.76%    passed     79.52%
+ 482  BFC103CSH_AHB52121_Suidae_2004.230556           20.83%    passed     99.99%
+ 483  URO047XFE_AHB72899_Avian_2013.041667             3.76%    passed    100.00%
+ 484  CZA516TJX_AHB72978_Avian_2013.002778             3.76%    passed    100.00%
+ 485  KNP875IRE_AHB73160_Avian_2013.002778             3.76%    passed    100.00%
+ 486  BGR194POD_AHB73367_Avian_2013.002778             3.76%    passed    100.00%
+ 487  WRQ827WZE_AHB73783_Avian_2012.180556            78.49%    passed     30.10%
+ 488  VEH090TJN_AHB73823_Avian_2012.616667            78.49%    passed      6.43%
+ 489  CLJ986FLE_AHB73833_Avian_2012.622222            78.49%    failed      3.08%
+ 490  GAB168BIT_AHI97302_Avian_2013.077778             3.76%    passed    100.00%
+ 491  HJJ620PXI_AHI97676_Suidae_2012.069444            5.24%    passed    100.00%
+ 492  GNW070MSH_AHI97692_Suidae_2012.063889            3.76%    passed    100.00%
+ 493  GST552FYS_AHI97703_Suidae_2012.116667            3.76%    passed    100.00%
+ 494  GUB696LDF_AHJ57950_Avian_2010.172222             3.90%    passed    100.00%
+ 495  MJK527BAK_AHL78212_Avian_2005.844444            19.09%    passed    100.00%
+ 496  NNK025FLG_AHL89613_Hominidae_2007.008333         3.76%    passed    100.00%
+ 497  WBN330RKS_AHL89769_Hominidae_2007.158333         3.76%    passed    100.00%
+ 498  MMV201PKO_AHL90801_Hominidae_2009.061111         3.76%    passed    100.00%
+ 499  GQY765LRH_AHM24287_Suidae_2013.180556            3.76%    passed    100.00%
+ 500  UVY750TVD_AHN00245_Avian_1981                   24.87%    passed     99.97%
+ 501  HHW971YNM_AHN00724_Hominidae_1976               49.46%    passed     98.65%
+ 502  JCX950YOF_AHN00735_Suidae_1976                   8.47%    passed    100.00%
+ 503  ZYC811MUJ_AHN00747_Suidae_1976                   3.76%    passed    100.00%
+ 504  DMK500CWH_AHN00759_Suidae_1976                   3.76%    passed    100.00%
+ 505  ITR090XVT_AHN00771_Hominidae_1976                3.76%    passed    100.00%
+ 506  LGU353LEM_AHN04973_Avian_1983                    3.76%    passed    100.00%
+ 507  GZX567MDH_AHN13777_Suidae_2012.511111            5.51%    passed    100.00%
+ 508  KHK393DSZ_AHN96320_Avian_2012.402778             3.76%    passed    100.00%
+ 509  HZM354TLC_AHZ13576_Avian_2004.002778            42.34%    passed     99.96%
+ 510  KBW694IBL_AHZ41899_Avian_2003.769444            28.90%    passed     99.69%
+ 511  EZF572NTY_AHZ60115_Hominidae_2012.919444        28.09%    passed     99.38%
+ 512  XZG082VZW_AIC64633_Suidae_2013.416667            3.76%    passed    100.00%
+ 513  LNQ190BTX_AIC64769_Hominidae_2012.580556        31.32%    passed     97.62%
+ 514  LPM313ZUF_AIC64808_Hominidae_2012.652778         8.20%    passed    100.00%
+ 515  LTX854YWP_AIE49237_Suidae_2010.602778            3.76%    passed    100.00%
+ 516  HHT070NYD_AIE49261_Suidae_2010.869444            3.90%    passed    100.00%
+ 517  QAY345FNE_AIE49769_Suidae_2011.944444            3.76%    passed    100.00%
+ 518  AVP109ACP_AIE49781_Suidae_2011.944444            3.76%    passed    100.00%
+ 519  GVN783HGC_AIE49793_Suidae_2011.944444            3.90%    passed    100.00%
+ 520  KOY073FKT_AIE49853_Suidae_2011.997222            3.76%    passed    100.00%
+ 521  BQL780SXM_AIE50794_Suidae_2011.955556            3.76%    passed    100.00%
+ 522  GEH285NAH_AIE50890_Suidae_2012.011111            3.76%    passed    100.00%
+ 523  NXA966IVC_AIE51033_Suidae_2012.011111            3.76%    passed    100.00%
+ 524  EPX659VHD_AIE51363_Suidae_2012.511111            3.76%    passed    100.00%
+ 525  XET279VFI_AIE51470_Suidae_2010.288889            3.76%    passed    100.00%
+ 526  PDH563ZDJ_AIE51482_Suidae_2010.288889            3.76%    passed    100.00%
+ 527  CNA434XSZ_AIE51963_Suidae_2012.633333            3.76%    passed    100.00%
+ 528  OTM083EQJ_AIL24869_Suidae_2013.427778            3.76%    passed    100.00%
+ 529  QRN813AOU_AIS23591_Avian_2010.041667             4.70%    passed    100.00%
+ 530  SPR397AHP_AIT38405_Canidae_2012.2                3.23%    passed    100.00%
+ 531  RDP245AMG_AIT92418_Hominidae_2013.066667        27.28%    passed     99.99%
+ 532  OAP618GQP_AIT92432_Hominidae_2013.080556        34.54%    passed     99.97%
+ 533  EZE950OWO_AIT92436_Hominidae_2013.083333        24.73%    passed     99.99%
+ 534  PLA148NFS_AIT92440_Hominidae_2011.158333        35.08%    passed     99.98%
+ 535  EMK066BEQ_AIT92449_Hominidae_2012.994444        20.70%    passed     99.99%
+ 536  SCV078ZPN_AIT92455_Hominidae_2013.091667        24.33%    passed     99.88%
+ 537  OGO980AXY_AIT92463_Hominidae_2013.066667        22.72%    passed     99.95%
+ 538  CSC399EIS_AIT92473_Hominidae_2013.083333        33.47%    passed    100.00%
+ 539  YZC697MFX_AIT92481_Hominidae_2011.144444        20.70%    passed    100.00%
+ 540  HOX906SEY_AIT92483_Hominidae_2011.180556        24.19%    passed    100.00%
+ 541  FYN588FGU_AIT93064_Avian_2013.25                22.85%    passed     99.90%
+ 542  WAV038QBW_AIW60658_Suidae_2011.230556           73.39%    passed     97.75%
+ 543  ENC152QPF_AIW60834_Avian_2008.063889            63.44%    passed     98.53%
+ 544  UZT858KSS_AIY59259_Hominidae_1962                3.76%    passed    100.00%
+ 545  YGW968EUW_AJI76226_Suidae_2013.038889            3.76%    passed    100.00%
+ 546  USD113YXT_AJK00353_Avian_2014.030556             3.76%    passed    100.00%
+ 547  TRF748DMX_AJS16131_Avian_2014.602778             3.76%    passed    100.00%
+ 548  CTV521OOA_AKJ80778_Suidae_2011.894444            3.76%    passed    100.00%
+ 549  HUP267RCF_AKJ80988_Suidae_2011                   3.76%    passed    100.00%
+ 550  WFT560ONB_AKJ81011_Suidae_2012                   3.76%    passed    100.00%
+ 551  OCU911HDP_AKJ81035_Suidae_2012                   3.76%    passed    100.00%
+ 552  NHY606PXK_AKJ81070_Suidae_2012                   3.76%    passed    100.00%
+ 553  YZP482CSN_AKJ81130_Suidae_2011.5                 3.76%    passed    100.00%
+ 554  HGR155DPG_AKJ81209_Suidae_2011                   6.18%    passed    100.00%
+ 555  YBU188JFF_AKJ81314_Suidae_2012.105556            3.76%    passed    100.00%
+ 556  IUM099GWE_AKJ81589_Suidae_2012.166667            3.76%    passed    100.00%
+ 557  CSO953MIZ_AKJ81646_Suidae_2010.902778            3.76%    passed    100.00%
+ 558  XWE063JGG_AKJ81732_Suidae_2011.416667            3.76%    passed    100.00%
+ 559  QSL254ZHX_AKJ81883_Suidae_2011.897222            3.76%    passed    100.00%
+ 560  ZPS629KJE_AKJ81950_Suidae_2012.541667            3.76%    passed    100.00%
+ 561  WIG382VFA_AKJ82371_Suidae_2013.058333            3.76%    passed    100.00%
+ 562  VAH231UFY_AKJ82405_Suidae_2012.508333            3.76%    passed    100.00%
+ 563  UXC928ZOI_AKJ82866_Suidae_1994                   3.76%    passed    100.00%
+ 564  DOG100VIF_AKJ83015_Suidae_2012.7                 3.76%    passed    100.00%
+ 565  BUS327WDP_AKJ83199_Suidae_2012.388889            3.76%    passed    100.00%
+ 566  PYK011LUA_AKL90938_Hominidae_2012.072222         8.06%    passed    100.00%
+ 567  NUA048SFC_AKL90955_Hominidae_2012.025           23.92%    passed    100.00%
+ 568  MRX843NVV_AKL90967_Hominidae_2012.030556        10.35%    passed    100.00%
+ 569  KZR580CMT_AKM13949_Avian_2009.383333            31.99%    passed     98.19%
+ 570  NOB018UNZ_AKM13971_Avian_2009.7                 27.55%    passed     99.64%
+ 571  LJE196ERH_AKM13983_Avian_2010.919444            47.18%    passed     99.99%
+ 572  TXX104DXZ_AKM14015_Avian_2010                   25.67%    passed     99.40%
+ 573  ARH695LZA_AKM14026_Avian_2010.233333            42.88%    passed     99.99%
+ 574  FVB503LNC_AKM14036_Avian_2010.263889            42.74%    passed     99.92%
+ 575  FAP994ZXQ_AKM14078_Avian_2007.097222            31.99%    passed     98.12%
+ 576  WEC248MMX_AKM14111_Avian_2009.363889            25.67%    passed     99.55%
+ 577  XOG821RQU_AKM14123_Avian_2007.886111            30.78%    passed     99.16%
+ 578  RWA737XSC_AKM14135_Avian_2007.905556            25.00%    passed     99.24%
+ 579  YNS643DLY_AKM14157_Avian_2009.897222            24.19%    passed     99.67%
+ 580  LID991DTL_AKM14169_Avian_2009.897222            48.79%    passed     99.99%
+ 581  XOR247YOO_AKM14198_Avian_2008.308333            26.75%    passed     99.24%
+ 582  AZD393YSL_AKM14210_Avian_2008.308333            23.66%    passed     99.63%
+ 583  UGO858KEL_AKM14222_Avian_2008.538889            24.87%    passed     99.76%
+ 584  CRP803GBA_AKM14262_Avian_2009.858333            23.92%    passed     99.88%
+ 585  BTB530ETR_AKQ43529_Suidae_2014.841667            3.76%    passed    100.00%
+ 586  DCJ730RIE_ALD19493_Canidae_2015.322222           3.76%    passed    100.00%
+ 587  XJI559PJB_ALP30733_Avian_2013.791667             3.76%    passed    100.00%
+ 588  PBV407PQR_ALX28427_Hominidae_2011                3.90%    passed    100.00%
+ 589  LKT766QZF_ALX29266_Suidae_2012                   3.76%    passed    100.00%
+ 590  DLE504ZCH_ALX29405_Suidae_2013                  20.70%    passed     99.97%
+ 591  NAL835EJM_ALX29839_Suidae_2014                   3.76%    passed    100.00%
+ 592  ZGZ875GHR_ALX30367_Suidae_2015                   3.76%    passed    100.00%
+ 593  JXI768GOQ_AMB66673_Suidae_2013.947222           25.40%    passed     99.97%
+ 594  TSQ027OXI_AMY15992_Suidae_2014.316667            4.70%    passed    100.00%
+ 595  ZVD643WBN_ANE36628_Suidae_2012.791667            3.76%    passed    100.00%
+ 596  WSY373KGZ_ANE36640_Suidae_2012.791667            3.76%    passed    100.00%
+ 597  ROK398ILE_ANE36997_Avian_2014.258333             3.76%    passed    100.00%
+ 598  PWX580XTG_ANE37023_Avian_2014.038889             3.76%    passed    100.00%
+ 599  VZX035IWD_ANZ03757_Avian_2012.166667             7.39%    passed    100.00%
+ 600  NYM013NFO_AOV82350_Hominidae_2014.916667        91.67%    passed     47.95%
+ 601  ZBC635MOW_APC57908_Suidae_1998                   3.76%    passed    100.00%
+ 602  MZA827RCL_APG38641_Avian_2013.258333            50.00%    passed     98.85%
+ 603  OVV436ACR_APG38663_Avian_2013.261111            37.37%    passed     98.98%
+ 604  BVT616EFC_APG38718_Avian_2013.302778            50.00%    passed     95.35%
+ 605  SOZ798ZYT_APG39148_Avian_2013.355556            65.46%    passed     94.37%
+ 606  EZA012FQH_APG39192_Avian_2013.513889            52.55%    passed     98.63%
+ 607  ERP209WDI_APH10319_Hominidae_2016.786111         3.76%    passed    100.00%
+ 608  RIC924LWY_APT36454_Hominidae_2016.75             3.76%    passed    100.00%
+ 609  UZB993FAL_APT36465_Suidae_2016.75               75.94%    passed     92.87%
+ 610  RPH254SQK_APT36556_Suidae_2016.15                3.76%    passed    100.00%
+ 611  NFI172FCB_APY16461_Avian_2015.666667            35.75%    passed    100.00%
+ 612  MBB781IGD_ARG42962_Avian_2009.961111             5.78%    passed    100.00%
+ 613  OWJ836XID_ARG42998_Avian_2009.961111             4.84%    passed    100.00%
+ 614  IIC567WLV_ARG43043_Avian_2009.933333            36.96%    passed     99.98%
+ 615  VJX312YZU_ARG43091_Avian_2009.933333            37.63%    passed     99.87%
+ 616  OLI529BIJ_ARI70373_Hominidae_2015.388889         6.59%    passed    100.00%
+ 617  KUL369SLV_ART66961_Suidae_2013.886111            3.76%    passed    100.00%
+ 618  KYK014ENU_ARV89954_Avian_2012.525                3.76%    passed    100.00%
+ 619  QYY015FCQ_ASB34017_Suidae_2014.666667            3.76%    passed    100.00%
+ 620  PFC741AZO_ASJ81923_Avian_2016.608333            34.14%    passed     99.99%
+ 621  YCH814HID_ASO97511_Hominidae_2012.944444        26.61%    passed     99.71%
+ 622  YWB068PGX_ASU06500_Hominidae_2015.105556        44.89%    passed     96.77%
+ 623  HQK317FQD_ASU06502_Hominidae_2012.941667        28.76%    passed     99.98%
+ 624  NRX891EVX_ASU06504_Hominidae_2012.941667        21.77%    passed     99.99%
+ 625  GNW622TCU_ASU06505_Hominidae_2009               35.22%    passed     99.98%
+ 626  PIX827IER_ASU47788_Hominidae_2014.777778        25.94%    passed     99.55%
+ 627  CKO680TUT_ATE48461_Suidae_2017.102778            3.76%    passed    100.00%
+ 628  QFK412KHR_ATE48474_Suidae_2016.969444            3.76%    passed    100.00%
+ 629  ZXL429JWZ_ATE48479_Suidae_2016.969444            3.76%    passed    100.00%
+ 630  KMS749DFW_ATE48492_Suidae_2016.988889            3.76%    passed    100.00%
+ 631  BLP037PKK_ATE48507_Suidae_2016.988889            3.76%    passed    100.00%
+ 632  ZOI636NZK_ATE48520_Suidae_2016.880556            3.76%    passed    100.00%
+ 633  KKB679OAH_ATG28368_Suidae_2013.666667            3.90%    passed    100.00%
+ 634  XXG108DSA_ATI21282_Suidae_2015                   3.76%    passed    100.00%
+ 635  FZQ695RHW_ATP61525_Canidae_2015.958333           3.76%    passed    100.00%
+ 636  MSB621LJI_ATP61537_Canidae_2015.958333           3.76%    passed    100.00%
+ 637  UDU023JWN_ATQ38759_Equidae_2015.352778           3.76%    passed    100.00%
+ 638  TCB721KRF_ATQ39031_Canidae_2015.9                3.76%    passed    100.00%
+ 639  KJN052FMR_ATQ39043_Canidae_2015.9                3.76%    passed    100.00%
+ 640  ZRD820VNV_ATU81622_Hominidae_2007                3.76%    passed    100.00%
+ 641  SLD793ATA_AUI42259_Avian_2016.397222            17.07%    passed    100.00%
+ 642  UQC813MRC_AUO30208_Avian_2015.283333             3.76%    passed    100.00%
+ 643  RAO112DPA_AVK43480_Suidae_2012.086111            3.76%    passed    100.00%
+ 644  OGW330PMJ_BAG07129_Avian_2007                   78.36%    passed     47.56%
+ 645  HDW409RJU_BAG07139_Avian_2007                   78.23%    passed     34.89%
+ 646  OES584ICI_BAG49741_Suidae_1979                   3.76%    passed    100.00%
+ 647  DQZ368BPN_BAH02079_Suidae_2005                   3.76%    passed    100.00%
+ 648  JUT619ENF_BAH02099_Suidae_2003                   3.76%    passed    100.00%
+ 649  MGV772QRY_BAH02119_Suidae_2005                   3.76%    passed    100.00%
+ 650  YNQ199MRM_BAH02149_Suidae_1981                   3.76%    passed    100.00%
+ 651  RNF172RAK_BAH02159_Suidae_1977                   3.76%    passed    100.00%
+ 652  ACX301NBS_BAJ83901_Avian_2010.75                85.89%    passed     43.52%
+ 653  QVI059HOC_BAK23269_Suidae_2005                   3.76%    passed    100.00%
+ 654  VIA024AUH_BAK23272_Suidae_2004                   3.76%    passed     99.99%
+ 655  IDI103EWP_BAK39725_Avian_2009.25                80.24%    passed     24.17%
+ 656  CIV620GWJ_BAL04274_Avian_2011                   50.13%    passed     99.85%
+ 657  IRO137XAS_BAL04294_Avian_2011                   49.46%    passed     99.98%
+ 658  VTO533PLH_BAL04304_Avian_2011                   49.06%    passed     99.99%
+ 659  NYV678HHG_BAL04314_Avian_2011                   48.79%    passed     99.98%
+ 660  XGP754UBT_BAL04322_Avian_2011                   49.46%    passed     99.97%
+ 661  TBB378RJW_BAL04466_Avian_2011                   49.33%    passed     99.99%
+ 662  WSM804KAN_BAL04660_Avian_2011                   47.72%    passed     99.53%
+ 663  IML870SRG_BAL14148_Avian_2011.102778            57.53%    passed     99.66%
+ 664  GAK618GWE_BAL14158_Avian_2011.097222            57.53%    passed     99.62%
+ 665  QEK396CUN_BAL14168_Avian_2011.105556            57.53%    passed     99.66%
+ 666  OBY880PPI_BAL14188_Avian_2011.130556            57.53%    passed     99.35%
+ 667  CGA600HDD_BAL14258_Avian_2010.980556            57.53%    passed     99.72%
+ 668  BTN683BLI_BAL70425_Suidae_2009.833333            3.76%    passed    100.00%
+ 669  HTW185MSW_BAL70443_Suidae_2008.416667            3.76%    passed    100.00%
+ 670  SVX579FGD_BAM22636_Avian_2012.130556            52.96%    passed     99.21%
+ 671  ZDD635GXS_BAM33978_Avian_2012.291667            52.82%    passed     99.95%
+ 672  TDW597RVZ_BAM33987_Avian_2012.297222            52.82%    passed     99.32%
+ 673  YNF896DWU_BAM33997_Avian_2012.3                 54.44%    passed     99.70%
+ 674  NLG055VYE_BAM35586_Avian_2012.291667            52.28%    passed     98.55%
+ 675  HHS005FWV_BAM35596_Avian_2012.291667            52.42%    passed     98.15%
+ 676  PQB128HGT_BAM35634_Avian_2012.291667            52.15%    passed     98.64%
+ 677  THN123CUJ_BAM35644_Avian_2012.291667            51.88%    passed     98.59%
+ 678  MFD496MMY_BAM71813_Avian_2012.619444            52.69%    passed     99.18%
+ 679  WON321UUQ_BAM71823_Avian_2012.619444            52.69%    passed     99.29%
+ 680  ZDL704FFH_BAM75583_Avian_2012.772222            60.22%    passed     99.86%
+ 681  UMF269KWS_BAM76313_Avian_2012.766667            53.36%    passed     99.84%
+ 682  EGM497UAN_BAM76343_Avian_2012.769444            53.63%    passed     99.57%
+ 683  FME973RRB_BAS21848_Avian_2014.666667            75.00%    passed     47.15%
+ 684  JKL222XVU_BAS21849_Avian_2014.666667            33.06%    passed     99.93%
+ 685  HLM163ECM_BAS21854_Avian_2014.666667            62.63%    passed     99.14%
+ 686  EAO923DXS_BAS21862_Avian_2014.666667            52.82%    passed     99.82%
+ 687  WKC108YQO_BAS21866_Avian_2014.666667            53.90%    passed     99.06%
+ 688  BBS960WNR_BAS21867_Avian_2014.666667            80.24%    passed     80.12%
+ 689  UTI208EIT_BAS21876_Avian_2014.666667            69.35%    passed     90.43%
+ 690  JGR464GMJ_BBG92094_Suidae_1982                   3.76%    passed    100.00%
+ 691  LOQ301XRV_BBG92104_Suidae_2003                   3.76%    passed    100.00%
+ 692  AKC681NUJ_CCD33088_Suidae_2010.833333            3.76%    passed    100.00%
+WARNING: 93 sequences contain more than 50% gaps/ambiguity
+****  TOTAL                                           22.20%  2 sequences failed composition chi2 test (p-value<5%; df=19)
+
+
+Create initial parsimony tree by phylogenetic likelihood library (PLL)... 0.454 seconds
+Perform fast likelihood tree search using LG+I+G model...
+Estimate model parameters (epsilon = 5.000)
+Perform nearest neighbor interchange...
+Estimate model parameters (epsilon = 1.000)
+1. Initial log-likelihood: -28608.884
+Optimal log-likelihood: -28608.233
+Proportion of invariable sites: 0.018
+Gamma shape alpha: 0.732
+Parameters optimization took 1 rounds (4.150 sec)
+Time for fast ML tree search: 117.925 seconds
+
+NOTE: ModelFinder requires 815 MB RAM!
+ModelFinder will test up to 702 protein models (sample size: 744) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+  1  LG            30047.965    1381 62857.929    3879941.929  69227.158
+  2  LG+I          29884.263    1382 62532.526    3885144.526  68906.366
+  3  LG+G4         28606.193    1382 59976.386    3882588.386  66350.227
+  4  LG+I+G4       28606.587    1383 59979.173    3888123.173  66357.626
+  5  LG+R2         28701.247    1383 60168.494    3888312.494  66546.947
+  6  LG+R3         28468.354    1385 59706.708    3898926.708  66094.385
+  7  LG+R4         28409.278    1387 59592.556    3909904.556  65989.457
+  8  LG+R5         28395.581    1389 59569.163    3920989.163  65975.288
+  9  LG+R6         28390.181    1391 59562.362    3932106.362  65977.711
+ 21  LG+F+R5       28325.199    1408 59466.398    4027210.398  65960.152
+WARNING: Log-likelihood -28344.8 of LG+F+R6 worse than LG+F+R5 -28325.2
+ 22  LG+F+R6       28344.829    1410 59509.658    4038529.658  66012.636
+ 34  WAG+R5        28391.788    1389 59561.576    3920981.576  65967.701
+WARNING: Log-likelihood -28415.2 of WAG+R6 worse than WAG+R5 -28391.8
+ 35  WAG+R6        28415.232    1391 59612.465    3932156.465  66027.814
+ 47  WAG+F+R5      28315.073    1408 59446.146    4027190.146  65939.900
+WARNING: Log-likelihood -28338.6 of WAG+F+R6 worse than WAG+F+R5 -28315.1
+ 48  WAG+F+R6      28338.616    1410 59497.231    4038517.231  66000.209
+ 60  JTT+R5        27860.562    1389 58499.124    3919919.124  64905.249
+WARNING: Log-likelihood -27896.3 of JTT+R6 worse than JTT+R5 -27860.6
+ 61  JTT+R6        27896.334    1391 58574.668    3931118.668  64990.017
+ 73  JTT+F+R5      27773.744    1408 58363.488    4026107.488  64857.241
+WARNING: Log-likelihood -27816.2 of JTT+F+R6 worse than JTT+F+R5 -27773.7
+ 74  JTT+F+R6      27816.197    1410 58452.394    4037472.394  64955.372
+ 86  Q.pfam+R5     28409.982    1389 59597.965    3921017.965  66004.090
+WARNING: Log-likelihood -28437.7 of Q.pfam+R6 worse than Q.pfam+R5 -28410
+ 87  Q.pfam+R6     28437.691    1391 59657.382    3932201.382  66072.731
+ 99  Q.pfam+F+R5   28304.724    1408 59425.449    4027169.449  65919.202
+WARNING: Log-likelihood -28335.7 of Q.pfam+F+R6 worse than Q.pfam+F+R5 -28304.7
+100  Q.pfam+F+R6   28335.747    1410 59491.494    4038511.494  65994.472
+112  Q.bird+R5     27808.359    1389 58394.717    3919814.717  64800.842
+WARNING: Log-likelihood -27837.5 of Q.bird+R6 worse than Q.bird+R5 -27808.4
+113  Q.bird+R6     27837.469    1391 58456.938    3931000.938  64872.287
+125  Q.bird+F+R5   27632.508    1408 58081.015    4025825.015  64574.769
+WARNING: Log-likelihood -27663.8 of Q.bird+F+R6 worse than Q.bird+F+R5 -27632.5
+126  Q.bird+F+R6   27663.768    1410 58147.536    4037167.536  64650.513
+138  Q.mammal+R5   27762.809    1389 58303.619    3919723.619  64709.744
+WARNING: Log-likelihood -27790.8 of Q.mammal+R6 worse than Q.mammal+R5 -27762.8
+139  Q.mammal+R6   27790.842    1391 58363.684    3930907.684  64779.033
+151  Q.mammal+F+R5 27568.689    1408 57953.379    4025697.379  64447.133
+WARNING: Log-likelihood -27617.9 of Q.mammal+F+R6 worse than Q.mammal+F+R5 -27568.7
+152  Q.mammal+F+R6 27617.912    1410 58055.825    4037075.825  64558.803
+164  Q.insect+R5   28160.988    1389 59099.975    3920519.975  65506.100
+WARNING: Log-likelihood -28197.5 of Q.insect+R6 worse than Q.insect+R5 -28161
+165  Q.insect+R6   28197.529    1391 59177.058    3931721.058  65592.407
+177  Q.insect+F+R5 28086.155    1408 58988.311    4026732.311  65482.065
+WARNING: Log-likelihood -28131.8 of Q.insect+F+R6 worse than Q.insect+F+R5 -28086.2
+178  Q.insect+F+R6 28131.813    1410 59083.626    4038103.626  65586.603
+190  Q.plant+R5    27850.008    1389 58478.016    3919898.016  64884.141
+WARNING: Log-likelihood -27896.4 of Q.plant+R6 worse than Q.plant+R5 -27850
+191  Q.plant+R6    27896.355    1391 58574.709    3931118.709  64990.058
+203  Q.plant+F+R5  27779.722    1408 58375.444    4026119.444  64869.198
+WARNING: Log-likelihood -27837.6 of Q.plant+F+R6 worse than Q.plant+F+R5 -27779.7
+204  Q.plant+F+R6  27837.572    1410 58495.144    4037515.144  64998.122
+216  Q.yeast+R5    28308.082    1389 59394.164    3920814.164  65800.289
+WARNING: Log-likelihood -28342.2 of Q.yeast+R6 worse than Q.yeast+R5 -28308.1
+217  Q.yeast+R6    28342.155    1391 59466.309    3932010.309  65881.658
+229  Q.yeast+F+R5  28206.864    1408 59229.728    4026973.728  65723.482
+WARNING: Log-likelihood -28251.7 of Q.yeast+F+R6 worse than Q.yeast+F+R5 -28206.9
+230  Q.yeast+F+R6  28251.655    1410 59323.310    4038343.310  65826.288
+242  JTTDCMut+R5   27844.857    1389 58467.714    3919887.714  64873.839
+WARNING: Log-likelihood -27903.8 of JTTDCMut+R6 worse than JTTDCMut+R5 -27844.9
+243  JTTDCMut+R6   27903.828    1391 58589.656    3931133.656  65005.005
+255  JTTDCMut+F+R5 27766.163    1408 58348.326    4026092.326  64842.080
+WARNING: Log-likelihood -27822.9 of JTTDCMut+F+R6 worse than JTTDCMut+F+R5 -27766.2
+256  JTTDCMut+F+R6 27822.851    1410 58465.703    4037485.703  64968.681
+268  DCMut+R5      28718.741    1389 60215.482    3921635.482  66621.607
+WARNING: Log-likelihood -28750.8 of DCMut+R6 worse than DCMut+R5 -28718.7
+269  DCMut+R6      28750.790    1391 60283.581    3932827.581  66698.930
+281  DCMut+F+R5    28580.948    1408 59977.896    4027721.896  66471.650
+WARNING: Log-likelihood -28628.3 of DCMut+F+R6 worse than DCMut+F+R5 -28580.9
+282  DCMut+F+R6    28628.306    1410 60076.611    4039096.611  66579.589
+294  VT+R5         28402.460    1389 59582.919    3921002.919  65989.044
+WARNING: Log-likelihood -28450 of VT+R6 worse than VT+R5 -28402.5
+295  VT+R6         28449.997    1391 59681.993    3932225.993  66097.342
+307  VT+F+R5       28355.457    1408 59526.914    4027270.914  66020.668
+WARNING: Log-likelihood -28403.2 of VT+F+R6 worse than VT+F+R5 -28355.5
+308  VT+F+R6       28403.215    1410 59626.430    4038646.430  66129.407
+320  PMB+R5        28862.855    1389 60503.711    3921923.711  66909.836
+WARNING: Log-likelihood -28897.5 of PMB+R6 worse than PMB+R5 -28862.9
+321  PMB+R6        28897.548    1391 60577.095    3933121.095  66992.444
+333  PMB+F+R5      28840.461    1408 60496.922    4028240.922  66990.676
+WARNING: Log-likelihood -28879.9 of PMB+F+R6 worse than PMB+F+R5 -28840.5
+334  PMB+F+R6      28879.939    1410 60579.878    4039599.878  67082.856
+346  Blosum62+R5   28878.254    1389 60534.509    3921954.509  66940.634
+WARNING: Log-likelihood -28913.8 of Blosum62+R6 worse than Blosum62+R5 -28878.3
+347  Blosum62+R6   28913.838    1391 60609.677    3933153.677  67025.026
+359  Blosum62+F+R5 28903.189    1408 60622.378    4028366.378  67116.132
+WARNING: Log-likelihood -28940.4 of Blosum62+F+R6 worse than Blosum62+F+R5 -28903.2
+360  Blosum62+F+R6 28940.408    1410 60700.815    4039720.815  67203.793
+372  Dayhoff+R5    28710.039    1389 60198.079    3921618.079  66604.204
+WARNING: Log-likelihood -28741.9 of Dayhoff+R6 worse than Dayhoff+R5 -28710
+373  Dayhoff+R6    28741.931    1391 60265.863    3932809.863  66681.212
+385  Dayhoff+F+R5  28572.223    1408 59960.446    4027704.446  66454.200
+WARNING: Log-likelihood -28619.5 of Dayhoff+F+R6 worse than Dayhoff+F+R5 -28572.2
+386  Dayhoff+F+R6  28619.545    1410 60059.090    4039079.090  66562.068
+398  mtREV+R5      29400.778    1389 61579.557    3922999.557  67985.682
+WARNING: Log-likelihood -29425.7 of mtREV+R6 worse than mtREV+R5 -29400.8
+399  mtREV+R6      29425.656    1391 61633.311    3934177.311  68048.660
+411  mtREV+F+R5    28535.900    1408 59887.800    4027631.800  66381.554
+WARNING: Log-likelihood -28569 of mtREV+F+R6 worse than mtREV+F+R5 -28535.9
+412  mtREV+F+R6    28568.969    1410 59957.938    4038977.938  66460.916
+424  mtART+R5      29981.214    1389 62740.427    3924160.427  69146.552
+WARNING: Log-likelihood -30012.5 of mtART+R6 worse than mtART+R5 -29981.2
+425  mtART+R6      30012.536    1391 62807.073    3935351.073  69222.422
+437  mtART+F+R5    29278.993    1408 61373.985    4029117.985  67867.739
+WARNING: Log-likelihood -29325.6 of mtART+F+R6 worse than mtART+F+R5 -29279
+438  mtART+F+R6    29325.611    1410 61471.222    4040491.222  67974.200
+450  mtZOA+R5      29225.895    1389 61229.789    3922649.789  67635.914
+WARNING: Log-likelihood -29247.5 of mtZOA+R6 worse than mtZOA+R5 -29225.9
+451  mtZOA+R6      29247.535    1391 61277.070    3933821.070  67692.419
+463  mtZOA+F+R5    28649.714    1408 60115.428    4027859.428  66609.182
+WARNING: Log-likelihood -28698.5 of mtZOA+F+R6 worse than mtZOA+F+R5 -28649.7
+464  mtZOA+F+R6    28698.502    1410 60217.005    4039237.005  66719.983
+476  mtMet+R5      28873.545    1389 60525.091    3921945.091  66931.216
+WARNING: Log-likelihood -28884.5 of mtMet+R6 worse than mtMet+R5 -28873.5
+477  mtMet+R6      28884.496    1391 60550.991    3933094.991  66966.340
+489  mtMet+F+R5    28182.074    1408 59180.148    4026924.148  65673.902
+WARNING: Log-likelihood -28226.3 of mtMet+F+R6 worse than mtMet+F+R5 -28182.1
+490  mtMet+F+R6    28226.290    1410 59272.579    4038292.579  65775.557
+502  mtVer+R5      29242.686    1389 61263.373    3922683.373  67669.498
+WARNING: Log-likelihood -29270.8 of mtVer+R6 worse than mtVer+R5 -29242.7
+503  mtVer+R6      29270.773    1391 61323.545    3933867.545  67738.894
+515  mtVer+F+R5    28419.967    1408 59655.934    4027399.934  66149.688
+WARNING: Log-likelihood -28475.9 of mtVer+F+R6 worse than mtVer+F+R5 -28420
+516  mtVer+F+R6    28475.898    1410 59771.795    4038791.795  66274.773
+528  mtInv+R5      29139.440    1389 61056.880    3922476.880  67463.005
+WARNING: Log-likelihood -29148.6 of mtInv+R6 worse than mtInv+R5 -29139.4
+529  mtInv+R6      29148.559    1391 61079.119    3933623.119  67494.468
+541  mtInv+F+R5    28343.490    1408 59502.980    4027246.980  65996.733
+WARNING: Log-likelihood -28385.1 of mtInv+F+R6 worse than mtInv+F+R5 -28343.5
+542  mtInv+F+R6    28385.074    1410 59590.148    4038610.148  66093.126
+554  mtMAM+R5      29923.753    1389 62625.506    3924045.506  69031.631
+WARNING: Log-likelihood -29965.8 of mtMAM+R6 worse than mtMAM+R5 -29923.8
+555  mtMAM+R6      29965.843    1391 62713.685    3935257.685  69129.034
+567  mtMAM+F+R5    29079.637    1408 60975.275    4028719.275  67469.029
+WARNING: Log-likelihood -29123.1 of mtMAM+F+R6 worse than mtMAM+F+R5 -29079.6
+568  mtMAM+F+R6    29123.135    1410 61066.270    4040086.270  67569.248
+580  HIVb+R5       27767.372    1389 58312.745    3919732.745  64718.870
+WARNING: Log-likelihood -27842 of HIVb+R6 worse than HIVb+R5 -27767.4
+581  HIVb+R6       27842.048    1391 58466.096    3931010.096  64881.445
+593  HIVb+F+R5     27734.474    1408 58284.949    4026028.949  64778.702
+WARNING: Log-likelihood -27815.6 of HIVb+F+R6 worse than HIVb+F+R5 -27734.5
+594  HIVb+F+R6     27815.588    1410 58451.176    4037471.176  64954.154
+606  HIVw+R5       28019.682    1389 58817.363    3920237.363  65223.488
+WARNING: Log-likelihood -28090.5 of HIVw+R6 worse than HIVw+R5 -28019.7
+607  HIVw+R6       28090.485    1391 58962.970    3931506.970  65378.319
+619  HIVw+F+R5     28039.765    1408 58895.529    4026639.529  65389.283
+WARNING: Log-likelihood -28110.4 of HIVw+F+R6 worse than HIVw+F+R5 -28039.8
+620  HIVw+F+R6     28110.419    1410 59040.838    4038060.838  65543.815
+632  FLU+R5        27608.199    1389 57994.397    3919414.397  64400.522
+WARNING: Log-likelihood -27650.4 of FLU+R6 worse than FLU+R5 -27608.2
+633  FLU+R6        27650.402    1391 58082.805    3930626.805  64498.154
+645  FLU+F+R5      27727.825    1408 58271.649    4026015.649  64765.403
+WARNING: Log-likelihood -27778.3 of FLU+F+R6 worse than FLU+F+R5 -27727.8
+646  FLU+F+R6      27778.300    1410 58376.600    4037396.600  64879.578
+658  rtREV+R5      28726.141    1389 60230.282    3921650.282  66636.407
+WARNING: Log-likelihood -28773.6 of rtREV+R6 worse than rtREV+R5 -28726.1
+659  rtREV+R6      28773.567    1391 60329.134    3932873.134  66744.483
+671  rtREV+F+R5    28567.228    1408 59950.457    4027694.457  66444.211
+WARNING: Log-likelihood -28613.7 of rtREV+F+R6 worse than rtREV+F+R5 -28567.2
+672  rtREV+F+R6    28613.694    1410 60047.389    4039067.389  66550.366
+684  cpREV+R5      28186.493    1389 59150.987    3920570.987  65557.112
+WARNING: Log-likelihood -28245 of cpREV+R6 worse than cpREV+R5 -28186.5
+685  cpREV+R6      28245.022    1391 59272.044    3931816.044  65687.393
+697  cpREV+F+R5    28295.455    1408 59406.909    4027150.909  65900.663
+WARNING: Log-likelihood -28356.1 of cpREV+F+R6 worse than cpREV+F+R5 -28295.5
+698  cpREV+F+R6    28356.096    1410 59532.193    4038552.193  66035.170
+Akaike Information Criterion:           Q.mammal+F+R5
+Corrected Akaike Information Criterion: LG
+Bayesian Information Criterion:         FLU+R5
+Best-fit model: FLU+R5 chosen according to BIC
+
+All model information printed to PA_alignment.fasta.model.gz
+CPU time for ModelFinder: 44946.174 seconds (12h:29m:6s)
+Wall-clock time for ModelFinder: 45156.741 seconds (12h:32m:36s)
+Generating 1000 samples for ultrafast bootstrap (seed: 494711)...
+
+NOTE: 409 MB RAM (0 GB) is required!
+Estimate model parameters (epsilon = 0.100)
+1. Initial log-likelihood: -27608.199
+Optimal log-likelihood: -27608.195
+Site proportion and rates:  (0.633,0.293) (0.220,1.259) (0.108,2.686) (0.033,4.821) (0.007,13.341)
+Parameters optimization took 1 rounds (20.840 sec)
+Computing ML distances based on estimated model parameters...
+Computing ML distances took 38.511631 sec (of wall-clock time) 38.478325 sec(of CPU time)
+WARNING: Some pairwise ML distances are too long (saturated)
+Computing RapidNJ tree took 0.050322 sec (of wall-clock time) 0.090252 sec (of CPU time)
+Log-likelihood of RapidNJ tree: -29742.968
+--------------------------------------------------------------------
+|             INITIALIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Generating 98 parsimony trees... 46.917 second
+Computing log-likelihood of 98 initial trees ... 150.222 seconds
+Current best score: -27608.195
+
+Do NNI search on 20 best initial trees
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 1: -27590.799
+Iteration 10 / LogL: -27647.638 / Time: 0h:23m:28s
+Iteration 20 / LogL: -27634.528 / Time: 0h:40m:44s
+Finish initializing candidate tree set (20)
+Current best tree score: -27590.799 / CPU time: 2356.995
+Number of iterations: 20
+--------------------------------------------------------------------
+|               OPTIMIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 22: -27587.433
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 24: -27582.408
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 26: -27577.620
+Iteration 30 / LogL: -27584.848 / Time: 0h:56m:15s (3h:6m:14s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 31: -27567.352
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 34: -27566.087
+Iteration 40 / LogL: -27570.770 / Time: 1h:14m:51s (3h:0m:26s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 47: -27559.011
+Iteration 50 / LogL: -27564.334 / Time: 1h:31m:44s (3h:1m:37s left)
+Log-likelihood cutoff on original alignment: -27747.216
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 51: -27549.960
+Iteration 60 / LogL: -27551.233 / Time: 1h:47m:38s (2h:46m:1s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 63: -27533.905
+Iteration 70 / LogL: -27588.897 / Time: 2h:3m:38s (2h:46m:39s left)
+Iteration 80 / LogL: -27538.641 / Time: 2h:18m:39s (2h:25m:40s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 86: -27532.385
+Iteration 90 / LogL: -27560.288 / Time: 2h:33m:10s (2h:45m:12s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 93: -27527.447
+Iteration 100 / LogL: -27543.615 / Time: 2h:49m:5s (2h:38m:50s left)
+Log-likelihood cutoff on original alignment: -27705.399
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.924
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 110 / LogL: -27528.477 / Time: 3h:3m:54s (2h:31m:51s left)
+Iteration 120 / LogL: -27536.688 / Time: 3h:18m:53s (2h:13m:42s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 123: -27527.168
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 126: -27522.989
+Iteration 130 / LogL: -27543.379 / Time: 3h:37m:0s (2h:41m:29s left)
+Iteration 140 / LogL: -27558.763 / Time: 3h:50m:57s (2h:22m:53s left)
+Iteration 150 / LogL: -27539.048 / Time: 4h:7m:55s (2h:6m:27s left)
+Log-likelihood cutoff on original alignment: -27705.399
+Iteration 160 / LogL: -27545.816 / Time: 4h:24m:57s (1h:49m:58s left)
+Iteration 170 / LogL: -27548.750 / Time: 4h:39m:42s (1h:32m:41s left)
+Iteration 180 / LogL: -27533.725 / Time: 4h:57m:18s (1h:16m:24s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 181: -27519.988
+Iteration 190 / LogL: -27557.704 / Time: 5h:13m:34s (2h:30m:58s left)
+Iteration 200 / LogL: -27525.564 / Time: 5h:29m:30s (2h:14m:7s left)
+Log-likelihood cutoff on original alignment: -27681.121
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.959
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 210 / LogL: -27546.406 / Time: 5h:45m:22s (2h:28m:43s left)
+Iteration 220 / LogL: -27562.859 / Time: 6h:1m:29s (2h:12m:3s left)
+Iteration 230 / LogL: -27531.665 / Time: 6h:16m:22s (1h:55m:2s left)
+Iteration 240 / LogL: -27529.592 / Time: 6h:31m:17s (1h:38m:13s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 248: -27519.210
+Iteration 250 / LogL: -27531.126 / Time: 6h:46m:8s (2h:39m:50s left)
+Log-likelihood cutoff on original alignment: -27681.121
+Iteration 260 / LogL: -27537.838 / Time: 7h:0m:51s (2h:22m:59s left)
+Iteration 270 / LogL: -27530.743 / Time: 7h:17m:4s (2h:6m:44s left)
+Iteration 280 / LogL: -27542.963 / Time: 7h:31m:38s (1h:50m:4s left)
+Iteration 290 / LogL: -27556.652 / Time: 7h:46m:27s (1h:33m:36s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 296: -27517.808
+Iteration 300 / LogL: -27533.159 / Time: 8h:2m:21s (2h:34m:52s left)
+Log-likelihood cutoff on original alignment: -27681.121
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.972
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 310: -27517.352
+Iteration 310 / LogL: -27517.352 / Time: 8h:17m:7s (2h:40m:52s left)
+Iteration 320 / LogL: -27554.088 / Time: 8h:31m:19s (2h:24m:15s left)
+Iteration 330 / LogL: -27531.270 / Time: 8h:45m:54s (2h:7m:52s left)
+Iteration 340 / LogL: -27552.196 / Time: 9h:0m:3s (1h:51m:31s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 343: -27517.185
+Iteration 350 / LogL: -27528.454 / Time: 9h:13m:40s (2h:27m:32s left)
+Log-likelihood cutoff on original alignment: -27681.121
+Iteration 360 / LogL: -27538.963 / Time: 9h:28m:22s (2h:11m:24s left)
+Iteration 370 / LogL: -27537.353 / Time: 9h:42m:39s (1h:55m:16s left)
+Iteration 380 / LogL: -27518.010 / Time: 9h:57m:6s (1h:39m:15s left)
+Iteration 390 / LogL: -27534.699 / Time: 10h:10m:20s (1h:23m:9s left)
+Iteration 400 / LogL: -27560.193 / Time: 10h:24m:18s (1h:7m:16s left)
+Log-likelihood cutoff on original alignment: -27680.546
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.982
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 406: -27512.281
+Iteration 410 / LogL: -27531.649 / Time: 10h:39m:50s (2h:30m:11s left)
+Iteration 420 / LogL: -27536.621 / Time: 10h:54m:7s (2h:14m:15s left)
+Iteration 430 / LogL: -27525.826 / Time: 11h:8m:24s (1h:58m:24s left)
+Iteration 440 / LogL: -27522.755 / Time: 11h:21m:55s (1h:42m:31s left)
+Iteration 450 / LogL: -27527.652 / Time: 11h:36m:12s (1h:26m:49s left)
+Log-likelihood cutoff on original alignment: -27680.546
+Iteration 460 / LogL: -27531.762 / Time: 11h:49m:24s (1h:11m:5s left)
+Iteration 470 / LogL: -27567.923 / Time: 12h:2m:51s (0h:55m:29s left)
+Iteration 480 / LogL: -27522.368 / Time: 12h:16m:58s (0h:40m:0s left)
+Iteration 490 / LogL: -27545.212 / Time: 12h:32m:21s (0h:24m:37s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 495: -27511.516
+Iteration 500 / LogL: -27517.814 / Time: 12h:47m:48s (2h:26m:10s left)
+Log-likelihood cutoff on original alignment: -27680.546
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.977
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 510 / LogL: -27533.424 / Time: 13h:2m:37s (2h:18m:22s left)
+Iteration 520 / LogL: -27535.171 / Time: 13h:17m:55s (2h:2m:59s left)
+Iteration 530 / LogL: -27521.080 / Time: 13h:32m:43s (1h:47m:32s left)
+Iteration 540 / LogL: -27533.145 / Time: 13h:47m:46s (1h:32m:8s left)
+Iteration 550 / LogL: -27525.718 / Time: 14h:3m:56s (1h:16m:51s left)
+Log-likelihood cutoff on original alignment: -27663.675
+Iteration 560 / LogL: -27536.821 / Time: 14h:16m:14s (1h:1m:16s left)
+Iteration 570 / LogL: -27553.581 / Time: 14h:30m:43s (0h:45m:54s left)
+Iteration 580 / LogL: -27516.767 / Time: 14h:45m:55s (0h:30m:36s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 581: -27510.613
+Iteration 590 / LogL: -27526.794 / Time: 15h:2m:15s (2h:19m:23s left)
+Iteration 600 / LogL: -27527.844 / Time: 15h:15m:20s (2h:3m:46s left)
+Log-likelihood cutoff on original alignment: -27663.675
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.977
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 610 / LogL: -27517.839 / Time: 15h:30m:33s (2h:17m:31s left)
+Iteration 620 / LogL: -27565.477 / Time: 15h:45m:34s (2h:2m:12s left)
+Iteration 630 / LogL: -27545.848 / Time: 16h:0m:18s (1h:46m:52s left)
+Iteration 640 / LogL: -27549.718 / Time: 16h:15m:19s (1h:31m:34s left)
+Iteration 650 / LogL: -27515.791 / Time: 16h:30m:12s (1h:16m:17s left)
+Log-likelihood cutoff on original alignment: -27663.675
+Iteration 660 / LogL: -27526.035 / Time: 16h:44m:59s (1h:1m:0s left)
+Iteration 670 / LogL: -27531.886 / Time: 16h:59m:38s (0h:45m:43s left)
+Iteration 680 / LogL: -27573.351 / Time: 17h:15m:9s (0h:30m:29s left)
+Iteration 690 / LogL: -27540.953 / Time: 17h:30m:37s (0h:15m:14s left)
+Iteration 700 / LogL: -27577.555 / Time: 17h:45m:8s (0h:0m:0s left)
+Log-likelihood cutoff on original alignment: -27659.665
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.974
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 710 / LogL: -27510.689 / Time: 18h:0m:37s (2h:17m:10s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 718: -27502.680
+Iteration 720 / LogL: -27544.403 / Time: 18h:15m:37s (2h:29m:20s left)
+Iteration 730 / LogL: -27531.221 / Time: 18h:31m:2s (2h:14m:7s left)
+Iteration 740 / LogL: -27526.752 / Time: 18h:44m:33s (1h:58m:41s left)
+Iteration 750 / LogL: -27548.152 / Time: 19h:0m:50s (1h:43m:34s left)
+Log-likelihood cutoff on original alignment: -27659.665
+Iteration 760 / LogL: -27515.447 / Time: 19h:17m:9s (1h:28m:25s left)
+Iteration 770 / LogL: -27527.709 / Time: 19h:31m:12s (1h:13m:6s left)
+Iteration 780 / LogL: -27530.311 / Time: 19h:46m:55s (0h:57m:53s left)
+Iteration 790 / LogL: -27536.342 / Time: 20h:0m:46s (0h:42m:36s left)
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 799: -27502.406
+Iteration 800 / LogL: -27503.448 / Time: 20h:15m:6s (2h:30m:33s left)
+Log-likelihood cutoff on original alignment: -27656.812
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.970
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 810 / LogL: -27515.425 / Time: 20h:29m:27s (2h:16m:46s left)
+Iteration 820 / LogL: -27533.215 / Time: 20h:43m:12s (2h:1m:26s left)
+Iteration 830 / LogL: -27525.636 / Time: 20h:58m:29s (1h:46m:15s left)
+Iteration 840 / LogL: -27546.000 / Time: 21h:13m:0s (1h:31m:2s left)
+Iteration 850 / LogL: -27509.382 / Time: 21h:27m:41s (1h:15m:50s left)
+Log-likelihood cutoff on original alignment: -27656.812
+Iteration 860 / LogL: -27520.091 / Time: 21h:41m:37s (1h:0m:36s left)
+Iteration 870 / LogL: -27512.426 / Time: 21h:55m:56s (0h:45m:25s left)
+Iteration 880 / LogL: -27538.897 / Time: 22h:10m:50s (0h:30m:16s left)
+Iteration 890 / LogL: -27616.580 / Time: 22h:24m:54s (0h:15m:7s left)
+Iteration 900 / LogL: -27522.500 / Time: 22h:38m:51s (0h:0m:0s left)
+Log-likelihood cutoff on original alignment: -27656.812
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.973
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+Iteration 910 / LogL: -27514.332 / Time: 22h:53m:41s (2h:16m:0s left)
+Iteration 920 / LogL: -27527.843 / Time: 23h:7m:2s (2h:0m:44s left)
+Iteration 930 / LogL: -27523.910 / Time: 23h:20m:51s (1h:45m:33s left)
+Iteration 940 / LogL: -27512.696 / Time: 23h:35m:33s (1h:30m:27s left)
+Iteration 950 / LogL: -27537.137 / Time: 23h:50m:4s (1h:15m:20s left)
+Log-likelihood cutoff on original alignment: -27656.812
+Iteration 960 / LogL: -27519.822 / Time: 24h:6m:8s (1h:0m:19s left)
+Iteration 970 / LogL: -27563.584 / Time: 24h:21m:33s (0h:45m:14s left)
+Iteration 980 / LogL: -27523.908 / Time: 24h:36m:39s (0h:30m:10s left)
+Iteration 990 / LogL: -27534.249 / Time: 24h:50m:32s (0h:15m:4s left)
+Iteration 1000 / LogL: -27509.320 / Time: 25h:5m:6s (0h:0m:0s left)
+Log-likelihood cutoff on original alignment: -27656.812
+NOTE: Bootstrap correlation coefficient of split occurrence frequencies: 0.978
+NOTE: UFBoot does not converge, continue at least 100 more iterations
+WARNING: bootstrap analysis did not converge. You should rerun with higher number of iterations (-nm option)
+TREE SEARCH COMPLETED AFTER 1001 ITERATIONS / Time: 25h:6m:29s
+
+--------------------------------------------------------------------
+|                    FINALIZING TREE SEARCH                        |
+--------------------------------------------------------------------
+Performs final model parameters optimization
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -27502.406
+Optimal log-likelihood: -27502.406
+Site proportion and rates:  (0.634,0.294) (0.226,1.269) (0.104,2.802) (0.029,4.817) (0.007,13.386)
+Parameters optimization took 1 rounds (5.284 sec)
+BEST SCORE FOUND : -27502.406
+Creating bootstrap support values...
+Split supports printed to NEXUS file PA_alignment.fasta.splits.nex
+Total tree length: 12.469
+
+Total number of iterations: 1001
+CPU time used for tree search: 90026.761 sec (25h:0m:26s)
+Wall-clock time used for tree search: 90302.048 sec (25h:5m:2s)
+Total CPU time used: 90123.533 sec (25h:2m:3s)
+Total wall-clock time used: 90399.070 sec (25h:6m:39s)
+
+Computing bootstrap consensus tree...
+Reading input file PA_alignment.fasta.splits.nex...
+692 taxa and 12744 splits.
+Consensus tree written to PA_alignment.fasta.contree
+Reading input trees file PA_alignment.fasta.contree
+Log-likelihood of consensus tree: -27504.827
+
+Analysis results written to: 
+  IQ-TREE report:                PA_alignment.fasta.iqtree
+  Maximum-likelihood tree:       PA_alignment.fasta.treefile
+  Likelihood distances:          PA_alignment.fasta.mldist
+
+Ultrafast bootstrap approximation results written to:
+  Split support values:          PA_alignment.fasta.splits.nex
+  Consensus tree:                PA_alignment.fasta.contree
+  Screen log file:               PA_alignment.fasta.log
+
+Date and Time: Thu Mar  6 01:40:38 2025
