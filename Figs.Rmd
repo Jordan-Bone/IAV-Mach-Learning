@@ -24,7 +24,7 @@ names(b) <- c("UID","Acc","Sample","Classification","Date")
 rbind(a,b) %>% write.csv("feats/combo/Timings.csv",row.names = F)
 ```
 
-```{r Reference Builder, eval=FALSE}
+```{r eval=FALSE}
 clu <- list.files("feats/combo",pattern = ".csv",full.names = T,recursive = T)
 cls <- data.frame()
 for(i in 1:length(clu)){
@@ -331,6 +331,10 @@ ggplot(overall,aes(x=Model,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+
 ggsave("Figures & Presentables/Overall Conf.pdf",width=33,height=19,units = "cm")
 ```
 
+```{r}
+master_conf
+```
+
 ### Protein by Protein
 ```{r,eval=FALSE}
   overall_2c <- c()
@@ -367,7 +371,7 @@ tc_byc <- read.csv("Comp/Two class breakdown.csv")
 mc_byc <- read.csv("Comp/Multiclass breakdown.csv")
 
 overall_results$Accuracy <- percent(overall_results$Accuracy,accuracy = 0.01)
-overall_results[,c(2,1,3)] %>% arrange(Protein) %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(1)
+overall_results[,c(2,1,3)] %>% pivot_wider(names_from=ModelType, values_from=Accuracy) %>% arrange(Protein) %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(1)
 ```
 
 

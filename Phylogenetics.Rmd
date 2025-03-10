@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/Coding_Ref/Phylogenetics/")
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/")
 
 # source("MegaLibrary.R")
 # install_github("rgriff23/btw")
@@ -15,8 +15,8 @@ library(tidyr)
 library(stringr)
 library(magrittr)
 
-uid_ref <- read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/USED UIDS.csv")
-m1_root <- read.nexus("iqtree/alpha iqtree/M1.nexus")
+uid_ref <- read.csv("USED UIDS.csv")
+# m1_root <- read.nexus("iqtree/alpha iqtree/M1.nexus")
 ```
 
 # BayesTraits
@@ -54,29 +54,66 @@ nodelabels(thermo = ans$lik.anc, piecol = co, cex = 0.75)
 
 ```{r, include=FALSE}
 library(phytools)
-data(anoletree)
-## this is just to pull out the tip states from the
-## data object - normally we would read this from file
-x<-getStates(anoletree,"tips")
-tree<-anoletree
-rm(anoletree)
-tree
-plotTree(tree,type="fan",fsize=0.8,ftype="i")
-cols<-setNames(palette()[1:length(unique(x))],sort(unique(x)))
-tiplabels(pie=to.matrix(x,sort(unique(x))),piecol=cols,cex=0.3)
-add.simmap.legend(colors=cols,prompt=FALSE,x=0.9*par()$usr[1],
-                  y=-max(nodeHeights(tree)),fsize=0.8)
-fitER<-ace(x,tree,model="ER",type="discrete")
-fitER
-round(fitER$lik.anc,3)
+library(phangorn)
+library(phylotools)
 
-plotTree(tree,type="fan",fsize=0.8,ftype="i")
-nodelabels(node=1:tree$Nnode+Ntip(tree),
-           pie=fitER$lik.anc,piecol=cols,cex=0.5)
-tiplabels(pie=to.matrix(x,sort(unique(x))),piecol=cols,cex=0.3)
-add.simmap.legend(colors=cols,prompt=FALSE,x=0.9*par()$usr[1],
-                  y=-max(nodeHeights(tree)),fsize=0.8)
+grass.align <- read.phyDat("grass_aligned-renamed.fasta", format = "fasta")
+dist <- dist.ml(grass.align)
+nj.tree <- nj(dist)
+fit <- pml(nj.tree, data = grass.align)
+fitGTR.G <- update(fit, model = "GTR", k = 4)
+fitGTR.G <- optim.pml(fitGTR.G, model = "GTR", optGamma = T, rearrangement = "stochastic", control = pml.control(trace = 0))
+
+fitGTR.G$tree <- root(fit$tree, outgroup = c('barley_D-hordein','Siberian wild rye_D-hordein'))
+plot(fitGTR.G)
+anc.ml <- ancestral.pml(fitGTR.G, "ml")
+plotAnc(fitGTR.G$tree, anc.ml, 209)
 ```
+
+## Continuous 
+```{r}
+#install.packages('phytools')
+library(phytools)
+
+g.tree <- read.nexus('/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/Phylogenies/iqtree/trees/NEXUS/M1_alignment.nexus')
+tree.root <- root(g.tree, outgroup = 'GNY411XNI_ABF69261_Avian_2001')
+plot(tree.root)
+
+new <- drop.tip(tree.root, c('barley_D-hordein', 'Siberian_wild_rye_D-hordein', 'Asiatic_grass'),
+                trim.internal = TRUE, subtree = FALSE, root.edge = 0, 
+                rooted = is.rooted(tree.root), collapse.singles = TRUE, interactive = FALSE)
+
+plot(new)
+nodelabels()
+new$tip.label
+height <- as.numeric(c(24, 36, 20, 30, 48, 18, 78, 60, 48, 48))
+anc.height <- fastAnc(new, height, CI = TRUE)
+anc.height
+```
+
+## Discrete
+```{r}
+new <- as.phylo(new)
+
+pheno <- read.table('grass_discrete.txt', row.names = 1)
+pheno <- as.matrix(pheno)[,1]
+pheno
+ace(x = pheno, phy = new, type = "discrete", model = "ER")
+fit.discrete<-ace(pheno, new, model="ER",type="discrete")
+fit.discrete
+fit.discrete$lik.anc
+
+plot(new)
+
+cols <- c('blue', 'orange')
+
+nodelabels(node=1:new$Nnode+Ntip(new),pie=fit.discrete$lik.anc,piecol=cols,cex=0.7)
+
+tiplabels(pie=to.matrix(pheno,sort(unique(pheno))),piecol=cols,cex=0.3)
+
+add.simmap.legend(colors=cols,prompt=FALSE,x=0.9*par()$usr[1], y=-max(nodeHeights(new)),fsize=0.8)
+```
+
 
 # ggtree
 ```{r, include=FALSE}

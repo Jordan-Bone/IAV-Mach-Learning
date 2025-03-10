@@ -1,0 +1,84 @@
+Confusion Matrix and Statistics
+
+                Reference
+Prediction       Avian Canidae Equidae Hominidae Phyllostomidae Suidae
+  Avian          16528     154      88       535             19    843
+  Canidae           31       0       0         0              0      2
+  Equidae           13       5      14         0              0      7
+  Hominidae        108       8       1      2434              0    505
+  Phyllostomidae     2       0       0         0              3      0
+  Suidae           399      33      37      2737              2   9139
+
+Overall Statistics
+                                          
+               Accuracy : 0.8357          
+                 95% CI : (0.8317, 0.8396)
+    No Information Rate : 0.5077          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.7243          
+                                          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: Avian Class: Canidae Class: Equidae Class: Hominidae
+Sensitivity                0.9676      0.0000000      0.1000000          0.42657
+Specificity                0.9011      0.9990134      0.9992539          0.97774
+Pos Pred Value             0.9098      0.0000000      0.3589744          0.79647
+Neg Pred Value             0.9643      0.9940501      0.9962509          0.89304
+Prevalence                 0.5077      0.0059441      0.0041608          0.16958
+Detection Rate             0.4912      0.0000000      0.0004161          0.07234
+Detection Prevalence       0.5399      0.0009808      0.0011591          0.09083
+Balanced Accuracy          0.9343      0.4995067      0.5496269          0.70215
+                     Class: Phyllostomidae Class: Suidae
+Sensitivity                      1.250e-01        0.8707
+Specificity                      9.999e-01        0.8614
+Pos Pred Value                   6.000e-01        0.7402
+Neg Pred Value                   9.994e-01        0.9363
+Prevalence                       7.133e-04        0.3119
+Detection Rate                   8.916e-05        0.2716
+Detection Prevalence             1.486e-04        0.3670
+Balanced Accuracy                5.625e-01        0.8661
+Confusion Matrix and Statistics
+
+                Reference
+Prediction       Avian Canidae Equidae Hominidae Phyllostomidae Suidae
+  Avian          16528     154      88       535             19    843
+  Canidae           31       0       0         0              0      2
+  Equidae           13       5      14         0              0      7
+  Hominidae        108       8       1      2434              0    505
+  Phyllostomidae     2       0       0         0              3      0
+  Suidae           399      33      37      2737              2   9139
+
+Overall Statistics
+                                          
+               Accuracy : 0.8357          
+                 95% CI : (0.8317, 0.8396)
+    No Information Rate : 0.5077          
+    P-Value [Acc > NIR] : < 2.2e-16       
+                                          
+                  Kappa : 0.7243          
+                                          
+ Mcnemar's Test P-Value : NA              
+
+Statistics by Class:
+
+                     Class: Avian Class: Canidae Class: Equidae Class: Hominidae
+Sensitivity                0.9676      0.0000000      0.1000000          0.42657
+Specificity                0.9011      0.9990134      0.9992539          0.97774
+Pos Pred Value             0.9098      0.0000000      0.3589744          0.79647
+Neg Pred Value             0.9643      0.9940501      0.9962509          0.89304
+Prevalence                 0.5077      0.0059441      0.0041608          0.16958
+Detection Rate             0.4912      0.0000000      0.0004161          0.07234
+Detection Prevalence       0.5399      0.0009808      0.0011591          0.09083
+Balanced Accuracy          0.9343      0.4995067      0.5496269          0.70215
+                     Class: Phyllostomidae Class: Suidae
+Sensitivity                      1.250e-01        0.8707
+Specificity                      9.999e-01        0.8614
+Pos Pred Value                   6.000e-01        0.7402
+Neg Pred Value                   9.994e-01        0.9363
+Prevalence                       7.133e-04        0.3119
+Detection Rate                   8.916e-05        0.2716
+Detection Prevalence             1.486e-04        0.3670
+Balanced Accuracy                5.625e-01        0.8661
