@@ -29,7 +29,7 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   
   mods <- list.files("Comp",pattern=paste0(MODTYPE,".rds"),full.names = T) %>% .[grepl(PRT, .)]     # select protein
   for(j in c(1:length(mods))){
-    print(mods[j])
+    # print(mods[j])
     
     MOD <- readRDS(mods[j])
     STY <- mods[j] %>% str_split_i("_",2)
@@ -50,14 +50,14 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
     
   }
   confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
-  
+  multiclass.roc(response = validate %>% pull(Classification),predictor = predict_class) %>% print
   
   # matrix_one_vs_all <- vector("list", length(levels(MOD$models$CTDc.ranger$trainingData$.outcome)))
   # for (i in seq_along(matrix_one_vs_all)) {
   # positive.class <- levels(MOD$models$CTDc.ranger$trainingData$.outcome)[i]
   # # print(positive.class)
-  # matrix_one_vs_all[[i]] <- confusionMatrix(predict_class$Prediction %>% droplevels, 
-  #                                           validate %>% pull(Classification) %>% as.factor %>% droplevels, 
+  # matrix_one_vs_all[[i]] <- confusionMatrix(predict_class$Prediction %>% droplevels,
+  #                                           validate %>% pull(Classification) %>% as.factor %>% droplevels,
   #                                           positive = positive.class)
   # t1_df <- cm$overall %>% round(., 3) %>% t() %>%
   #   cbind(.,
@@ -69,16 +69,13 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   # if (output == "classwise"){return(matrix_test$byClass %>% reshape2::melt())}
   # else {return(as.data.frame(t1_df))}
   # }
-  
-  #F1_Score_micro(vlis,prds) %>% percent(accuracy=0.01) %>% print # 83.57%
-  #F1_Score_macro(vlis,prds) %>% percent(accuracy=0.01) %>% print # 47.94%
-  
-  # AUC = multiclass.roc(response = vlis %>% as.factor, predictor = prds %>% as.factor,
-  # levels=levels(as.factor(prds)))
-  # %>% .$auc %>% as.numeric() %>% round(3)
-  
-  # F1_Score_micro(vlis,prds) %>% percent(accuracy=0.01) %>% print
-  # F1_Score_macro(vlis,prds) %>% percent(accuracy=0.01) %>% print
+
+  # AUC = multiclass.roc(response = as.factor(vlis), predictor = as.factor(prds),
+  # levels=levels(as.factor(prds))) %>% .$auc %>% as.numeric() %>% round(3)
+
+  f1mi <- F1_Score_micro(vlis,prds)
+  f1ma <- F1_Score_macro(vlis,prds)
+  data.frame(PRT,f1mi,f1ma) %>% print
   
   ###############
   # VARIABLE IMPORTANCE

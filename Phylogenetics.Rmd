@@ -19,6 +19,13 @@ uid_ref <- read.csv("USED UIDS.csv")
 # m1_root <- read.nexus("iqtree/alpha iqtree/M1.nexus")
 ```
 
+```{r}
+m1 <- read.nexus("/Users/jordanbone/Documents/Coding_Ref/Phylogenetics/BayesTraits/M1.nexus")
+data.frame(m1$edge.length) %>% ggplot(aes(m1.edge.length,fill=m1.edge.length>0))+ geom_histogram()
+data.frame(m1$edge.length) %>% subset(m1.edge.length>0.000003) %>% ggplot(aes(m1.edge.length))+ geom_histogram()
+```
+
+
 # BayesTraits
 ```{r}
 library(btw)
