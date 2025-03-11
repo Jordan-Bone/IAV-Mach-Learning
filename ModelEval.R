@@ -49,8 +49,8 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
     pred_vals <- append(pred_vals,prvals)
     
   }
-  confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
-  multiclass.roc(response = validate %>% pull(Classification),predictor = predict_class) %>% print
+  # confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
+  # multiclass.roc(response = validate %>% pull(Classification),predictor = predict_class) %>% print
   
   # matrix_one_vs_all <- vector("list", length(levels(MOD$models$CTDc.ranger$trainingData$.outcome)))
   # for (i in seq_along(matrix_one_vs_all)) {
@@ -69,13 +69,15 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   # if (output == "classwise"){return(matrix_test$byClass %>% reshape2::melt())}
   # else {return(as.data.frame(t1_df))}
   # }
-
-  # AUC = multiclass.roc(response = as.factor(vlis), predictor = as.factor(prds),
-  # levels=levels(as.factor(prds))) %>% .$auc %>% as.numeric() %>% round(3)
-
+  
+  predictor_values <- matrix(ncol=length(levels(as.factor(vlis))),data=pred_vals)
+  colnames(predictor_values) <- levels(as.factor(vlis))
+  AUC = multiclass.roc(response = as.factor(vlis), predictor = predictor_values,
+  levels=levels(as.factor(prds))) %>% .$auc %>% as.numeric() %>% round(3)
+  
   f1mi <- F1_Score_micro(vlis,prds)
   f1ma <- F1_Score_macro(vlis,prds)
-  data.frame(PRT,f1mi,f1ma) %>% print
+  data.frame(PRT,f1mi,f1ma,AUC) %>% print
   
   ###############
   # VARIABLE IMPORTANCE
