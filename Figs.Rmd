@@ -465,6 +465,34 @@ ggplot(data=rate_sums,aes(state1,state2,fill=Rate))+
 # bftest(results,results_2)
 ```
 
+### Trait Analyses
+```{r}
+traits <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  temp <- read.csv(paste0("Phylogenies/iqtree/Trait Analyses/",PRT," MultiState Trait Analysis.csv"))
+  trait_temp <- temp %>% pivot_longer(cols=4:length(temp),names_to = "Transition",values_to = "Rate") %>% mutate(Protein=PRT,Recip=Transition %>% str_replace_all("q","") %>% str_sub(1,1),Donor=Transition %>% str_replace_all("q","") %>% str_sub(2,2))
+  traits <- rbind(traits,trait_temp)
+}
+traits <- traits %>% select(-Tree.No)
+traits$Protein <- traits$Protein %>% str_replace_all("PB2","01PB2") %>% str_replace_all("PB1","02PB1") %>% str_replace_all("PA","03PA") %>% str_replace_all("HA","04HA") %>% str_replace_all("NP","05NP") %>% str_replace_all("NA","06NA") %>% str_replace_all("M1","07M1") %>% str_replace_all("NS1","08NS1")
+trait_labs <- traits %>% group_by(Protein,Donor,Recip) %>% summarise(mRate=mean(Rate),sdRate=sd(Rate))
+```
+
+```{r}
+ggplot(trait_labs,aes(Donor,Recip,fill=mRate))+geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ 
+  geom_text(aes(label=paste0(round(mRate,2),"\n±",round(sdRate,2))))+
+  facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
+ggsave("Host Transitions.pdf",width=33,height=19,units = "cm")
+
+ggplot(subset(trait_labs,mRate>1),aes(Donor,Recip,fill=mRate))+geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ 
+  geom_text(aes(label=paste0(round(mRate,2),"\n±",round(sdRate,2))))+
+  facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
+ggsave("Host Transitions - filtered.pdf",width=33,height=19,units = "cm")
+
+# ggplot(trait_labs,aes(paste0(Donor,Recip),y=mRate,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0),ymax=mRate+sdRate,colour=Donor))+geom_pointrange(size=0.4)+facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "bottom")
+```
+
+
 ### Ancestral Reconstruction
 ```{r}
 colz <- c("Avian" = "skyblue", "Mammalian" = "indianred")
@@ -503,22 +531,9 @@ ggplot(pb2_ace)+
 ```{r}
 ggplot(subset(transition_rates,Protein=="HA"),aes(Donor,Recip,fill=Rate))+geom_tile()+facet_wrap(~Protein)
 
-ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, ymax=mRate+sdRate,colour=str_sub(Transition,2,2)))+geom_crossbar()+facet_wrap(~Protein)+theme(legend.position = "none")
+ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, ymax=mRate+sdRate,colour=str_sub(Transition,1,1)))+geom_crossbar()+facet_wrap(~Protein)+theme(legend.position = "none")
 
 ggplot(RecNodes,aes(RecTrait,RecNode,colour=RecTrait))+geom_point()+facet_wrap(~Protein)
 ```
 
-
-## BEAST
-```{r}
-subset(reference_table,(UID %in% rep_uids$UID) & (Protein %in% PRT)) %>% group_by(UID,Protein) %>% summarise(ntAcc) %>% pivot_wider(names_from = Protein, values_from = ntAcc) %>% write.csv("BEAST/Timesheet.csv",row.names = F)
-
-# subset(reference_table, Protein %in% PRT) |>
-#   dplyr::summarise(n = dplyr::n(), .by = c(UID, Protein)) |>
-#   dplyr::filter(n > 1L)`
-```
-
-```{r}
-read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/BEAST/Acc_meta/ncbi_dataset/data/data_report.jsonl",sep="{",header = F)
-```
 
