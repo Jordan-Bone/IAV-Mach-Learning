@@ -15,6 +15,7 @@ rep_uids <- read.csv("USED UIDS.txt")
 uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
 ```
+
 # Data Collection
 ```{r, eval=FALSE}
 a <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ntAcc,Sample,Classification,Date)
@@ -450,7 +451,61 @@ ggsave("Figures & Presentables/VarImp5.pdf",width=33,height=19,units = "cm")
 
 ## BayesTraits
 ```{r}
+multi_trs_rates <- results$Log$results %>% select(-c("Tree.No","No.Off.Parmeters","No.Off.Zero","Model.string")&-starts_with("Root")) %>% pivot_longer(cols = 3:32,names_to = "Transition",values_to = "Rate")
 
+multi_trs_rates$state1 <- multi_trs_rates$Transition %>% str_replace_all("q","") %>% str_sub(1,1)
+multi_trs_rates$state2 <- multi_trs_rates$Transition %>% str_replace_all("q","") %>% str_sub(2,2)
+rate_sums <- multi_trs_rates %>% group_by(state1,state2) %>% summarise(Rate=mean(Rate))
+
+ggplot(data=rate_sums,aes(state1,state2,fill=Rate))+
+  geom_tile(colour="white")+geom_text(aes(label=round(Rate,2)))+scale_fill_gradient(low="white",high="forestgreen")+
+  labs(x="Origin",y="Spillover",subtitle = "Transition Rates Between Hosts",title = "M1 protein")
+
+# lrtest(results,results_2)
+# bftest(results,results_2)
+```
+
+### Ancestral Reconstruction
+```{r}
+colz <- c("Avian" = "skyblue", "Mammalian" = "indianred")
+transition_rates <- data.frame()
+RecNodes <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
+  raw_ace <- read.csv(paste0("Phylogenies/iqtree/ACE/",PRT," Trait Reconstruction.csv"))
+  rates <- raw_ace %>% select(Iteration,Lh,starts_with("q")) %>% pivot_longer(cols=3:32,names_to = "Transition",values_to = "Rate") %>% mutate(Protein=PRT,Donor=Transition %>% str_replace_all("q","") %>% str_sub(1,1),Recip=Transition %>% str_replace_all("q","") %>% str_sub(2,2))
+  transition_rates <- rbind(transition_rates,rates)
+  
+  recons <- raw_ace %>% select(Iteration,Lh,starts_with("RecNode")) %>% pivot_longer(cols=3:8,names_to = "RecTrait",values_to = "RecNode") %>% mutate(Protein=PRT,RecTrait=RecTrait %>% str_split_i("\\.",3))
+  RecNodes <- rbind(RecNodes,recons)
+}
+# RecNodes$RecTrait <- ifelse(RecNodes$RecTrait="A","Avian","B" "D" "E" "H" "P")
+
+trat <- transition_rates %>% group_by(Protein,Transition=str_replace_all(Transition,"q","")) %>% summarise(mRate=mean(Rate),sdRate=sd(Rate))
+# trat <- transition_rates %>% group_by(Protein,Transition) %>% summarise(Rate=quantile(Rate))
+# trat$Stat <- rep(c("min","q25","med","q75","max"),210)
+```
+
+```{r}
+ggplot(transition_rates,aes(Iteration,Lh,colour=Protein))+geom_point()
+
+ggplot(pb2_ace,aes(q01,q10))+geom_point()+
+  geom_label(aes(35,8,label=paste("A -> M\n",round(mean(ace_df$q01),2))),fill="skyblue")+
+  geom_label(aes(8,30,label=paste("M -> A\n",round(mean(ace_df$q10),2))),fill="indianred")+
+  labs(caption = "Transition Rates from State 0 (Avian) to State 1 (Mammalian) and reverse.",subtitle = "Transition Rates Between States",title = "M1 protein")
+
+ggplot(pb2_ace)+
+  geom_point(aes(Iteration,RecNode.P.0.,colour="Avian"))+
+  geom_point(aes(Iteration,RecNode.P.1.,colour="Mammalian"))+
+  scale_colour_manual(name="Host",values=colz)+
+  labs(x="MCMC iterations",y="Proportion of Node States")
+```
+
+```{r}
+ggplot(subset(transition_rates,Protein=="HA"),aes(Donor,Recip,fill=Rate))+geom_tile()+facet_wrap(~Protein)
+
+ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, ymax=mRate+sdRate,colour=str_sub(Transition,2,2)))+geom_crossbar()+facet_wrap(~Protein)+theme(legend.position = "none")
+
+ggplot(RecNodes,aes(RecTrait,RecNode,colour=RecTrait))+geom_point()+facet_wrap(~Protein)
 ```
 
 
