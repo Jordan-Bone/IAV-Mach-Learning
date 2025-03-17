@@ -536,4 +536,29 @@ ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, 
 ggplot(RecNodes,aes(RecTrait,RecNode,colour=RecTrait))+geom_point()+facet_wrap(~Protein)
 ```
 
+Transition states between traits is meant to show the likelihood of roving from one host to another.
+Similarly, the continuous trait reconstruction models show the difference in protein features along branches
+
+Now where exactly do we expect to see big changes - where are the known host shifts?
+
+EIV2 H3N8 first emerged in 1963:
+PB2, ha, na, m and NS1 reassorted with np, PB1 and pa?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
