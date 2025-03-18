@@ -545,6 +545,30 @@ EIV2 H3N8 first emerged in 1963:
 PB2, ha, na, m and NS1 reassorted with np, PB1 and pa?
 
 
+```{r, eval=FALSE}
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  tre <- read.nexus(paste0("Phylogenies/iqtree/trees/NEXUS/",PRT,".nexus"))
+  pre <- read.csv(paste0("Comp/",PRT,"_predictions.csv"))
+  
+  if(PRT=="HA"){
+    labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",2))
+  }
+  else{labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",1))}
+  left_join(labs,pre,by="V1",keep = F) %>% mutate(Mismatch=V4==Prediction) %>%
+    write.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"), row.names = F,quote = F)
+}
+```
+
+```{r}
+mismatches <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  msmtch <- read.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"))
+  mismatches <- bind_rows(mismatches,msmtch)
+}
+
+mismatches %>% group_by(PRT,Mismatch) %>% summarise(N=length(Mismatch)) %>% pivot_wider(names_from = Mismatch, values_from = N)
+```
+
 
 
 

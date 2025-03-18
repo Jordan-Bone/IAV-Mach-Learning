@@ -4,7 +4,8 @@ library(MLmetrics)
 library(foreach) # enables use of the %do% operator. This is another way of applying a function over and over to different items of a list or vector. But it has a parallelisable version to run these tasks in parallel (best done on a computing cluster, we can do this with %dopar%)
 
 # Run variable importances? NB will take 6hrs per protein = 48 hours for all proteins on single LB desktop
-run_varimp <- TRUE
+# run_varimp <- TRUE
+run_varimp <- FALSE
 
 # Select 2class or mclass models
 MODTYPE <- "mclass"
@@ -26,6 +27,7 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   prds <- c()
   vlis <- c()
   pred_vals <- c()
+  mismatches <- c()
   
   mods <- list.files("Comp",pattern=paste0(MODTYPE,".rds"),full.names = T) %>% .[grepl(PRT, .)]     # select protein
   for(j in c(1:length(mods))){
@@ -34,7 +36,7 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
     MOD <- readRDS(mods[j])
     STY <- mods[j] %>% str_split_i("_",2)
     validate <- ft_data %>% subset(UID %in% subset(uid_ref,Subtype==STY)$UID) %>%
-      select("Classification",ends_with(PRT)&!starts_with("ptAcc")) %>% filter(complete.cases(.))
+      select("Classification","UID",ends_with(PRT)&!starts_with("ptAcc")) %>% filter(complete.cases(.))
     if(MODTYPE == "2class"){
       validate$Classification <- ifelse(validate$Classification=="Avian","Avian","Mammal")
     }
@@ -48,7 +50,11 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
     vlis <- append(vlis,validate$Classification)
     pred_vals <- append(pred_vals,prvals)
     
+    mismat <- cbind(validate$UID,PRT,STY,validate$Classification,predict_class) %>% data.frame()
+    mismatches <- bind_rows(mismatches,mismat)
   }
+  write.csv(mismatches,paste0("Comp/",PRT,"_predictions.csv"),row.names = F,quote = F)
+  
   # confusionMatrix(prds %>% as.factor, vlis %>% as.factor) %>% saveRDS(paste0("Comp/",PRT," 2class ConfMatrix.rds"))
   # multiclass.roc(response = validate %>% pull(Classification),predictor = predict_class) %>% print
   
@@ -70,14 +76,14 @@ for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
   # else {return(as.data.frame(t1_df))}
   # }
   
-  predictor_values <- matrix(ncol=length(levels(as.factor(vlis))),data=pred_vals)
-  colnames(predictor_values) <- levels(as.factor(vlis))
-  AUC = multiclass.roc(response = as.factor(vlis), predictor = predictor_values,
-  levels=levels(as.factor(prds))) %>% .$auc %>% as.numeric() %>% round(3)
-  
-  f1mi <- F1_Score_micro(vlis,prds)
-  f1ma <- F1_Score_macro(vlis,prds)
-  data.frame(PRT,f1mi,f1ma,AUC) %>% print
+  # predictor_values <- matrix(ncol=length(levels(as.factor(vlis))),data=pred_vals)
+  # colnames(predictor_values) <- levels(as.factor(vlis))
+  # AUC = multiclass.roc(response = as.factor(vlis), predictor = predictor_values,
+  # levels=levels(as.factor(prds))) %>% .$auc %>% as.numeric() %>% round(3)
+  # 
+  # f1mi <- F1_Score_micro(vlis,prds)
+  # f1ma <- F1_Score_macro(vlis,prds)
+  # data.frame(PRT,f1mi,f1ma,AUC) %>% print
   
   ###############
   # VARIABLE IMPORTANCE
