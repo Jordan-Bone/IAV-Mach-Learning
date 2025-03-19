@@ -402,6 +402,33 @@ ggplot(mc_byc,aes(Protein,Host,fill=Balanced.Accuracy))+geom_tile()+scale_fill_g
 ```
 
 
+
+## Mismatches
+
+```{r, eval=FALSE}
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  tre <- read.nexus(paste0("Phylogenies/iqtree/trees/NEXUS/",PRT,".nexus"))
+  pre <- read.csv(paste0("Comp/",PRT,"_predictions.csv"))
+  
+  if(PRT=="HA"){
+    labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",2))
+  }
+  else{labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",1))}
+  left_join(labs,pre,by="V1",keep = F) %>% mutate(Mismatch=V4==Prediction) %>%
+    write.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"), row.names = F,quote = F)
+}
+```
+
+```{r}
+mismatches <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  msmtch <- read.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"))
+  mismatches <- bind_rows(mismatches,msmtch)
+}
+
+mismatches %>% group_by(PRT,Mismatch) %>% summarise(N=length(Mismatch)) %>% pivot_wider(names_from = Mismatch, values_from = N)
+```
+
 # VarImp
 ```{r}
 PB2v <- read.csv("Varimp/varimp_PB2_mclass.csv") %>% mutate(Protein="01PB2")
@@ -544,45 +571,101 @@ Now where exactly do we expect to see big changes - where are the known host shi
 EIV2 H3N8 first emerged in 1963:
 PB2, ha, na, m and NS1 reassorted with np, PB1 and pa?
 
-
-```{r, eval=FALSE}
+```{r}
+solo_rates <- data.frame()
+combo_rates <- data.frame()
+recons <- data.frame()
 for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
-  tre <- read.nexus(paste0("Phylogenies/iqtree/trees/NEXUS/",PRT,".nexus"))
-  pre <- read.csv(paste0("Comp/",PRT,"_predictions.csv"))
+  raw_ace <- read.csv(paste0("Phylogenies/iqtree/ACE/",PRT," Feature Reconstruction.csv"))
+  raw_solo_rates <- raw_ace %>% select(starts_with("q.")) %>% mutate(Protein=PRT)
+  raw_combo_rates <- raw_ace %>% select(starts_with("q")&!contains(".")) %>% mutate(Protein=PRT)
+  raw_recons <- raw_ace %>% select(starts_with("Rec")) %>% mutate(Protein=PRT)
   
-  if(PRT=="HA"){
-    labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",2))
-  }
-  else{labs <- data.frame(tre$tip.label,V1=tre$tip.label %>% str_split_i("_",1))}
-  left_join(labs,pre,by="V1",keep = F) %>% mutate(Mismatch=V4==Prediction) %>%
-    write.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"), row.names = F,quote = F)
+  solo_rates <- bind_rows(solo_rates,raw_solo_rates)
+  combo_rates <- bind_rows(combo_rates,raw_combo_rates)
+  recons <- bind_rows(recons,raw_recons)
 }
+
+solo_rates_long <- solo_rates %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
+combo_rates_long <- combo_rates %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
+recons_long <- recons %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
+
+solo_rates_hosts <- solo_rates %>% select(Protein,all_of(c("q.A","q.B","q.D","q.E","q.H","q.P"))) %>%
+  pivot_longer(cols = -"Protein", names_to = "Trait", values_to = "Rate") %>% group_by(Protein,Trait) %>% summarise(mR=mean(Rate),sdR=sd(Rate),qRa=quantile(Rate,na.rm=TRUE)) %>% mutate(Stat=c("min","q25","med","q75","max")) %>% pivot_wider(names_from = "Stat",values_from = "qRa")
+solo_rates_hosts$Trait <- solo_rates_hosts$Trait %>% str_replace_all("q.A","Avian") %>% str_replace_all("q.B","Bat") %>% str_replace_all("q.D","Dog") %>% str_replace_all("q.E","Equine") %>% str_replace_all("q.H","Human") %>% str_replace_all("q.P","Pig")
+
+combo_rates_host <- combo_rates %>% select(all_of(c("Protein","qAB","qAD","qAE","qAH","qAP","qBA","qBD","qBE","qBH","qBP","qDA","qDB","qDE","qDH","qDP","qEA","qEB","qED","qEH","qEP","qHA","qHB","qHD","qHE","qHP","qPA","qPB","qPD","qPE","qPH"))) %>% pivot_longer(cols = -"Protein", names_to = "Shift", values_to = "Rate") %>% mutate(Source=str_sub(Shift,2,2),Recip=str_sub(Shift,3,3))
+
+recNode <- recons %>% pivot_longer(cols=-"Protein",names_to = "Trait", values_to = "Rate")
+recNode$Trait <- recNode$Trait %>% str_replace_all("RecNode_","") %>% str_replace_all("_P_","_P")
+recNode$Feat1 <- recNode$Trait %>% str_split_i("_",1) %>% str_replace_all("\\.","") %>% str_replace_all("S","") %>% as.numeric()
+recNode$Feat2 <- recNode$Trait %>% str_split_i("_",2) %>% str_replace_all("\\.","") %>% str_sub(2,2)
 ```
 
 ```{r}
-mismatches <- data.frame()
-for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
-  msmtch <- read.csv(paste0("Phylogenies/iqtree/Annotations/",PRT,".txt"))
-  mismatches <- bind_rows(mismatches,msmtch)
-}
+ggplot(solo_rates_hosts,aes(Trait,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,colour=Protein))+geom_pointrange(position = position_jitter(height = 0))
+ggplot(solo_rates_hosts,aes(Trait,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,fill=Protein))+geom_crossbar(position="dodge")
+ggplot(solo_rates_hosts,aes(Protein,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,fill=Trait))+geom_crossbar(position="dodge")
 
-mismatches %>% group_by(PRT,Mismatch) %>% summarise(N=length(Mismatch)) %>% pivot_wider(names_from = Mismatch, values_from = N)
+ggplot(solo_rates_hosts,aes(Trait,ymin=q25,y=med,ymax=q75,fill=Protein))+geom_crossbar(position="dodge")
+ggplot(solo_rates_hosts,aes(Protein,ymin=q25,y=med,ymax=q75,fill=Trait))+geom_crossbar(position="dodge")
+ggsave("Figures & Presentables/20-Mar/Phylo Signal.pdf",width=33,height=19,units = "cm")
 ```
 
+```{r}
+ggplot(combo_rates_long,aes(Trait,Rate,colour=Protein))+geom_point(alpha=0.4)+facet_wrap(~str_sub(Trait,2,2),scales="free_x")
+# ggplot(combo_rates,aes(q4A,qA4,colour=Protein))+geom_point(alpha=0.4)
+```
 
+```{r}
+ggplot(combo_rates,aes(qAB,qBA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Bat",y="Bat -> Avian")
+ggsave("Figures & Presentables/20-Mar/Phylo AB.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qAD,qDA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Dog",y="Dog -> Avian")
+ggsave("Figures & Presentables/20-Mar/Phylo AD.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qAE,qEA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Horse",y="Horse -> Avian")
+ggsave("Figures & Presentables/20-Mar/Phylo AE.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qAH,qHA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Human",y="Human -> Avian")
+ggsave("Figures & Presentables/20-Mar/Phylo AH.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qAP,qPA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Pig",y="Pig -> Avian")
+ggsave("Figures & Presentables/20-Mar/Phylo AP.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qBD,qDB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Dog",y="Dog -> Bat")
+ggsave("Figures & Presentables/20-Mar/Phylo BD.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qBE,qEB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Horse",y="Horse -> Bat")
+ggsave("Figures & Presentables/20-Mar/Phylo BE.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qBH,qHB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Human",y="Human -> Bat")
+ggsave("Figures & Presentables/20-Mar/Phylo BH.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qBP,qPB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Pig",y="Pig -> Bat")
+ggsave("Figures & Presentables/20-Mar/Phylo BP.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qDE,qED,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Horse",y="Horse -> Dog")
+ggsave("Figures & Presentables/20-Mar/Phylo DE.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qDH,qHD,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Human",y="Human -> Dog")
+ggsave("Figures & Presentables/20-Mar/Phylo DH.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qDP,qPD,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Pig",y="Pig -> Dog")
+ggsave("Figures & Presentables/20-Mar/Phylo DP.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qEH,qHE,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Horse -> Human",y="Human -> Horse")
+ggsave("Figures & Presentables/20-Mar/Phylo EH.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qEP,qPE,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Horse -> Pig",y="Pig -> Horse")
+ggsave("Figures & Presentables/20-Mar/Phylo EP.pdf",width=33,height=19,units = "cm")
+ggplot(combo_rates,aes(qHP,qPH,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Human -> Pig",y="Pig -> Human")
+ggsave("Figures & Presentables/20-Mar/Phylo HP.pdf",width=33,height=19,units = "cm")
 
+colnames(combo_rates)
+```
 
+```{r}
+host_shifts <- combo_rates %>% select(all_of(c("qAB","qAD","qAE","qAH","qAP","qBA","qBD","qBE","qBH","qBP","qDA","qDB","qDE","qDH","qDP","qEA","qEB","qED","qEH","qEP","qHA","qHB","qHD","qHE","qHP","qPA","qPB","qPD","qPE","qPH")))
+host_shifts <- host_shifts %>% replace(is.na(.), 0)
 
+results <- prcomp(host_shifts, scale = TRUE)
+results$rotation <- -1*results$rotation
 
+library(ggbiplot)
+host.NS <- c(rep("PB2",500),rep("PB1",500),rep("PA",500),rep("HA",500),rep("NP",500),rep("NA",500),
+             rep("M1",500),rep("NS1",500))
+ggbiplot(results,ellipse=TRUE, groups=host.NS)
+```
 
-
-
-
-
-
-
-
-
-
-
+```{r}
+ggplot(recNode,aes(Feat1,Feat2,fill=Rate))+geom_tile()+facet_wrap(~Protein,ncol=4)+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")
+```
 
