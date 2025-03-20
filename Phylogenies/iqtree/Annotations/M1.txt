@@ -1,4 +1,4 @@
-tre.tip.label	V1	PRT	STY	V4	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Mismatch
+tre.tip.label	UID	PRT	STY	HOST	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Matched
 MPB496GRB_ALH32786_Hominidae_2014.958333	MPB496GRB	M1	H3N2	Hominidae	0	0	0	0.8	0	0.2	Hominidae	TRUE
 KFG417YAB_ARB17181_Hominidae_2017.061111	KFG417YAB	M1	H3N2	Hominidae	0	0	0	0.9	0	0.1	Hominidae	TRUE
 RMV631UKQ_ALH37527_Hominidae_2015.580556	RMV631UKQ	M1	H3N2	Hominidae	0	0	0	0.9	0	0.1	Hominidae	TRUE

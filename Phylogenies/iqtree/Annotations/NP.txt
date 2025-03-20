@@ -1,4 +1,4 @@
-tre.tip.label	V1	PRT	STY	V4	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Mismatch
+tre.tip.label	UID	PRT	STY	HOST	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Matched
 BSN409TCC_AUO32071_Suidae_2017.661111	BSN409TCC	NP	H3N2	Suidae	0	0	0	0	0	1	Suidae	TRUE
 BXY398VXF_AUO32141_Suidae_2017.602778	BXY398VXF	NP	H3N2	Suidae	0	0	0	0	0	1	Suidae	TRUE
 CMU438LUB_AUO32031_Suidae_2017.658333	CMU438LUB	NP	H3N2	Suidae	0	0	0	0	0	1	Suidae	TRUE

@@ -1,4 +1,4 @@
-tre.tip.label	V1	PRT	STY	V4	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Mismatch
+tre.tip.label	UID	PRT	STY	HOST	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Matched
 HMZ572KBE_AFV68428_Suidae_2009.5	HMZ572KBE	PB1	H1N1	Suidae	0	0	0	0	0	1	Suidae	TRUE
 MHA770NNU_AFV68491_Suidae_2009.5	MHA770NNU	PB1	H1N1	Suidae	0	0	0	0	0	1	Suidae	TRUE
 LRF395AFA_AFV68500_Suidae_2009.5	LRF395AFA	PB1	H1N1	Suidae	0	0	0	0	0	1	Suidae	TRUE

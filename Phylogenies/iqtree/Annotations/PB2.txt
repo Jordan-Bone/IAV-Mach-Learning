@@ -1,4 +1,4 @@
-tre.tip.label	V1	PRT	STY	V4	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Mismatch
+tre.tip.label	UID	PRT	STY	HOST	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Matched
 DCN321RFF_AGH99304_Hominidae_2009.041667	DCN321RFF	PB2	H1N1	Hominidae	0.1	0	0	0.6	0	0.3	Hominidae	TRUE
 OFL502XXU_AEX35130_Hominidae_2008.563889	OFL502XXU	PB2	H1N1	Hominidae	0.4	0.1	0	0.3	0	0.2	Avian	FALSE
 THG271QXQ_AEN02502_Hominidae_2008.116667	THG271QXQ	PB2	H1N1	Hominidae	0	0	0	0.4	0	0.6	Suidae	FALSE

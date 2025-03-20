@@ -476,6 +476,41 @@ ggsave("Figures & Presentables/VarImp5.pdf",width=33,height=19,units = "cm")
 
 # Phylogenetics
 
+## Protein Trees
+
+```{r}
+for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
+  tree_temp <- read.nexus(paste0("Phylogenies/iqtree/trees/NEXUS/",PRT,".nexus"))
+  tip <- as.phylo(tree_temp)$tip.label
+  tA <- data.frame(node = nodeid(tree_temp, tip[grep("Avian", tip)]), host = "Avian")
+  tB <- data.frame(node = nodeid(tree_temp, tip[grep("Phyllostomidae", tip)]), host = "Bat")
+  tD <- data.frame(node = nodeid(tree_temp, tip[grep("Canidae", tip)]), host = "Dog")
+  tE <- data.frame(node = nodeid(tree_temp, tip[grep("Equidae", tip)]), host = "Horse")
+  tH <- data.frame(node = nodeid(tree_temp, tip[grep("Hominidae", tip)]), host = "Human")
+  tP <- data.frame(node = nodeid(tree_temp, tip[grep("Suidae", tip)]), host = "Pig")
+  d <- rbind(tA,rbind(tB,rbind(tD,rbind(tE,rbind(tH,tP)))))
+  tree <- full_join(tree_temp, d, by = 'node')
+  assign(paste0(PRT,"_tree"),tree)
+  saveRDS(tree,file = paste0("Phylogenies/",PRT,"_tree.rds"))
+}
+```
+
+```{r}
+NP_tree <- readRDS("Phylogenies/NP_tree.rds")
+ggtree(NP_tree, aes(color=host))+geom_nodelab(aes(label = node), hjust = -0.5)+
+  # geom_tiplab(hjust = -.1)+ 
+  theme(legend.position = c(.05, .85)) 
+
+readRDS("Phylogenies/PA_tree.rds") %>% ggtree(aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)+ theme(legend.position = c(.05, .75))+labs(title = "PA Tree")
+```
+
+```{r}
+HA_tree <- readRDS("Phylogenies/HA_tree.rds")
+ggtree(HA_tree,aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)+ theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
+
+tree_subset(HA_tree,"AEM60113_KOI765MSE_Equidae_1979",levels_back=2) %>% ggtree(aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)
+```
+
 ## BayesTraits
 ```{r}
 multi_trs_rates <- results$Log$results %>% select(-c("Tree.No","No.Off.Parmeters","No.Off.Zero","Model.string")&-starts_with("Root")) %>% pivot_longer(cols = 3:32,names_to = "Transition",values_to = "Rate")
@@ -563,14 +598,6 @@ ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, 
 ggplot(RecNodes,aes(RecTrait,RecNode,colour=RecTrait))+geom_point()+facet_wrap(~Protein)
 ```
 
-Transition states between traits is meant to show the likelihood of roving from one host to another.
-Similarly, the continuous trait reconstruction models show the difference in protein features along branches
-
-Now where exactly do we expect to see big changes - where are the known host shifts?
-
-EIV2 H3N8 first emerged in 1963:
-PB2, ha, na, m and NS1 reassorted with np, PB1 and pa?
-
 ```{r}
 solo_rates <- data.frame()
 combo_rates <- data.frame()
@@ -617,7 +644,7 @@ ggplot(combo_rates_long,aes(Trait,Rate,colour=Protein))+geom_point(alpha=0.4)+fa
 # ggplot(combo_rates,aes(q4A,qA4,colour=Protein))+geom_point(alpha=0.4)
 ```
 
-```{r}
+```{r,eval=FALSE}
 ggplot(combo_rates,aes(qAB,qBA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Bat",y="Bat -> Avian")
 ggsave("Figures & Presentables/20-Mar/Phylo AB.pdf",width=33,height=19,units = "cm")
 ggplot(combo_rates,aes(qAD,qDA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Dog",y="Dog -> Avian")
@@ -648,8 +675,32 @@ ggplot(combo_rates,aes(qEP,qPE,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100
 ggsave("Figures & Presentables/20-Mar/Phylo EP.pdf",width=33,height=19,units = "cm")
 ggplot(combo_rates,aes(qHP,qPH,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Human -> Pig",y="Pig -> Human")
 ggsave("Figures & Presentables/20-Mar/Phylo HP.pdf",width=33,height=19,units = "cm")
+```
 
-colnames(combo_rates)
+```{r}
+host_rate_av <- combo_rates_host %>% group_by(Protein,Source,Recip) %>% summarise(mR=mean(Rate),sR=sd(Rate))
+ggplot(subset(host_rate_av,Protein=="HA"),aes(Source,mR,colour=Recip))+geom_point(alpha=0.8)
+```
+
+
+```{r}
+host_transfers <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  for(SFT in c("qAB","qAD","qAE","qAH","qAP","qBD","qBE","qBH","qBP","qDE","qDH","qDP","qEH","qEP","qHP")){
+    TFS <- paste0("q",str_sub(SFT,3,3),str_sub(SFT,2,2))
+    a <- data.frame(Pro=PRT,Shift=SFT,
+                    mR=mean(subset(combo_rates_host,Protein==PRT&(Shift==SFT|Shift==TFS))$Rate),
+                    sR=sd(subset(combo_rates_host,Protein==PRT&(Shift==SFT|Shift==TFS))$Rate),
+                    mRfwd=mean(subset(combo_rates_host,Protein==PRT&Shift==SFT)$Rate),
+                    sRfwd=sd(subset(combo_rates_host,Protein==PRT&Shift==SFT)$Rate),
+                    mRrev=mean(subset(combo_rates_host,Protein==PRT&Shift==TFS)$Rate),
+                    sRrev=sd(subset(combo_rates_host,Protein==PRT&Shift==TFS)$Rate))
+    host_transfers <- bind_rows(host_transfers,a)
+  }
+}
+
+ggplot(host_transfers,aes(Shift,mR))+geom_point()+facet_wrap(~Pro)
+ggplot(host_transfers)+geom_point(aes(mRfwd,mRrev,colour = Shift))+facet_wrap(~Pro)
 ```
 
 ```{r}
@@ -667,5 +718,7 @@ ggbiplot(results,ellipse=TRUE, groups=host.NS)
 
 ```{r}
 ggplot(recNode,aes(Feat1,Feat2,fill=Rate))+geom_tile()+facet_wrap(~Protein,ncol=4)+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")
+
+ggplot(subset(recNode,Protein=="HA"),aes(as.factor(Feat1),Feat2,fill=Rate))+geom_tile()+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")
 ```
 

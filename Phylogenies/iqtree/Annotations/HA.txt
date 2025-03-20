@@ -1,4 +1,4 @@
-tre.tip.label	V1	PRT	STY	V4	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Mismatch
+tre.tip.label	UID	PRT	STY	HOST	Avian	Canidae	Equidae	Hominidae	Phyllostomidae	Suidae	Prediction	Matched
 ACZ36899_INR912QWR_Avian_2007	INR912QWR	HA	H5N1	Avian	1	0	0	0	0	0	Avian	TRUE
 ADQ92582_ZXY061WEM_Avian_2007.391667	ZXY061WEM	HA	H5N1	Avian	0.9	0	0	0	0	0.1	Avian	TRUE
 ACU15967_MRC427SMS_Avian_2007.397222	MRC427SMS	HA	H5N1	Avian	0.9	0	0	0	0	0.1	Avian	TRUE
