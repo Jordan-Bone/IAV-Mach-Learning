@@ -838,6 +838,12 @@ subset(recNode,Protein=="NS1"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,F
 
 ### Specified Nodes
 
+Two new columns will be added to the output “RecNode P(D)” and “RecNode P(G)”, these
+represent the probability of reconstructing a D or a G at RecNode.
+
+q12 | Trait 1 = 0 | 2 | 0 → 1
+q12 | The dependent q12 transition rate
+
 ```{r}
 readRDS("Phylogenies/PB2_tree.rds") %>% ggtree(aes(colour=host))+ 
   geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "PB2 Tree")
@@ -847,14 +853,12 @@ readRDS("Phylogenies/PB2_tree.rds") %>% ggtree(aes(colour=host))+
 #2 "PWU662QEB_AKI84323_Equidae_2014.805556 UZM911YSU_AOD75038_Canidae_2016.141667 CFQ918WRG_ADY71219_Suidae_2003.741667"
 ```
 
-
 ```{r}
 readRDS("Phylogenies/HA_tree.rds") %>% ggtree(aes(colour=host))+ 
   geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
 readRDS("Phylogenies/NA_tree.rds") %>% ggtree(aes(colour=host))+ 
   geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "NA Tree")
 ```
-
 
 ```{r}
 ns1_node1 <- read.csv("Phylogenies/iqtree/ACE/NS1 Node 1 Feature Reconstruction.csv")
@@ -863,41 +867,6 @@ ns1_node1 %>% select("Iteration","RecNode...S.0....P.A.","RecNode...S.0....P.B."
 
 readRDS("Phylogenies/NS1_tree.rds") %>% tree_subset("ATB639FJH_AEM60152_Equidae_1971",levels_back=2) %>% ggtree(aes(colour=host))+ geom_tiplab()+ theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
 ```
-
-"RecNode...S.1....P.A."  "RecNode...S.1....P.B." 
-[307] "RecNode...S.1....P.D."  "RecNode...S.1....P.E."  "RecNode...S.1....P.H." 
-[310] "RecNode...S.1....P.P."
-
-[322] "RecNode...S.2....P.A."  "RecNode...S.2....P.B."  "RecNode...S.2....P.D." 
-[325] "RecNode...S.2....P.E."  "RecNode...S.2....P.H."  "RecNode...S.2....P.P." 
-
-"RecNode...S.3....P.A." 
-[340] "RecNode...S.3....P.B."  "RecNode...S.3....P.D."  "RecNode...S.3....P.E." 
-[343] "RecNode...S.3....P.H."  "RecNode...S.3....P.P."  
-
-"RecNode...S.4....P.A."  "RecNode...S.4....P.B." 
-[358] "RecNode...S.4....P.D."  "RecNode...S.4....P.E."  "RecNode...S.4....P.H." 
-[361] "RecNode...S.4....P.P."
-
-[373] "RecNode...S.5....P.A."  "RecNode...S.5....P.B."  "RecNode...S.5....P.D." 
-[376] "RecNode...S.5....P.E."  "RecNode...S.5....P.H."  "RecNode...S.5....P.P." 
-
-"RecNode...S.6....P.A." 
-[391] "RecNode...S.6....P.B."  "RecNode...S.6....P.D."  "RecNode...S.6....P.E." 
-[394] "RecNode...S.6....P.H."  "RecNode...S.6....P.P."  "RecNode...S.7....P..." 
-
-"RecNode...S.7....P.A."  "RecNode...S.7....P.B." 
-[409] "RecNode...S.7....P.D."  "RecNode...S.7....P.E."  "RecNode...S.7....P.H." 
-[412] "RecNode...S.7....P.P."  
-
-[424] "RecNode...S.8....P.A."  "RecNode...S.8....P.B."  "RecNode...S.8....P.D." 
-[427] "RecNode...S.8....P.E."  "RecNode...S.8....P.H."  "RecNode...S.8....P.P." 
-"RecNode...S.9....P.A." 
-[442] "RecNode...S.9....P.B."  "RecNode...S.9....P.D."  "RecNode...S.9....P.E." 
-[445] "RecNode...S.9....P.H."  "RecNode...S.9....P.P."
-"RecNode...S.10....P.A." "RecNode...S.10....P.B."
-[460] "RecNode...S.10....P.D." "RecNode...S.10....P.E." "RecNode...S.10....P.H."
-[463] "RecNode...S.10....P.P."
 
 ```{r}
 #1 "XKL378APK_AIN25482_Canidae_2011 CAW967YKN_ASB31124_Canidae_2010 OAY212AIY_AJJ98563_Canidae_2008 UZM911YSU_AOD75036_Canidae_2016.141667 ZRL582GFL_ASB31108_Canidae_2012 FZQ695RHW_ATP61523_Canidae_2015.958333 MSB621LJI_ATP61535_Canidae_2015.958333 ATB639FJH_AEM60152_Equidae_1971 LGL684RXB_ADM29699_Canidae_2009 VRO588QNE_ASB31300_Equidae_1995 TCB721KRF_ATQ39029_Canidae_2015.9 SEJ026MEM_AOD75136_Canidae_2016.102778 ZIE194WFY_ADM29347_Canidae_2006.041667 WCC169ABL_AIZ07520_Canidae_2012.844444 FNB405OVZ_ASB31170_Canidae_2009"
