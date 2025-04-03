@@ -11,6 +11,7 @@ output:
     number_sections: TRUE
     fig_caption: TRUE
 biblio-style: apalike
+bibliography: Figures & Presentables/refs.bib
 link-citations: yes
 always_allow_html: yes
 editor_options:
@@ -21,11 +22,13 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/",fig.align = "center",fig.height=8,fig.width=10)
 source("MegaLibrary.R")
+library(TreeTools)
 
 reference_table <- read.csv("RefTable.csv")
 rep_uids <- read.csv("USED UIDS.txt")
 uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
+varimps <- read.csv("Varimp/VarImp Refs.csv")
 ```
 # Introduction
 
@@ -33,10 +36,8 @@ Influenza A viruses are notorious and exemplary pathogens that cross host-specie
 
 Our cross-specialisation approach first uses protein compositional features to train machine learning models on classifying the original host the virus was obtained from. 
 - The features are x and show y, included them because z
-Then, using the same protein sequences, we constructed mcc trees and reconstructed ancestral node traits using the BEAST suite. 
+
 Finally, we compared the results of both modelling and phylogenetic approaches to detect any overlap or, more interestingly, any inferences that were exclusive to only one method. 
-
-
 
 # Methodology
 
@@ -44,81 +45,16 @@ Finally, we compared the results of both modelling and phylogenetic approaches t
 Sequences were collected from NCBI Virus Database. This dataset was filtered to only include samples with: 
 a) complete nucleotide sequences, missing no more than 10% of the average length for that segment
 b) metadata containing the virus subtype and original host, at least up to the Class level (Aves or Mammalia) through preferably detailing all the way down to the Family or Species level
-Nucleotide sequences were then assigned a random identifier (between AAA-000-AAA and ZZZ-999-ZZZ) to associate with metadata throughout analyses.
+Nucleotide sequences were then assigned a random identifier (between AAA-000-AAA and ZZZ-999-ZZZ) to associate with metadata throughout analyses. 14,682 avian and 21,737 mammalian sequences were collated at this stage. 
 
 Samples from mammalian hosts were then retained only if the original host was within the Canidae, Suidae, Equidae, Hominidae or Phyllostomidae families, as viruses within these hosts were expected to display clear examples of adaptation. Viral sequences of mammalian-origin were then reduced further by excluding samples where the subtype does not circulate naturally within closed systems of that host (i.e. removing spillovers or stuttering chains of transmission, neither of which represent the kind of host adaptation we sought to detect). Included subtypes for each family: Canidae (H3N2, H3N8), Equidae (H7N7, H3N8) and finally Hominidae (H1N1, H1N2, H2N2 and H3N2). 
 
-Corresponding protein sequences were then obtained for each sample, most of which were available from the NCBI Virus Database. The few genomic sequences without matching proteins were translated locally using the 'ape' package in R. 
+Corresponding protein sequences were then obtained for each sample, most of which were available from the NCBI Virus Database. The few genomic sequences without matching proteins were translated locally using the 'ape' package in R [@paradis_2019aa]. 
 
 ## Clustering
-Proteins were then aligned using MAFFT into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99), coverage of the sequences within each cluster (-c 0.5, 0.7, 0.8) and the way in which the coverage is calculated (--cov-mode 0, 1). Ultimately options were set to --min-seq-id 0.95, -c 0.8 and --cov-mode 1 in order to grant a representative number of samples without introducing redundancy. Ultimately, x proteins were nominated leading to sequences from 4551 individual viruses.
-
-```{r, eval=FALSE}
-a <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ntAcc,Sample,Classification,Date)
-names(a) <- c("UID","Acc","Sample","Classification","Date")
-b <- subset(reference_table,Protein %in% PRT & UID %in% uid_ref$UID) %>% select(UID,ptAcc.x,Sample,Classification,Date)
-names(b) <- c("UID","Acc","Sample","Classification","Date")
-rbind(a,b) %>% write.csv("feats/combo/Timings.csv",row.names = F)
-```
-
-```{r eval=FALSE}
-clu <- list.files("feats/combo",pattern = ".csv",full.names = T,recursive = T)
-cls <- data.frame()
-for(i in 1:length(clu)){
-  clts <- data.frame(ptAcc=read.csv(clu[i])[,1] %>% str_split_i(":",1),
-                     prt=clu[i] %>% str_split_i("\\/",2) %>% str_split_i("_",1))
-  cls <- rbind(cls,clts)
-}
-
-cls2 <- left_join(cls,reference_table, relationship = "many-to-many")
-```
-
-```{r Reference Builder, eval=FALSE}
-####
-usrs <- read_xlsx("/Users/jordanbone/Documents/IAV.AI/Used Seqs.xlsx")[,c(2:10)]
-us2 <- usrs %>% pivot_longer(2:9, names_to = "Protein", values_to = "ptAcc2")
-reference_table <- left_join(reference_table,us2,by=c("UID","Protein"))
-
-for(i in 1:length(reference_table$UID)){
-#   if(reference_table[i,12]!="08NEP" & reference_table[i,12]!="07M2" & reference_table[i,12]!="02PB1-F2" & reference_table[i,12]!="03PA-X"){
-#     if(reference_table[i,1] %in% us2$UID){
-#       subs <- subset(us2,UID %in% reference_table[i,1] & Protein == reference_table[i,12])
-#       reference_table[i,11] <- ifelse(reference_table[i,11]!=subs$ptAcc,subs$ptAcc,reference_table[i,11])
-      #     # reference_table[i,9] <- ifelse(reference_table[i,9]!=subs$ntAcc|is.na(reference_table[i,9]),subs$ntAcc,reference_table[i,9])
-      #     # reference_table[i,14] <- ifelse(reference_table[i,14]!=subs$Subtype|is.na(reference_table[i,14]),subs$Subtype,reference_table[i,14])
-#     }}
-  reference_table[i,11] <- ifelse(reference_table[i,11]!=reference_table[i,16] &!is.na(reference_table[i,16]),reference_table[i,16],reference_table[i,11])
-  per.done(i)
-}
-beep(2)
-write.csv(reference_table[,-16],"RefTable.csv",row.names = F)
-```
+Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99), coverage of the sequences within each cluster (-c 0.5, 0.7, 0.8) and the way in which the coverage is calculated (--cov-mode 0, 1). Ultimately options were set to `--min-seq-id 0.95`, `-c 0.8` and `--cov-mode 1` in order to grant a representative number of samples without introducing redundancy. Ultimately, 6697 proteins were nominated leading to sequences from 4551 individual viruses.
 
 ```{r}
-mam <- subset(reference_table,Class=="Mammalia") %>%
-  group_by(Order,Family,Subtype) %>% summarise(N=length(Subtype)) %>%
-  subset(Family %in% c("Hominidae","Suidae","Canidae","Equidae","Phyllostomidae"))
-
-ggplot(subset(mam,N>19),aes(Family,log10(N),fill=Subtype))+geom_col(position="dodge")+
-  geom_text(aes(label=Subtype,group=Subtype),position = position_dodge(width = .9),size=3)
-# #ggsave("Mammal Subtypes.pdf",width=13,height=8)
-```
-
-```{r, eval=FALSE}
-fetc <- list.files("feats",pattern = ".csv",full.names = T,recursive = F)
-for(i in 1:length(fetc)){
-  FeatParam <- str_split_i(fetc[i],"\\/",2) %>% str_replace_all(".csv","")
-  SegFeat <- paste0(str_split_i(FeatParam,"_",1),"_",str_split_i(FeatParam,"_",8))
-  assign(SegFeat, read.csv(fetc[i]))
-}
-
-ha_ctdc$Seg <- "HA"
-ha_ctdc$Feat <- "CTDc"
-```
-
-```{r}
-# subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Num<25))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="20 of which appear\nmore than 25 times"),fill="#F8766D")+ theme(legend.position = "none",axis.text.x = element_text(angle = 90))+labs(title = "95 Unique Subtypes")
-
 subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Subtype %in% held_subtypes))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="23 of which appear\nmore than 25 times"),fill="#53CCCD")+
   geom_segment(aes(x=70,xend=59.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+
   geom_segment(aes(x=70,xend=79.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+
@@ -134,24 +70,6 @@ subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(S
 #ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
 ```
 
-```{r}
-# ssnl <- read_xlsx("Human Seasonals.xlsx",sheet="Sheet5")
-# ggplot(ssnl,aes(Release_Date,WGS,colour=Genotype))+geom_point(alpha=0.7)
-```
-
-```{r}
-mod_cls <- read.csv("Sequences/Clusters.csv")
-ggplot(mod_cls,aes(Protein,Clusters,fill=Group))+geom_col(position="dodge")+
-  facet_wrap(~Identity,scales = "free")+
-  theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))
-
-mod_cls %>% pivot_wider(names_from = c("Group","Identity"),values_from = "Clusters") %>% kbl(col.names = c("Protein","100%","95%","85%","75%","100%","95%","85%","75%"),align='c',caption="Number of representative sequences from each group") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1,"Avian"=4,"Mammalian"=4))
-
-# a minimum coverage (option -c [0,1], which is defined by the number of aligned residue pairs divided by either the maximum of the length of query/centre and target/non-centre sequences alnRes/max(qLen,tLen) (default mode, --cov-mode 0), or by the length of the target/non-centre sequence alnRes/tLen (--cov-mode 1), or by the length of the query/centre alnRes/qLen (--cov-mode 2).
-
-# a minimum sequence identity (--min-seq-id [0,1]) with option --alignment-mode 3 defined as the number of identical aligned residues divided by the number of aligned columns including internal gap columns, or, by default, defined by a highly correlated measure, the equivalent similarity score of the local alignment (including gap penalties) divided by the maximum of the lengths of the two locally aligned sequence segments. The score per residue equivalent to a certain sequence identity is obtained by a linear regression using thousands of local alignments as training set.
-```
-
 ```{r Sequence Diversity, include=FALSE}
 # haBifas <- seqinr::read.fasta("Sequences/Avian/ha_cluster_95_c80_cov0_rep_seq.fasta")
 # haBi <- data.frame("Base"=1:567,"Entropy"=Bios2cor::entropy(haBifas),row.names = NULL)
@@ -163,175 +81,38 @@ mod_cls %>% pivot_wider(names_from = c("Group","Identity"),values_from = "Cluste
 #   geom_label(aes(400,0.4,label="Mammalian\nH = 90.30"),colour="slateblue")+labs(title="Sitewise Diversity in Avian and Mammalian Haemagglutinin Clusters")
 ```
 
-```{r Lolliplots, include=FALSE}
-# HASNPcon <- c(144,467)
-# sample.HAcon <- GRanges("HA", IRanges(HASNPcon, width=1, names=c("Gly 144 Asp","Arg 467 Ser")))
-# features.HA <- GRanges("HA", IRanges(c(1,1,17,52,276,330,347,514),width=c(565,16,51,223,53,16,166,20),names=c("HA","Signal Peptide","HA1 - Stalk","HA1 - Head","HA1 - Stalk","Fusion Peptide","HA2 - Stalk","Transmembrane Domain")))
-# features.HA$fill <- c("ivory","tan","plum3","purple3","plum3","firebrick2","lightslateblue","sienna1")
-# features.HA$height <- 0.08
-# sample.HAcon$color <- rep("dodgerblue2",2)
-# sample.HAcon$shape <- rep("circle",2)
-# trackViewer::lolliplot(sample.HAcon,features.HA,legend = legend)
-# grid.text("HA Segment", x=.5, y=.98, just="top",gp=gpar(cex=1.5, fontface="bold"))
-```
-
-```{r, eval=FALSE}
-# num_clus <- read.csv("Sequences/Clustering Tests.csv")
-# subset(num_clus,Identity!=100 & Group=="Avian")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(15507,15507,15447,15447,15441,15441,15380,15380,14682,14682,15442,15442,15335,15335,15124,15124,15228,15228,15293,15293)) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Avian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
-
-# subset(num_clus,Identity!=100 & Group=="Mammal")[,-1] %>% pivot_wider(names_from = c("Identity","Coverage"), values_from = "Count") %>% cbind(Total=c(21880,21880,21829,21829,21856,21856,22106,22106,21865,21865,21845,21845,21791,21791,21770,21770,21760,21760,21737,21737)) %>% arrange(Protein) %>%  kbl(col.names = c("Protein","Mode",rep(c("c 50","c 70","c 80"),5),"Total"), caption="Proteins of Mammalian Viruses") %>% kable_styling(full_width = F) %>% add_header_above(c(" "=1," "=1,"75% Identity"=3,"85% Identity"=3,"90% Identity"=3,"95% Identity"=3,"99% Identity"=3," "=1)) %>% column_spec(12:14,background = "palegreen") %>% collapse_rows(c(1:18))
-
-# subset(cls2,Protein!="02PB1-F2"&Protein!="03PA-X"&Protein!="07M2"&Protein!="08NEP") %>% group_by(Protein,Subtype,Class) %>% summarise(N=length(UID)) %>% pivot_wider(names_from = Protein,values_from = N) %>% 
-  # write.csv("Cluster Selection.csv",row.names = F)
-  # kbl() %>% kable_styling(full_width = F)
-
-cls3 <- subset(cls2,Protein!="02PB1-F2"&Protein!="03PA-X"&Protein!="07M2"&Protein!="08NEP") %>% group_by(Subtype,Class,Family,Superorder,Infraclass) %>% summarise(N=length(UID))
-
-ggplot(subset(cls3,Class=="Mammalia"),aes(Family,N,fill=Subtype))+
-  geom_col(position="dodge")+geom_text(aes(y=N+20,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
-  theme(legend.position = "none")
-
-ggplot(subset(cls3,Class=="Aves"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
-  theme(legend.position = "none")+facet_wrap(Infraclass~Superorder, scales = "free")
-
-ggplot(subset(cls3,Superorder=="Galloanserae"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
-  theme(legend.position = "none")
-ggplot(subset(cls3,Superorder=="Neoaves"),aes(Family,N,fill=Subtype))+geom_col(position="dodge")+geom_text(aes(y=N*.5,label=Subtype),check_overlap = T,position = position_dodge(width = .9),size=2.5)+
-  theme(legend.position = "none",axis.text.x = element_text(angle = 90))
-
-cls3 %>% group_by(Subtype) %>% summarise(sn=sum(N)) %>% subset(sn>25)
-
-ggplot(cls3,aes(x=reorder(Subtype,-N),y=N,fill=ifelse(Class=="Aves",Class,Family)))+geom_col(position="dodge")+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))+labs(x="Subtype",fill="Group")+geom_vline(xintercept = 58.5, alpha=0.4, linetype="longdash")
-#ggsave("Subtype Frequencies.pdf",width=33,height=19,units = "cm")
-
-ggplot(subset(cls3,N>=50),aes(x=reorder(Subtype,-N),y=N,fill=ifelse(Class=="Aves",Class,Family)))+geom_col(position="dodge")+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))+labs(x="Subtype",fill="Group")+geom_vline(xintercept = 58.5, alpha=0.4, linetype="longdash")
-#ggsave("Subtype Frequencies zoom.pdf",width=33,height=19,units = "cm")
-
-cls3$Classification <- ifelse(cls3$Class=="Mammalia",cls3$Family,str_replace_all(cls3$Superorder,"Aves","Galloanserae"))
-cls4 <- cls3 %>% group_by(Subtype,Classification) %>% summarise(N=sum(N))
-ggplot(cls4,aes(x=reorder(Subtype,-N),y=N,fill=Classification))+geom_col()+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))
-```
-
-
-```{r Cluster Tests, include=FALSE}
-stack_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Stacks")
-ensemb_res <- read_xlsx("Comp/HA test results.xlsx",sheet="Ensemble")
-
-ggplot(subset(stack_res,Model!="ensemble"),aes(paste(Coverage,Mode),Importance,colour=Model))+
-  geom_point()
-ggplot(stack_res,aes(paste(Coverage,Mode),ymin=ROC-sdROC,y=ROC,ymax=ROC+sdROC,fill=Model))+
-  geom_crossbar(position="dodge")
-
-# stack_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
-# ensemb_res %>% kbl() %>% kable_styling(full_width = F) %>% collapse_rows(4:5)
-```
-
-```{r Model Check, eval=FALSE}
-mo_list <- list.files("Models/",pattern=".rds",full.names = T)
-mod_stats_2 <- data.frame()
-mod_stats_M <- data.frame()
-for(i in 1:length(mo_list)){
-  tmp_mo <- readRDS(mo_list[i])
-  if(str_split_i(mo_list[i],"_",5)=="Mclass.rds"){
-    temp_df_M <- data.frame(Protein=str_split_i(mo_list[i],"_",1) %>% str_split_i("\\/",3),
-                            Feature=str_split_i(mo_list[i],"_",2),
-                            Holdout=str_split_i(mo_list[i],"_",3),
-                            ModelType=str_split_i(mo_list[i],"_",5) %>% str_split_i("l",1),
-                            Samples=tmp_mo$finalModel$num.samples,
-                          subset(tmp_mo$results,min.node.size==tmp_mo$finalModel$tuneValue$min.node.size))
-    mod_stats_M <- rbind(mod_stats_M,temp_df_M)
-  }
-  else{
-    temp_df_2 <- data.frame(Protein=str_split_i(mo_list[i],"_",1) %>% str_split_i("\\/",3),
-                            Feature=str_split_i(mo_list[i],"_",2),
-                            Holdout=str_split_i(mo_list[i],"_",3),
-                            ModelType=str_split_i(mo_list[i],"_",5) %>% str_split_i("l",1),
-                            Samples=tmp_mo$finalModel$num.samples,
-                            subset(tmp_mo$results,min.node.size==tmp_mo$finalModel$tuneValue$min.node.size))
-    mod_stats_2 <- rbind(mod_stats_2,temp_df_2)
-  }
-  ifelse(is.wholenumber(i/100),print(i),"")
-}
-
-ggplot(mod_stats_M,aes(Feature,Accuracy,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Protein)
-ggplot(mod_stats_M,aes(Mean_Specificity,Mean_Sensitivity,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Feature)
-
-ggplot(mod_stats_2,aes(Feature,ROC,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Protein)
-ggplot(mod_stats_2,aes(Spec,Sens,colour=Holdout))+geom_point(alpha=0.6)+facet_wrap(~Feature)
-
-# mos_out <- rbind(data.frame(protein="07M1",feature=str_split_i(names(summary(M1_complete)$imp),"\\.",1),imp=summary(M1_complete)$imp,summary(M1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="04HA",feature=str_split_i(names(summary(HA_complete)$imp),"\\.",1),imp=summary(HA_complete)$imp,summary(HA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="06NA",feature=str_split_i(names(summary(NA_complete)$imp),"\\.",1),imp=summary(NA_complete)$imp,summary(NA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="03PA",feature=str_split_i(names(summary(PA_complete)$imp),"\\.",1),imp=summary(PA_complete)$imp,summary(PA_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="08NS1",feature=str_split_i(names(summary(NS1_complete)$imp),"\\.",1),imp=summary(NS1_complete)$imp,summary(NS1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="02PB1",feature=str_split_i(names(summary(PB1_complete)$imp),"\\.",1),imp=summary(PB1_complete)$imp,summary(PB1_complete)$results[2:7],row.names = NULL),rbind(data.frame(protein="05NP",feature=str_split_i(names(summary(NP_complete)$imp),"\\.",1),imp=summary(NP_complete)$imp,summary(NP_complete)$results[2:7],row.names = NULL),data.frame(protein="01PB2",feature=str_split_i(names(summary(PB2_complete)$imp),"\\.",1),imp=summary(PB2_complete)$imp,summary(PB2_complete)$results[2:7],row.names = NULL))))))))
-
-# data.frame(protein="01PB2",feature=str_split_i(names(summary(PB2_complete)$imp),"\\.",1),imp=summary(PB2_complete)$imp,summary(PB2_complete)$results[2:7],row.names = NULL)
-
-mos_out <- read.csv("Comp/Model Outputs.csv")
-ggplot(mos_out,aes(feature,ymin=value-sd,y=value,ymax=value+sd,colour=imp))+
-  geom_pointrange()+facet_wrap(~protein,ncol=4)+scale_colour_gradient(low="grey",high="red")+theme(legend.position = "bottom",axis.text.x = element_text(angle = 45))
-```
-
-```{r Subtype Distribution, include=FALSE, eval=FALSE}
-sbd <- cls2 %>% group_by(Order,Class,Superorder,Subtype) %>% summarise(N=length(UID))
-sbd$Classification <- ifelse(sbd$Class=="Mammalia",sbd$Order,sbd$Superorder)
-# sbd %>% group_by(Classification,Subtype) %>% summarise(N=sum(N)) %>% pivot_wider(names_from = "Classification",values_from = N) %>% write.csv("Subtype Distribution.csv",row.names = F)
-
-reference_table[,c(1,14,15,11,12)] %>% subset(Protein!="02PB1-F2"&Protein!="03PA-X") %>% group_by(UID,Subtype,Classification,Protein) %>% summarise(N=length(ptAcc)) %>% pivot_wider(names_from = Protein, values_from = N)
-
-# dupes <- reference_table[,c(1,14,15,11,12)] %>% subset(Protein!="02PB1-F2"&Protein!="03PA-X") |> dplyr::summarise(n = dplyr::n(), .by = c(UID, Subtype,Classification, Protein)) |> dplyr::filter(n > 1L)
-
-ax <- reference_table[,c(1,14,15,11,12)] %>% subset(Protein!="02PB1-F2"&Protein!="03PA-X"&Protein!="08NEP"&Protein!="07M2") 
-ax$Rep <- ifelse(ax$ptAcc %in% cls$ptAcc,"Rep","Not")
-
-badax <- ax |> dplyr::summarise(n = dplyr::n(), .by = c(UID, Subtype, Classification, Rep, Protein)) |> dplyr::filter(n > 1L)
-
-for(i in 1:length(ax$UID)){
-  ax[i,4] <- ifelse(ax[i,6]=="Rep",cell_spec(ax[i,4], background = "forestgreen"),ax[i,4])
-}
-# ax$ptAcc <- cell_spec(ax$ptAcc, background = ifelse(ax$Rep=="Rep","forestgreen","white"))
-
-subset(ax,!UID %in% badax$UID)[,-6] %>% group_by(UID,Subtype,Classification) %>% pivot_wider(names_from = Protein, values_from = ptAcc) %>% kbl(escape=F) %>% kable_styling() %>% save_kable(file = "table1.html")
-# %>% write.csv("Full data.csv",row.names = F)
-
-mod_stats <- read.csv("Models/Mod Stats.csv")
-subset(mod_stats,FeatSet=="ctdd") %>% pivot_longer(cols=4:5,names_to = "Class",values_to = "N") %>% ggplot(aes(Holdout,N,colour=Class))+geom_point(alpha=0.6)
-subset(mod_stats,Avian+Mammal!=2325)
-
-mostat <- read.csv("MoStat.csv")
-ggplot(subset(mostat,F=="ctdd"),aes(str_replace_all(X,"ex",""),N))+geom_point(alpha=0.6)+facet_wrap(~P,scales="free",nrow=2)+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))+labs(x="Subtype")
-#ggsave("Num Holdouts.pdf",width=50,height=19,units = "cm")
-
-ggplot(subset(mostat,F=="ctdd"&P=="04ha"),aes(str_replace_all(X,"ex",""),N,colour=N==max(N)))+geom_point(alpha=0.9)+theme(legend.position = "bottom",axis.text.x = element_text(angle = 90))+labs(x="Subtype")
-#ggsave("HA Holdouts.pdf",width=30,height=19,units = "cm")
-ha2324 <- subset(mostat,P=="ha"&N==2324&F=="2mer")$X
-
-ggplot(subset(mostat,F=="ctdd"&P=="ha"&N<2300),aes(str_replace_all(X,"ex",""),y=max(mostat$N)-N))+geom_point(alpha=0.9)+labs(x="Excluded Subtype",y="Number of Sequences")
-```
-
-
 ## Protein Features
-Proteins from avian-origin and mammalian-origin viruses retained by MMSeq2 were then aligned into a single fasta file for each protein. Accessory proteins and those spliced from alternate reading frames (M2, NEP, PB1-F2 and PA-X) were then excluded from any further analyses as they were too short and/or conserved to show patterns of adaptation. OmegaFeaturesCLI was run over the alignments to produce matrices of protein compositional and physio-chemical properties with the 'get_descriptor' command. Features, and the associated command, are as follows: 2mers ('DPC type 1'), Chou's pseudo-amino acid composition ('PseAAC'), conjoined triad ('CTriad'), and finally Composition (CTDc), & Transition (CTDt) & Distribution (CTDd) values.
+Proteins from avian-origin and mammalian-origin viruses retained by MMSeq2 were then aligned into a single fasta file for each protein. Accessory proteins (PB1-F2 and PA-X) were then removed from the analyses as both lie within the coding regions of their respective genomic segments and thus the calculation of any features from sequence data would already include these regions. Similarly, those spliced from alternate reading frames (M2 and NEP) were excluded from any further analyses as they were too short and/or conserved to show patterns of adaptation
 
-Six datasets of protein features were derived from the iFeatureOmega processing: amino acid two-mers (DPC, 400 cols), (CTDc, CTDd and CTDt, x y and z cols respectively), paac and triad (X cols). These were then annotated with the subtype of the origin virus and labelled with the original host. 
+OmegaFeaturesCLI [@chen_2022aa] was run over the alignments to produce matrices of protein compositional and physio-chemical properties with the 'get_descriptor' command. Features, and the associated command, are as follows: 2mers ('DPC type 1'), Chou's pseudo-amino acid composition ('PseAAC'), conjoined triad ('CTriad'), and finally Composition (CTDc), & Transition (CTDt) & Distribution (CTDd) values.
+
+Six datasets of protein features were derived from the iFeatureOmega processing: amino acid two-mers (DPC, 400 features), (CTDc, CTDd and CTDt, 39, 195 and 39 features respectively), paac (23 features) and triad (343 features). These were then annotated with the subtype of the origin virus and labelled with the original host. 
 
 ## Machine Learning Models
-Matrices of protein features were back-referenced to add viral metadata (origin host and subtype). These were then used to create Random Forest classification models, using the features of each of the 8 main IAV proteins to distinguish between the classes of hosts from which viruses were sampled.
+Matrices of protein features were then used to create Random Forest classification models, to distinguish between the host from which viruses were sampled.
 
-In order to create test data, around subtypes that appeared most frequently (>20 times) were iteratively held out of model construction. In addition to these 23 subtypes, both  bat-exclusive subtypes (H17N10 and H18N11) were held as test data. The remaining 70 subtypes comprised 308/4551 (~7%) sequences. Six Random Forest models were created from each of the feature datasets, for each holdout. These models were then stacked with the use of the 'caret' package. Models were weighted in order to accomodate for disproportionate sizes of host groups by using the inverse of that group's proportion.
+In order to create test data, subtypes that appeared most frequently (>20 times) were iteratively held out of model construction. In addition to these 23 subtypes, both  bat-exclusive subtypes (H17N10 and H18N11) were held as test data. The remaining 70 subtypes comprised $\frac{308}{4551}$ (~7%) sequences. Six Random Forest models were created from each of the feature datasets, for each holdout. These models were then stacked with the use of the 'caretEnsemble' package [@deane-mayer_2024aa]. Models were weighted in order to accommodate for disproportionate sizes of host groups by using the inverse of that group's proportion.
 
-Virus subtypes were used to subset feature datasets, the 25 highlighted subtypes were removed iteratively: first creating six datasets without H1N1 viruses, then six datasets without H1N2 viruses etc. 
+These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the stacking algorithm by caret.
 
-These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the Stacking algorithm by caret. 
+![Model assembly: One model was created for each parameter.](Figures & Presentables/Model Assembly.png)
 
 ## Phylogenetics
-Using sequence data from each of the 8 proteins studied (PB2, PB1, PA, HA, NP, NA, M1 and NS1) 
+Using sequence data from each of the 8 proteins studied phylogenetic trees were estimated. Initial model parameters such as evolutionary and codon-partitioning models were estimated by ModelFinder within IQTree2 [@kalyaanamoorthy_2017aa,@minh_2020aa], and temporality was confirmed with TempEst [@rambaut_2016aa].
 ```{r}
-data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Model"=c("FLU+R4","FLU+R4","FLU+R5","FLU+R8","Q.mammal+R4","FLU+R5","Q.mammal+R3","HIVw+R6"),"Node"=c("x","x","x","x","x","x","x","x")) %>% kbl() %>% kable_styling(full_width = F, position="float_right")
+data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Model"=c("FLU+R4","FLU+R4","FLU+R5","FLU+R8","Q.mammal+R4","FLU+R5","Q.mammal+R3","HIVw+R6")) %>% kbl() %>% kable_styling(full_width = F, position="float_right")
 ```
-phylogenetic trees were estimated using the BEAST suite of softwares. Initial model parameters such as evolutionary and codon-partitioning models were estimated by ModelFinder within IQTree2, and temporality was confirmed with TempEst. Maximum Likelihood trees were estimated with substitution models suggested by ModelFinder (Table X) and bootstrapped 1000 times for validation. 
+Maximum Likelihood trees were estimated with substitution models suggested by ModelFinder (Table X) and bootstrapped 1000 times for validation. 
 
-Phylogenetic models were first trialled on Maximum Likelihood trees with the use of BayesTraits v3.0; in the R wrapper "btw". A discrete-trait analysis estimated the origin host of viruses and protein features were modelled as continuous traits. Trait analyses were first modelled using tips features and then ancestral trait reconstruction upon internal nodes, both using multistate reverse-jump MCMC procedures. Initially, transition rates between discrete states (i.e. Host) were examined across each protein tree before the states of ancestral nodes were estimated. 
+Phylogenetic models were first trialled on Maximum Likelihood trees with the use of BayesTraits v3.0 [@meade_2022aa]; in the R wrapper "btw" [@griffin_2018aa]. A discrete-trait analysis estimated the origin host of viruses and protein features were modelled as continuous traits. Trait analyses were first modelled using tips features and then ancestral trait reconstruction upon internal nodes, both using multi-state reverse-jump MCMC procedures. Initially, transition rates between discrete states (i.e. Host) were examined across each protein tree before the states of ancestral nodes were estimated. 
 
 Specific nodes were selected for ancestral trait reconstruction due to known historical host-switching events. Recognised host switch events include: human viruses that originated from avian and swine reassortments in 1918, 1957 and 1968; emergence of swine viruses into human pandemic strains (H1N1pdm09); avian IAV into horses (H7N7 and H3N8) and the jump of equine H3N8 viruses into canine populations. 
 
-Tree estimations in BEAST used the following parameters and methods: ... Furthermore, in protein features were modelled as continuous traits under ancestral node reconstruction. Likewise, following Seb's work, protein sequences themselves were estimated at each ancestral node, based on the sequences of each leaf. 
+
+## Sequence Reconstruction
+RateAncestor: this variable can be set to 0 or 1. If RateAncestor = 1, the program is forced to do two additional analyses, which you can ignore if you do not need the results. First, under a model of variable rates across sites such as the gamma, RateAncestor = 1 forces the program to calculate rates for individual sites along the sequence (output that will be saved in the output rates file), using the empirical Bayes procedure (Yang and Wang 1995). Secondly, RateAncestor = 1 forces the program to perform the empirical Bayesian reconstruction of ancestral sequences (Yang et al. 1995b; Koshi and Goldstein 1996; [Yang 2006 pages 119-124(http://abacus.gene.ucl.ac.uk/CME/)]). Ancestral state reconstruction by parsimony (Fitch 1971; Hartigan 1973) is well known (i.e., it is implemented in the PAML program pamp). It can also be achieved using the likelihood/empirical Bayes approach. Often, the two approaches produce similar results, but the likelihood-based reconstruction has two advantages over parsimony: this method uses information from the branch lengths and the relative substitution rates between characters (nucleotides) and provides a measure of uncertainties in the form of posterior probabilities for reconstructed ancestral states.
+
+The results are listed, by site, in the output file rst. You can also use the variable verbose to control how much information you want to be written in this output file. If verbose = 0, only the best nucleotide (the one with the highest posterior probability) at each node at each site is listed, while with verbose = 1 (try 2 if 1 does not work), the full posterior probability distribution from the marginal reconstruction is listed. If the model is homogenous (i.e., if nhomo = 0 or nhomo = 1 have been specified in the control file) and assumes one rate for all sites, both the joint and marginal ancestral reconstructions will be calculated. If the model assumes variable rates among sites like the gamma model, only the marginal reconstructions are calculated. More details about ancestral sequence reconstruction in the section below
 
 # Results
 
@@ -361,21 +142,22 @@ classes <- master_conf$byClass %>% as.data.frame() %>% rownames_to_column()
 # classes$rowname <- str_split_i(classes$rowname,":",2) %>% str_trim
 classes$Host <- c("Avian","Dog","Horse","Human","Bat","Swine")
 m1 <- ggplot(classes,aes(Sensitivity,Specificity,colour=Host))+geom_point(size=3)+ylim(0,1)
-m2 <- ggplot(classes,aes(Host,Precision,colour=Host))+geom_point(size=3)+ylim(0,1)
-m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+geom_point(size=3)+ylim(0,1)
+m2 <- ggplot(classes,aes(Host,Precision,colour=Host))+geom_point(size=3)+ylim(0,1)+theme(legend.position="none")
+m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+geom_point(size=3)+ylim(0,1)+theme(legend.position="none")
 m4 <- ggplot(classes,aes(`Pos Pred Value`,`Neg Pred Value`,colour=Host))+geom_point(size=3)+ylim(0,1)
-ggarrange(m1,m4,m3,m2,common.legend = T,legend="bottom")
+ggarrange(m1,m4,common.legend = T,legend="bottom")
+ggarrange(m3,m2,common.legend = T,legend="bottom")
 #ggsave("Model Diag.pdf",width=33,height=19,units = "cm")
 
-master_conf2 <- readRDS("Comp/ConfMatrix 2class Master.rds")
-master_conf2$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+
-  geom_tile(colour="grey10")+geom_text(aes(label=ifelse(Freq<=0," ",percent(Freq/sum(master_conf$table),accuracy = 0.001))))+
-  scale_fill_gradient(low="white",high="forestgreen",na.value = "grey50")+guides(fill=guide_legend(title="Freq %"))
-#ggsave("Figures & Presentables/Mislabelling 2c.pdf",width=33,height=19,units = "cm")
-
-overall <- master_conf$overall %>% t() %>% as.data.frame() %>% rbind(master_conf2$overall %>% t() %>% as.data.frame()) %>% cbind() %>% data.frame("Model"=c("Multiclass","Dualclass"))
-ggplot(overall,aes(x=Model,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+
-  geom_pointrange(size=0.2)
+# master_conf2 <- readRDS("Comp/ConfMatrix 2class Master.rds")
+# master_conf2$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+
+#   geom_tile(colour="grey10")+geom_text(aes(label=ifelse(Freq<=0," ",percent(Freq/sum(master_conf$table),accuracy = 0.001))))+
+#   scale_fill_gradient(low="white",high="forestgreen",na.value = "grey50")+guides(fill=guide_legend(title="Freq %"))
+# #ggsave("Figures & Presentables/Mislabelling 2c.pdf",width=33,height=19,units = "cm")
+# 
+# overall <- master_conf$overall %>% t() %>% as.data.frame() %>% rbind(master_conf2$overall %>% t() %>% as.data.frame()) %>% cbind() %>% data.frame("Model"=c("Multiclass","Dualclass"))
+# ggplot(overall,aes(x=Model,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+
+#   geom_pointrange(size=0.2)
 #ggsave("Figures & Presentables/Overall Conf.pdf",width=33,height=19,units = "cm")
 ```
 
@@ -410,33 +192,15 @@ byClass_Mc$rowname <- byClass_Mc$rowname %>% str_split_i(":",2) %>% str_trim()
 ```
 
 ```{r}
-overall_results <- read.csv("Comp/Model results.csv")
-tc_byc <- read.csv("Comp/Two class breakdown.csv")
 mc_byc <- read.csv("Comp/Multiclass breakdown.csv")
-
-overall_results$Accuracy <- percent(overall_results$Accuracy,accuracy = 0.01)
-overall_results[,c(2,1,3)] %>% pivot_wider(names_from=ModelType, values_from=Accuracy) %>% arrange(Protein) %>% kbl() %>% kable_styling(full_width = F,position="float_right") %>% collapse_rows(1)
-```
-
-
-```{r}
-ggplot(overall_results,aes(Protein,ymin=AccuracyLower,y=Accuracy,ymax=AccuracyUpper))+geom_pointrange()+facet_wrap(~ModelType)
-ggplot(overall_results,aes(Protein,Kappa))+geom_point()+facet_wrap(~ModelType)
-
-ggplot(tc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point()
-ggplot(tc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()
-ggplot(tc_byc,aes(Protein,Precision))+geom_point()
-ggplot(tc_byc,aes(Protein,F1))+geom_point()
-ggplot(tc_byc,aes(Protein,Balanced.Accuracy))+geom_point()
-
-ggplot(mc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point(alpha=0.6)+facet_wrap(~Host)
+ggplot(mc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point(alpha=0.8)+facet_wrap(~Host)
 ggplot(mc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()+facet_wrap(~Host)
-ggplot(mc_byc,aes(Protein,Precision,colour=Host))+geom_jitter(height=0,width=0.2)
-ggplot(mc_byc,aes(Protein,F1,colour=Host))+geom_point()
-ggplot(mc_byc,aes(Protein,Balanced.Accuracy,colour=Host))+geom_point()
+ggplot(mc_byc,aes(Host,Precision,colour=Protein))+geom_jitter(height=0,width=0.2)
+ggplot(mc_byc,aes(Host,F1,colour=Protein))+geom_point()
+ggplot(mc_byc,aes(Host,Balanced.Accuracy,colour=Protein))+geom_point()
 ```
 
-```{r}
+```{r, eval=FALSE}
 ggplot(mc_byc,aes(Protein,Host,fill=F1))+geom_tile()+geom_text(aes(label=percent(F1,accuracy=0.01)))+
   scale_fill_gradient(low="grey90",high="forestgreen",na.value = "white")+ theme(legend.position="none")+ labs(title = "F1 Values of Multiclass Models")
 
@@ -471,13 +235,15 @@ mismatches$PRT <- mismatches$PRT %>% str_replace_all("PB2","01PB2") %>% str_repl
 mismatches %>% group_by(PRT,Matched) %>% summarise(N=length(Matched)) %>% subset(!is.na(Matched)) %>% pivot_wider(names_from = Matched, values_from = N) %>% select(PRT,`TRUE`,`FALSE`) %>% kbl(col.names = c("Protein","Matched","Mismatched")) %>% kable_styling(full_width = F,position="float_left")
 ```
 
+When did the model predict things incorrectly? Was there any pattern to the mistakes? Not really...
+
 ## Protein Features
 
 ```{r}
 var_imps <- read.csv("Varimp/VarImps.csv")
 
 # ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+ ylim(0,500)
-ggplot(subset(var_imps,AUC_loss>0.001),aes(AUC_loss,colour = Protein))+ geom_density()
+# ggplot(subset(var_imps,AUC_loss>0.001),aes(AUC_loss,colour = Protein))+ geom_density()
 #ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+facet_wrap(~str_split_i(var,"_",1))
@@ -524,50 +290,29 @@ for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
 ```
 
 ```{r}
-# NP_tree <- readRDS("Phylogenies/NP_tree.rds")
-# ggtree(NP_tree, aes(color=host))+geom_nodelab(aes(label = node), hjust = -0.5)+
-#   # geom_tiplab(hjust = -.1)+ 
-#   theme(legend.position = c(.05, .85)) 
-
 readRDS("Phylogenies/PB2_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PB2 Tree")
 readRDS("Phylogenies/PB1_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PB1 Tree")
 readRDS("Phylogenies/PA_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PA Tree")
 readRDS("Phylogenies/HA_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
 readRDS("Phylogenies/NP_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NP Tree")
 readRDS("Phylogenies/NA_tree.rds") %>% ggtree(aes(colour=host))+ 
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NA Tree")
 readRDS("Phylogenies/M1_tree.rds") %>% ggtree(aes(colour=host))+
-  # geom_nodelab(aes(label = node), hjust = -0.5)+ 
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "M1 Tree")
 readRDS("Phylogenies/NS1_tree.rds") %>% ggtree(aes(colour=host))+
-  # geom_nodelab(aes(label = node), hjust = -0.5)+
-  # geom_tiplab(hjust = -.1)+ 
-  geom_tippoint()+
+  # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
 ```
 
@@ -576,18 +321,19 @@ library(nodiv)
 tree <- readRDS("Phylogenies/NS1_tree.rds")
 ggtree(tree,aes(colour=host))+
   # geom_balance(node = 1621)+ 
-  geom_hilight(node = 1674)+
-  # geom_hilight(node = 1099)+
+  # geom_hilight(node = 1674)+
+  geom_hilight(node = 1621)+
   theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
 
-tree_subset(tree,1674,levels_back=0) %>% ggtree(aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)
+# tree_subset(tree,1674,levels_back=0) %>% ggtree(aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)
 
 # basal_node(as.phylo(tree))
 # nodenumbers(as.phylo(tree))
 # nodes(as.phylo(tree), all = FALSE)
 # Descendants(1621, as.phylo(tree))
-Parent("ATB639FJH_AEM60152_Equidae_1971", as.phylo(tree)) #NS1 - 1674
-MostRecentAncestor(tips=c("OWQ498HSV_AHL21355_Suidae_2011.894444","FTK531MEX_ARV89158_Suidae_2014.555556"),as.phylo(tree)) #NS1 - 
+# Parent("ATB639FJH_AEM60152_Equidae_1971", as.phylo(tree)) #NS1 - 1674
+# MostRecentAncestor(tips=c("OWQ498HSV_AHL21355_Suidae_2011.894444","FTK531MEX_ARV89158_Suidae_2014.555556"),as.phylo(tree)) 
+# Parent(1672, as.phylo(tree))
 ```
 
 ```{r, eval=FALSE}
@@ -597,7 +343,7 @@ ggtree(HA_tree,aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)+ th
 tree_subset(HA_tree,"AEM60113_KOI765MSE_Equidae_1979",levels_back=2) %>% ggtree(aes(colour=host))+ geom_nodelab(aes(label=node),hjust = -0.5)
 ```
 
-```{r, fig.height=20}
+```{r, fig.height=10}
 ha <- readRDS("Phylogenies/HA_tree.rds")
 tip.label(ha) <- tip.label(ha) %>% str_replace_all("'","")
 td <- read.table("Phylogenies/iqtree/Annotations/varimp_HA_values.txt")
@@ -605,17 +351,17 @@ ha <- full_join(ha,data.frame(label=td$V1,subtype=td$V13), by = 'label')
 
 p <- ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT charge.Tr1221", data=td, geom=geom_point, mapping=aes(x=V3))
 
-ggtree(ha,aes(colour=subtype),branch.length = "none")+ geom_tiplab(aes(lable=subtype))+geom_nodelab(aes(label=node),hjust = -0.25)+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree")
-ggsave("Phylogenies/iqtree/Annotations/HA_values.pdf",height=42)
+# ggtree(ha,aes(colour=subtype),branch.length = "none")+ geom_tiplab(aes(lable=subtype))+geom_nodelab(aes(label=node),hjust = -0.25)+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree")
+# ggsave("Phylogenies/iqtree/Annotations/HA_values.pdf",height=42)
 
 subtype_block <- data.frame(node=c(2579,2569,3446,2008,3770,3186,3988,3429),
                             offset=0.003,offset.text=-0.001,extend=0.05,
                             label=c("H1","H2","H3","H5","H7","H9","H10","H11"))
 
-p + geom_cladelab(data=subtype_block, mapping = aes(node = node,label = label,offset = offset,offset.text = offset.text,extend = extend),barsize = 1,fontface = 3,align = TRUE)
+p + geom_cladelab(data=subtype_block, mapping = aes(node=node, label=label, offset=offset, offset.text=offset.text, extend=extend),barsize = 1,fontface = 3,align = TRUE)
 ```
 
-```{r, fig.height=10}
+```{r, fig.height=10, eval=FALSE}
 ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_point, mapping=aes(x=V4))+ geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_path, alpha=0.6, mapping=aes(x=V4))
 
 ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT solventaccess.Tr1331", data=td, geom=geom_point, mapping=aes(x=V5))+ geom_facet(panel="CTDT solventaccess.Tr1331", data=td, geom=geom_path, alpha=0.6, mapping=aes(x=V5))
@@ -623,9 +369,7 @@ ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75)
 ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT hydrophobicity_CASG920101.Tr1331", data=td, geom=geom_point, mapping=aes(x=V6))+ geom_facet(panel="CTDT hydrophobicity_CASG920101.Tr1331", data=td, geom=geom_path, alpha=0.6, mapping=aes(x=V6))
 ```
 
-M1 
-
-```{r}
+```{r, eval=FALSE}
 m1 <- readRDS("Phylogenies/M1_tree.rds")
 tip.label(m1) <- tip.label(m1) %>% str_replace_all("'","")
 td <- read.table("Phylogenies/iqtree/Annotations/varimp_M1_values.txt")
@@ -634,6 +378,8 @@ ggtree(m1,aes(colour=host))+ geom_tiplab(hjust = -.1)+ theme(legend.position = c
 ```
 
 ### Trait Analyses
+
+Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host_1 to host_2?
 ```{r}
 traits <- data.frame()
 for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
@@ -665,7 +411,7 @@ ggplot(subset(trait_labs,Protein %in% c("05NP","06NA","07M1","08NS1")), aes(Dono
 ```
 
 ### Ancestral Reconstruction
-```{r}
+```{r, eval=FALSE}
 transition_rates <- data.frame()
 RecNodes <- data.frame()
 for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
@@ -683,194 +429,120 @@ trat <- transition_rates %>% group_by(Protein,Transition=str_replace_all(Transit
 # trat$Stat <- rep(c("min","q25","med","q75","max"),210)
 ```
 
-```{r}
-ggplot(subset(transition_rates,Protein=="HA"),aes(Donor,Recip,fill=Rate))+geom_tile()+facet_wrap(~Protein)
-
-ggplot(trat,aes(Transition,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0), y=mRate, ymax=mRate+sdRate,colour=str_sub(Transition,1,1)))+geom_crossbar()+facet_wrap(~Protein)+theme(legend.position = "none")
-
-ggplot(RecNodes,aes(RecTrait,RecNode,colour=RecTrait))+geom_point()+facet_wrap(~Protein)
-```
-
-```{r}
-solo_rates <- data.frame()
-combo_rates <- data.frame()
-recons <- data.frame()
-for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
-  raw_ace <- read.csv(paste0("Phylogenies/iqtree/ACE/",PRT," Feature Reconstruction.csv"))
-  raw_solo_rates <- raw_ace %>% select(starts_with("q.")) %>% mutate(Protein=PRT)
-  raw_combo_rates <- raw_ace %>% select(starts_with("q")&!contains(".")) %>% mutate(Protein=PRT)
-  raw_recons <- raw_ace %>% select(starts_with("Rec")) %>% mutate(Protein=PRT)
-  
-  solo_rates <- bind_rows(solo_rates,raw_solo_rates)
-  combo_rates <- bind_rows(combo_rates,raw_combo_rates)
-  recons <- bind_rows(recons,raw_recons)
-}
-
-solo_rates_long <- solo_rates %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
-combo_rates_long <- combo_rates %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
-recons_long <- recons %>% pivot_longer(cols=-"Protein",names_to = "Trait",values_to = "Rate")
-
-solo_rates_hosts <- solo_rates %>% select(Protein,all_of(c("q.A","q.B","q.D","q.E","q.H","q.P"))) %>%
-  pivot_longer(cols = -"Protein", names_to = "Trait", values_to = "Rate") %>% group_by(Protein,Trait) %>% summarise(mR=mean(Rate),sdR=sd(Rate),qRa=quantile(Rate,na.rm=TRUE)) %>% mutate(Stat=c("min","q25","med","q75","max")) %>% pivot_wider(names_from = "Stat",values_from = "qRa")
-solo_rates_hosts$Trait <- solo_rates_hosts$Trait %>% str_replace_all("q.A","Avian") %>% str_replace_all("q.B","Bat") %>% str_replace_all("q.D","Dog") %>% str_replace_all("q.E","Equine") %>% str_replace_all("q.H","Human") %>% str_replace_all("q.P","Pig")
-
-combo_rates_host <- combo_rates %>% select(all_of(c("Protein","qAB","qAD","qAE","qAH","qAP","qBA","qBD","qBE","qBH","qBP","qDA","qDB","qDE","qDH","qDP","qEA","qEB","qED","qEH","qEP","qHA","qHB","qHD","qHE","qHP","qPA","qPB","qPD","qPE","qPH"))) %>% pivot_longer(cols = -"Protein", names_to = "Shift", values_to = "Rate") %>% mutate(Source=str_sub(Shift,2,2),Recip=str_sub(Shift,3,3))
-
-recNode <- recons %>% pivot_longer(cols=-"Protein",names_to = "Trait", values_to = "Rate")
-recNode$Trait <- recNode$Trait %>% str_replace_all("RecNode_","") %>% str_replace_all("_P_","_P")
-recNode$Feat1 <- recNode$Trait %>% str_split_i("_",1) %>% str_replace_all("\\.","") %>% str_replace_all("S","") %>% as.numeric()
-recNode$Feat2 <- recNode$Trait %>% str_split_i("_",2) %>% str_replace_all("\\.","") %>% str_sub(2,2)
-```
-
-```{r}
-ggplot(solo_rates_hosts,aes(Trait,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,colour=Protein))+geom_pointrange(position = position_jitter(height = 0))
-ggplot(solo_rates_hosts,aes(Trait,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,fill=Protein))+geom_crossbar(position="dodge")
-ggplot(solo_rates_hosts,aes(Protein,ymin=ifelse(mR-sdR<=0,0,mR-sdR),y=mR,ymax=mR+sdR,fill=Trait))+geom_crossbar(position="dodge")
-
-ggplot(solo_rates_hosts,aes(Trait,ymin=q25,y=med,ymax=q75,fill=Protein))+geom_crossbar(position="dodge")
-ggplot(solo_rates_hosts,aes(Protein,ymin=q25,y=med,ymax=q75,fill=Trait))+geom_crossbar(position="dodge")
-#ggsave("Figures & Presentables/20-Mar/Phylo Signal.pdf",width=33,height=19,units = "cm")
-```
-
-```{r}
-ggplot(combo_rates_long,aes(Trait,Rate,colour=Protein))+geom_point(alpha=0.4)+facet_wrap(~str_sub(Trait,2,2),scales="free_x")
-# ggplot(combo_rates,aes(q4A,qA4,colour=Protein))+geom_point(alpha=0.4)
-```
-
-```{r,eval=FALSE}
-ggplot(combo_rates,aes(qAB,qBA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Bat",y="Bat -> Avian")
-#ggsave("Figures & Presentables/20-Mar/Phylo AB.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qAD,qDA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Dog",y="Dog -> Avian")
-#ggsave("Figures & Presentables/20-Mar/Phylo AD.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qAE,qEA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Horse",y="Horse -> Avian")
-#ggsave("Figures & Presentables/20-Mar/Phylo AE.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qAH,qHA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Human",y="Human -> Avian")
-#ggsave("Figures & Presentables/20-Mar/Phylo AH.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qAP,qPA,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Avian -> Pig",y="Pig -> Avian")
-#ggsave("Figures & Presentables/20-Mar/Phylo AP.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qBD,qDB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Dog",y="Dog -> Bat")
-#ggsave("Figures & Presentables/20-Mar/Phylo BD.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qBE,qEB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Horse",y="Horse -> Bat")
-#ggsave("Figures & Presentables/20-Mar/Phylo BE.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qBH,qHB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Human",y="Human -> Bat")
-#ggsave("Figures & Presentables/20-Mar/Phylo BH.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qBP,qPB,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Bat -> Pig",y="Pig -> Bat")
-#ggsave("Figures & Presentables/20-Mar/Phylo BP.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qDE,qED,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Horse",y="Horse -> Dog")
-#ggsave("Figures & Presentables/20-Mar/Phylo DE.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qDH,qHD,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Human",y="Human -> Dog")
-#ggsave("Figures & Presentables/20-Mar/Phylo DH.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qDP,qPD,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Dog -> Pig",y="Pig -> Dog")
-#ggsave("Figures & Presentables/20-Mar/Phylo DP.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qEH,qHE,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Horse -> Human",y="Human -> Horse")
-#ggsave("Figures & Presentables/20-Mar/Phylo EH.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qEP,qPE,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Horse -> Pig",y="Pig -> Horse")
-#ggsave("Figures & Presentables/20-Mar/Phylo EP.pdf",width=33,height=19,units = "cm")
-ggplot(combo_rates,aes(qHP,qPH,colour=Protein))+geom_point(alpha=0.8)+ylim(0,100)+xlim(0,100)+labs(x="Human -> Pig",y="Pig -> Human")
-#ggsave("Figures & Presentables/20-Mar/Phylo HP.pdf",width=33,height=19,units = "cm")
-```
-
-```{r}
-host_rate_av <- combo_rates_host %>% group_by(Protein,Source,Recip) %>% summarise(mR=mean(Rate),sR=sd(Rate))
-ggplot(subset(host_rate_av,Protein=="HA"),aes(Source,mR,colour=Recip))+geom_point(alpha=0.8)
-```
-
-```{r}
-host_transfers <- data.frame()
-for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
-  for(SFT in c("qAB","qAD","qAE","qAH","qAP","qBD","qBE","qBH","qBP","qDE","qDH","qDP","qEH","qEP","qHP")){
-    TFS <- paste0("q",str_sub(SFT,3,3),str_sub(SFT,2,2))
-    a <- data.frame(Pro=PRT,Shift=SFT,
-                    mR=mean(subset(combo_rates_host,Protein==PRT&(Shift==SFT|Shift==TFS))$Rate),
-                    sR=sd(subset(combo_rates_host,Protein==PRT&(Shift==SFT|Shift==TFS))$Rate),
-                    mRfwd=mean(subset(combo_rates_host,Protein==PRT&Shift==SFT)$Rate),
-                    sRfwd=sd(subset(combo_rates_host,Protein==PRT&Shift==SFT)$Rate),
-                    mRrev=mean(subset(combo_rates_host,Protein==PRT&Shift==TFS)$Rate),
-                    sRrev=sd(subset(combo_rates_host,Protein==PRT&Shift==TFS)$Rate))
-    host_transfers <- bind_rows(host_transfers,a)
-  }
-}
-
-ggplot(host_transfers,aes(Shift,mR))+geom_point()+facet_wrap(~Pro)
-ggplot(host_transfers)+geom_point(aes(mRfwd,mRrev,colour = Shift))+facet_wrap(~Pro)
-
-ggplot(host_transfers)+geom_pointrange(aes(mRfwd,y=mRrev,ymin=ifelse(mRrev-sRrev<0,0,mRrev-sRrev),ymax=mRrev+sRrev,colour = Shift))+geom_pointrange(aes(mRrev,y=mRfwd,ymin=ifelse(mRfwd-sRfwd<0,0,mRfwd-sRfwd),ymax=mRfwd+sRfwd,colour = Shift))+facet_wrap(~Pro,scales="free")
-```
-
-```{r}
-host_shifts <- combo_rates %>% select(all_of(c("qAB","qAD","qAE","qAH","qAP","qBA","qBD","qBE","qBH","qBP","qDA","qDB","qDE","qDH","qDP","qEA","qEB","qED","qEH","qEP","qHA","qHB","qHD","qHE","qHP","qPA","qPB","qPD","qPE","qPH")))
-host_shifts <- host_shifts %>% replace(is.na(.), 0)
-
-results <- prcomp(host_shifts, scale = TRUE)
-results$rotation <- -1*results$rotation
-
-library(ggbiplot)
-host.NS <- c(rep("PB2",500),rep("PB1",500),rep("PA",500),rep("HA",500),rep("NP",500),rep("NA",500),
-             rep("M1",500),rep("NS1",500))
-ggbiplot(results,ellipse=TRUE, groups=host.NS)
-```
-
-```{r}
-hosttypes <- c("Avian","Bat","Dog","Horse","Human","Pig")
-
-recNode <- left_join(recNode,read_excel("VarImp/VarImp Values.xlsx",sheet="Sheet3"))
-```
-
-
-```{r}
-subset(recNode,Protein=="PB2"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feature,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(Feature,Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "PB2")
-
-subset(recNode,Protein=="PB1"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "PB1")
-
-subset(recNode,Protein=="PA"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "PA")
-
-subset(recNode,Protein=="HA"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "HA")
-
-subset(recNode,Protein=="NP"&Feat2 %in% c("A","H","P")) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "NP")
-
-subset(recNode,Protein=="NA"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "NA")
-
-subset(recNode,Protein=="M1"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "M1")
-
-subset(recNode,Protein=="NS1"&Feat2 %in% hosttypes) %>% group_by(Protein,Trait,Feat1,Feat2) %>% summarise(mR=mean(Rate),sR=sd(Rate),vR=var(Rate)) %>% ggplot(aes(as.factor(Feat1),Feat2,fill=mR))+geom_tile(colour="grey10")+geom_text(aes(label=paste0(round(mR,3),"\n±",round(sR,3))))+ scale_fill_gradient(low="grey90",high="forestgreen")+theme(legend.position = "none")+labs(y="Host",x="Protein Feature",title = "NS1")
-# #ggsave("Figures & Presentables/20-Mar/NS1 Phylo.pdf",width=33,height=19,units = "cm")
-```
-
-### Specified Nodes
-
 Two new columns will be added to the output “RecNode P(D)” and “RecNode P(G)”, these
 represent the probability of reconstructing a D or a G at RecNode.
 
-q12 | Trait 1 = 0 | 2 | 0 → 1
-q12 | The dependent q12 transition rate
-
 ```{r}
-readRDS("Phylogenies/PB2_tree.rds") %>% ggtree(aes(colour=host))+ 
-  geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "PB2 Tree")
+ace_nodes <- list.files(path = "Phylogenies/iqtree/ACE",pattern = "Node",full.names = T)
 
-#1 "ODX878OKZ_ADY70552_Suidae_1993.611111 WJU630FQR_ADH83313_Suidae_2009.344444 VAO240MWS_ACF25607_Avian_1990 ISM055SWS_ACF25597_Avian_1992 JGR464GMJ_BBG92092_Suidae_1982 WNZ342YCA_ACD88526_Avian_1980.438889 JYB759VJM_ACN90984_Suidae_2003.583333 QVI059HOC_BAK22651_Suidae_2005 JZN040UZM_BAK22652_Suidae_2004"
+for(i in 1:6){
+  ace_data <- read.csv(ace_nodes[i])
+  prot <- ace_nodes[i] %>% str_split_i("\\/",4) %>% str_split_i(" ",1)
+  node <- ace_nodes[i] %>% str_split_i("\\/",4) %>% str_split_i(" ",3)
+    x <- ace_data %>% select(starts_with("RecNode")&(ends_with("P.A.")|ends_with("P.B.")|ends_with("P.D.")|ends_with("P.E.")|ends_with("P.H.")|ends_with("P.P."))) %>% pivot_longer(cols=1:66,names_to = "Rec",values_to = "Value") %>% mutate("Feat"=str_split_i(Rec,"\\.\\.\\.",2) %>% str_split_i("\\.",2),"Host"=str_split_i(Rec,"\\.\\.\\.",3) %>% str_split_i("\\.",3)) %>% group_by(Host,Feat=as.integer(Feat)) %>% summarise(mV=mean(Value),sV=sd(Value),minV=quantile(Value)[1],q25V=quantile(Value)[2],medV=quantile(Value)[3],q75V=quantile(Value)[4],maxV=quantile(Value)[5]) %>% mutate(Protein=prot,Node=node)
+    x <- left_join(x,varimps,by=c("Protein","Feat"))
+    x$Feat <- str_replace_all(x$Feat,"10","host_ft")
+    x$Feature <- x$Feature %>% str_replace_all("_","\n")
+    assign(paste0(prot,"_",node),x)
+}
+```
 
-#2 "PWU662QEB_AKI84323_Equidae_2014.805556 UZM911YSU_AOD75038_Canidae_2016.141667 CFQ918WRG_ADY71219_Suidae_2003.741667"
+```{r NS1 subtrees, fig.height=10}
+NS1_tree <- readRDS("Phylogenies/NS1_tree.rds")
+  
+NS1_full <- ggtree(NS1_tree,aes(colour=host))+ 
+  # geom_nodelab(aes(label=node),hjust = -0.25)+
+  geom_hilight(node = 1673)+geom_hilight(node = 1256)+
+  geom_cladelab(node=1673,label="1",angle=270,offset=0.2)+
+  geom_cladelab(node=1256,label="2",angle=270,offset=0.2)+
+  theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
+
+# Descendants(1255,as.phylo(NS1_tree))
+
+NS1_node1 <- tree_subset(NS1_tree,1673,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "NS1 Node 1")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#2CBA37","#33BFC4"),breaks = c("Dog","Horse"))
+NS1_node2 <- tree_subset(NS1_tree,1256,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "NS1 Node 2")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#F8766D","#619CFF","#F564E3"),breaks = c("Avian","Human","Pig"))
+
+ggarrange(NS1_full,ggarrange(NS1_node1,NS1_node2,ncol=1),common.legend = T)
 ```
 
 ```{r}
-readRDS("Phylogenies/HA_tree.rds") %>% ggtree(aes(colour=host))+ 
-  geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
-readRDS("Phylogenies/NA_tree.rds") %>% ggtree(aes(colour=host))+ 
-  geom_tippoint()+ theme(legend.position = c(.05, .75))+labs(title = "NA Tree")
+ggplot(NS1_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+ scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 1")
+ggplot(NS1_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label=round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 2")
+```
+
+```{r PB2 subtrees, fig.height=10}
+PB2_tree <- readRDS("Phylogenies/PB2_tree.rds")
+  
+pb2_full <- ggtree(PB2_tree,aes(colour=host))+ 
+  # geom_nodelab(aes(label=node),hjust = -0.25)+
+  geom_hilight(node = 757)+geom_hilight(node = 885)+
+  geom_cladelab(node=757,label="1",angle=270,offset=0.2)+
+  geom_cladelab(node=885,label="2",angle=270,offset=0.2)+
+  theme(legend.position = c(.05, .75))+labs(title = "PB2 Tree")
+
+pb2_node1 <- tree_subset(PB2_tree,757,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "PB2 Node 1")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#F8766D","#F564E3"),breaks = c("Avian","Pig"))
+pb2_node2 <- tree_subset(PB2_tree,885,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "PB2 Node 2")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#2CBA37","#33BFC4","#F564E3"),breaks = c("Dog","Horse","Pig"))
+
+ggarrange(pb2_full,ggarrange(pb2_node1,pb2_node2,ncol=1),common.legend = T)
 ```
 
 ```{r}
-ns1_node1 <- read.csv("Phylogenies/iqtree/ACE/NS1 Node 1 Feature Reconstruction.csv")
+ggplot(PB2_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 1")
+ggplot(PB2_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 2")
+```
 
-ns1_node1 %>% select("Iteration","RecNode...S.0....P.A.","RecNode...S.0....P.B.","RecNode...S.0....P.D.","RecNode...S.0....P.E.","RecNode...S.0....P.H.","RecNode...S.0....P.P.") %>% pivot_longer(cols = -1, names_to = "Jump", values_to = "Rate") %>% group_by(Jump) %>% summarise(mR=mean(Rate),sR=sd(Rate)) %>% ggplot(aes(Jump,ymin=mR-sR,y=mR,ymax=mR+sR))+geom_pointrange()
+```{r HA subtrees, fig.height=10}
+HA_tree <- readRDS("Phylogenies/HA_tree.rds")
+  
+HA_full <- ggtree(HA_tree,aes(colour=host))+ 
+  # geom_nodelab(aes(label=node),hjust = -0.25)+
+  geom_hilight(node = 3667)+geom_hilight(node = 3490)+
+  geom_cladelab(node=3667,label="1",angle=270,offset=0.2)+
+  geom_cladelab(node=3490,label="2",angle=270,offset=0.2)+
+theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
 
-readRDS("Phylogenies/NS1_tree.rds") %>% tree_subset("ATB639FJH_AEM60152_Equidae_1971",levels_back=2) %>% ggtree(aes(colour=host))+ geom_tiplab()+ theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
+Descendants(3492,as.phylo(HA_tree))
+HA_node1 <- tree_subset(HA_tree,3667,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "HA Node 1")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#2CBA37","#33BFC4","#F564E3"),breaks = c("Dog","Horse","Pig"))
+HA_node2 <- tree_subset(HA_tree,3493,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "HA Node 2")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#2CBA37","#619CFF","#F564E3"),breaks = c("Dog","Human","Pig"))
+
+ggarrange(HA_full,ggarrange(HA_node1,HA_node2,ncol=1),common.legend = T)
 ```
 
 ```{r}
-#1 "XKL378APK_AIN25482_Canidae_2011 CAW967YKN_ASB31124_Canidae_2010 OAY212AIY_AJJ98563_Canidae_2008 UZM911YSU_AOD75036_Canidae_2016.141667 ZRL582GFL_ASB31108_Canidae_2012 FZQ695RHW_ATP61523_Canidae_2015.958333 MSB621LJI_ATP61535_Canidae_2015.958333 ATB639FJH_AEM60152_Equidae_1971 LGL684RXB_ADM29699_Canidae_2009 VRO588QNE_ASB31300_Equidae_1995 TCB721KRF_ATQ39029_Canidae_2015.9 SEJ026MEM_AOD75136_Canidae_2016.102778 ZIE194WFY_ADM29347_Canidae_2006.041667 WCC169ABL_AIZ07520_Canidae_2012.844444 FNB405OVZ_ASB31170_Canidae_2009"
-
-#2 "FVX391EJI_AHA98469_Hominidae_2013.152778 ZUG199BMM_AHA98514_Hominidae_2013.136111 DQQ709AGJ_AHA98525_Hominidae_2013.125 WLL745UVR_ATJ02460_Suidae_2016.744444 VSA822LIU_AEA29246_Suidae_2009.666667 EVE279ACF_AGI52417_Hominidae_2009.747222 SCK140RSO_AGI53754_Hominidae_2009.930556 GXV382JXI_ARV89086_Suidae_2014.477778 CFC861HEM_AIT16710_Suidae_2012.875 TOZ811CBI_AGI53080_Hominidae_2009.791667 QJO365XDH_AGI55098_Hominidae_2010.011111 HRZ884BMP_AKL90897_Hominidae_2012.030556 MYE388EVS_AEA29234_Suidae_2009.875 AJV627GKL_AIC64651_Suidae_2013 IEA737AGI_ATJ01543_Suidae_2015.461111 SOO666LFF_AEA29256_Suidae_2009.875 DOW573GNP_AGI55539_Hominidae_2009.991667 RZF962FWK_AGI55109_Hominidae_2010.091667 XHO918IFW_AEN68539_Suidae_2011.013889 OJA392TLJ_AGK72671_Hominidae_2011.166667 DIG705GLN_AGI52692_Hominidae_2010.011111 MXH365SXC_CCD31007_Suidae_2010.833333 EGA889UQW_CCD31017_Suidae_2010.833333 HBO199FBZ_AGS42047_Suidae_2012.136111 ZXC902VRJ_AGI54688_Hominidae_2009.475 CKM448XXV_ANK57543_Suidae_2014.675 AIO100PZJ_ARX95009_Avian_2014.955556 RXV972SLL_ASU55780_Hominidae_2017.041667 JVV956HLV_APH11064_Hominidae_2016.777778 JUD623ZJB_ADN24987_Hominidae_2009.925 UBV909CBI_ADI52806_Avian_2009.838889 TBD245MCB_AEA29244_Suidae_2009.513889 JDB514ZHL_ADN25273_Hominidae_2009.558333 VND017LFH_AEA29238_Suidae_2009.552778 GIH655JQQ_AEA29250_Suidae_2009.713889 FSQ724QZM_ADN25119_Hominidae_2009.416667 NMI163SIF_AEA29242_Suidae_2009.836111 TUP152QGD_ADN25117_Hominidae_2009.416667 KEU466CJG_ADN25397_Hominidae_2009.836111 JOY586FBZ_ANZ03605_Suidae_2014.055556 QIA527YZG_AEM91958_Suidae_2010.997222 YFI163IFJ_ACR01030_Suidae_2009 ERQ535CBW_ADN25069_Hominidae_2009.975 FTK531MEX_ARV89158_Suidae_2014.555556"
+ggplot(HA_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 1")
+ggplot(HA_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 2")
 ```
 
+```{r NA subtrees, fig.height=10}
+NA_tree <- readRDS("Phylogenies/NA_tree.rds")
+  
+NA_full <- ggtree(NA_tree,aes(colour=host))+ 
+  # geom_nodelab(aes(label=node),hjust = -0.25)+
+  geom_hilight(node = 777)+geom_hilight(node = 690)+
+  geom_cladelab(node=777,label="1",angle=270,offset=0.2)+
+  geom_cladelab(node=690,label="2",angle=270,offset=0.2)+
+  theme(legend.position = c(.05, .75))+labs(title = "NA Tree")
+
+# Descendants(609,as.phylo(NA_tree))
+
+NA_node1 <- tree_subset(NA_tree,777,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "NA Node 1")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#F8766D","#33BFC4"),breaks = c("Avian","Horse"))
+NA_node2 <- tree_subset(NA_tree,690,levels_back=0) %>% ggtree(aes(colour=host))+
+  theme(legend.position = "none")+labs(title = "NA Node 2")+geom_rootedge(rootedge = 0.001)+
+  scale_colour_manual(values = c("#F8766D","#619CFF","#F564E3"),breaks = c("Avian","Human","Pig"))
+
+ggarrange(NA_full,ggarrange(NA_node1,NA_node2,ncol=1),common.legend = T)
+```
