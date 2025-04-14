@@ -71,6 +71,9 @@ The clustering resulting from removing sequences with a 95% sequence identity le
 > [!NOTE]
 > Note that some viruses had multiple proteins
 
+> [!NOTE]
+> Note that some viruses had multiple proteins
+
 ## Protein Models
 
 Confusion matrices made between known origin host and those predicted by the stack models were used to assess model predictive strength and find evidence of possible host shifts.
