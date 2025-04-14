@@ -30,46 +30,100 @@ uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
 varimps <- read.csv("Varimp/VarImp Refs.csv")
 ```
+
 # Introduction
 
-Influenza A viruses are notorious and exemplary pathogens that cross host-species boundaries. By no means exclusively, yet the potential for IAV cross-species emergence is one of the most keenly felt biological threats in the world. The proclivity of these viruses to circulate in multiple vertebrate species, including many of the species reared agriculturally, poses great importance on understanding how and when host-jumps may occur. In addition, huge amounts of resources are spent annually to try and predict whether IAV will jump between species, and what those consequences may entail. To make these predictions, many different angles of influenza virus biology are analysed from evolutionary history to ecological contact networks to structural/molecular modelling of host-pathogen protein interactions to name but a few. However, exploring these features independently can obfuscate patterns and/or lead to pseudo-replication - is he relationship between protein structures already accounted for by viral phylogenetic histories? 
+Influenza A viruses are notorious and exemplary pathogens that cross
+host-species boundaries. By no means exclusively, yet the potential for
+IAV cross-species emergence is one of the most keenly felt biological
+threats in the world. The proclivity of these viruses to circulate in
+multiple vertebrate species, including many of the species reared
+agriculturally, poses great importance on understanding how and when
+host-jumps may occur. In addition, huge amounts of resources are spent
+annually to try and predict whether IAV will jump between species, and
+what those consequences may entail. To make these predictions, many
+different angles of influenza virus biology are analysed from
+evolutionary history to ecological contact networks to
+structural/molecular modelling of host-pathogen protein interactions to
+name but a few. However, exploring these features independently can
+obfuscate patterns and/or lead to pseudo-replication - is he
+relationship between protein structures already accounted for by viral
+phylogenetic histories?
 
-Our cross-specialisation approach first uses protein compositional features to train machine learning models on classifying the original host the virus was obtained from. 
-- The features are x and show y, included them because z
+Our cross-specialisation approach first uses protein compositional
+features to train machine learning models on classifying the original
+host the virus was obtained from. - The features are x and show y,
+included them because z
 
-Finally, we compared the results of both modelling and phylogenetic approaches to detect any overlap or, more interestingly, any inferences that were exclusive to only one method. 
+Finally, we compared the results of both modelling and phylogenetic
+approaches to detect any overlap or, more interestingly, any inferences
+that were exclusive to only one method.
 
 # Methodology
 
 ## Sequence Collection
-Sequences were collected from NCBI Virus Database. This dataset was filtered to only include samples with: 
-a) complete nucleotide sequences, missing no more than 10% of the average length for that segment
-b) metadata containing the virus subtype and original host, at least up to the Class level (Aves or Mammalia) through preferably detailing all the way down to the Family or Species level
-Nucleotide sequences were then assigned a random identifier (between AAA-000-AAA and ZZZ-999-ZZZ) to associate with metadata throughout analyses. 14,682 avian and 21,737 mammalian sequences were collated at this stage. 
 
-Samples from mammalian hosts were then retained only if the original host was within the Canidae, Suidae, Equidae, Hominidae or Phyllostomidae families, as viruses within these hosts were expected to display clear examples of adaptation. Viral sequences of mammalian-origin were then reduced further by excluding samples where the subtype does not circulate naturally within closed systems of that host (i.e. removing spillovers or stuttering chains of transmission, neither of which represent the kind of host adaptation we sought to detect). Included subtypes for each family: Canidae (H3N2, H3N8), Equidae (H7N7, H3N8) and finally Hominidae (H1N1, H1N2, H2N2 and H3N2). 
+Sequences were collected from NCBI Virus Database. This dataset was
+filtered to only include samples with: a) complete nucleotide sequences,
+missing no more than 10% of the average length for that segment b)
+metadata containing the virus subtype and original host, at least up to
+the Class level (Aves or Mammalia) through preferably detailing all the
+way down to the Family or Species level Nucleotide sequences were then
+assigned a random identifier (between AAA-000-AAA and ZZZ-999-ZZZ) to
+associate with metadata throughout analyses. 14,682 avian and 21,737
+mammalian sequences were collated at this stage.
 
-Corresponding protein sequences were then obtained for each sample, most of which were available from the NCBI Virus Database. The few genomic sequences without matching proteins were translated locally using the 'ape' package in R [@paradis_2019aa]. 
+Samples from mammalian hosts were then retained only if the original
+host was within the Canidae, Suidae, Equidae, Hominidae or
+Phyllostomidae families, as viruses within these hosts were expected to
+display clear examples of adaptation. Viral sequences of
+mammalian-origin were then reduced further by excluding samples where
+the subtype does not circulate naturally within closed systems of that
+host (i.e. removing spillovers or stuttering chains of transmission,
+neither of which represent the kind of host adaptation we sought to
+detect). Included subtypes for each family: Canidae (H3N2, H3N8),
+Equidae (H7N7, H3N8) and finally Hominidae (H1N1, H1N2, H2N2 and H3N2).
 
-In the future, we would've clustered per host and also possibly split the birds up more instead of assuming that *all* birds are *always* the source of infection. 
+Corresponding protein sequences were then obtained for each sample, most
+of which were available from the NCBI Virus Database. The few genomic
+sequences without matching proteins were translated locally using the
+'ape' package in R [@paradis_2019aa].
+
+In the future, we would've clustered per host and also possibly split
+the birds up more instead of assuming that *all* birds are *always* the
+source of infection.
 
 ## Clustering
-Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99), coverage of the sequences within each cluster (-c 0.5, 0.7, 0.8) and the way in which the coverage is calculated (--cov-mode 0, 1). Ultimately options were set to `--min-seq-id 0.95`, `-c 0.8` and `--cov-mode 1` in order to grant a representative number of samples without introducing redundancy. Ultimately, 6697 proteins were nominated leading to sequences from 4551 individual viruses.
+
+Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20
+resulting protein fasta files (two for each of the 10 major IAV
+proteins, one containing mammalian-origin viruses and the other
+avian-origin). These were then clustered using the linear algorithm
+'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three
+variables of the clustering algorithm were experimented with in
+optimising data downsampling: the percentage identity threshold required
+to delineate sequences from one another (--min-seq-id 0.5, 0.75, 0.85,
+0.9, 0.95, 0.99), coverage of the sequences within each cluster (-c 0.5,
+0.7, 0.8) and the way in which the coverage is calculated (--cov-mode 0,
+1). Ultimately options were set to `--min-seq-id 0.95`, `-c 0.8` and
+`--cov-mode 1` in order to grant a representative number of samples
+without introducing redundancy. Ultimately, 6697 proteins were nominated
+leading to sequences from 4551 individual viruses.
 
 ```{r, Unique Subtypes}
 subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Subtype %in% held_subtypes))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="23 of which appear\nmore than 25 times"),fill="#53CCCD")+ geom_segment(aes(x=70,xend=59.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+ 
-  geom_label(aes(75,1100,label="Σ = 4568"),colour="black",fill="white",size=3)+
-  geom_label(aes(50,430,label="Σ = 308"),colour="#F8766D",fill="white",size=3)+
-  geom_label(aes(12,790,label="Σ = 4260"),colour="#53CCCD",fill="white",size=3)+
+  geom_label(aes(75,1100,label="Σ = 4568"),fill="black",colour="white")+
+  geom_label(aes(50,430,label="Σ = 308"),fill="#F8766D")+
+  geom_label(aes(12,790,label="Σ = 4260"),fill="#53CCCD")+
   geom_segment(aes(x=70,xend=79.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+ geom_label(aes(x=70,y=300,label="Plus two bat\nsequences"),fill="#53CCCD")+theme(legend.position = "none",
-        text=element_text(size=20), #change font size of all text
+        text=element_text(size=32), #change font size of all text
         axis.title=element_text(size=20), #change font size of axis titles
         plot.title=element_text(size=20), #change font size of plot title
         legend.text=element_text(size=20), #change font size of legend text
         legend.title=element_text(size=20),
-        axis.text.x = element_text(size=8,angle = 90),)+
+        axis.text.x = element_text(size=10,angle = 90),axis.text.y = element_text(size=10))+
   labs(title = "95 Unique IAV Subtypes",x="Subtypes",y="Quantity")
-#ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
+##ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
 ```
 
 ```{r Sequence Diversity, include=FALSE}
@@ -84,100 +138,234 @@ subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(S
 ```
 
 ## Protein Features
-Proteins from avian-origin and mammalian-origin viruses retained by MMSeq2 were then aligned into a single fasta file for each protein. Accessory proteins (PB1-F2 and PA-X) were then removed from the analyses as both lie within the coding regions of their respective genomic segments and thus the calculation of any features from sequence data would already include these regions. Similarly, those spliced from alternate reading frames (M2 and NEP) were excluded from any further analyses as they were too short and/or conserved to show patterns of adaptation
 
-OmegaFeaturesCLI [@chen_2022aa] was run over the alignments to produce matrices of protein compositional and physio-chemical properties with the 'get_descriptor' command. Features, and the associated command, are as follows: 2mers ('DPC type 1'), Chou's pseudo-amino acid composition ('PseAAC'), conjoined triad ('CTriad'), and finally Composition (CTDc), & Transition (CTDt) & Distribution (CTDd) values.
+Proteins from avian-origin and mammalian-origin viruses retained by
+MMSeq2 were then aligned into a single fasta file for each protein.
+Accessory proteins (PB1-F2 and PA-X) were then removed from the analyses
+as both lie within the coding regions of their respective genomic
+segments and thus the calculation of any features from sequence data
+would already include these regions. Similarly, those spliced from
+alternate reading frames (M2 and NEP) were excluded from any further
+analyses as they were too short and/or conserved to show patterns of
+adaptation
 
-Six datasets of protein features were derived from the iFeatureOmega processing: amino acid two-mers (DPC, 400 features), (CTDc, CTDd and CTDt, 39, 195 and 39 features respectively), paac (23 features) and triad (343 features). These were then annotated with the subtype of the origin virus and labelled with the original host. 
+OmegaFeaturesCLI [@chen_2022aa] was run over the alignments to produce
+matrices of protein compositional and physio-chemical properties with
+the 'get_descriptor' command. Features, and the associated command, are
+as follows: 2mers ('DPC type 1'), Chou's pseudo-amino acid composition
+('PseAAC'), conjoined triad ('CTriad'), and finally Composition (CTDc),
+& Transition (CTDt) & Distribution (CTDd) values.
+
+Six datasets of protein features were derived from the iFeatureOmega
+processing: amino acid two-mers (DPC, 400 features), (CTDc, CTDd and
+CTDt, 39, 195 and 39 features respectively), paac (23 features) and
+triad (343 features). These were then annotated with the subtype of the
+origin virus and labelled with the original host.
 
 ## Machine Learning Models
-Matrices of protein features were then used to create Random Forest classification models, to distinguish between the host from which viruses were sampled.
 
-In order to create test data, subtypes that appeared most frequently (>20 times) were iteratively held out of model construction. In addition to these 23 subtypes, both  bat-exclusive subtypes (H17N10 and H18N11) were held as test data. The remaining 70 subtypes comprised $\frac{308}{4551}$ (~7%) sequences. Six Random Forest models were created from each of the feature datasets, for each holdout. These models were then stacked with the use of the 'caretEnsemble' package [@deane-mayer_2024aa]. Models were weighted in order to accommodate for disproportionate sizes of host groups by using the inverse of that group's proportion.
+Matrices of protein features were then used to create Random Forest
+classification models, to distinguish between the host from which
+viruses were sampled.
 
-These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the stacking algorithm by caret.
+In order to create test data, subtypes that appeared most frequently
+(\>20 times) were iteratively held out of model construction. In
+addition to these 23 subtypes, both bat-exclusive subtypes (H17N10 and
+H18N11) were held as test data. The remaining 70 subtypes comprised
+$\frac{308}{4551}$ (\~7%) sequences. Six Random Forest models were
+created from each of the feature datasets, for each holdout. These
+models were then stacked with the use of the 'caretEnsemble' package
+[@deane-mayer_2024aa]. Models were weighted in order to accommodate for
+disproportionate sizes of host groups by using the inverse of that
+group's proportion.
 
-![Model assembly: One model was created for each parameter.](Figures & Presentables/Model Assembly.png)
+These datasets were then used to train Random Forest models, leading to
+2400 models in total: 8 proteins, 6 chemical and compositional features,
+25 subtype holdouts and either two-class or multi-class models. Each
+models' training statistics were extracted for preliminary validation.
+Models for each protein and subtype were then compiled with the stacking
+algorithm by caret.
+
+![Model assembly: One model was created for each
+parameter.](Figures%20&%20Presentables/Model%20Assembly.png)
 
 ## Phylogenetics
-Using sequence data from each of the 8 proteins studied phylogenetic trees were estimated. Initial model parameters such as evolutionary and codon-partitioning models were estimated by ModelFinder within IQTree2 [@kalyaanamoorthy_2017aa,@minh_2020aa], and temporality was confirmed with TempEst [@rambaut_2016aa].
+
+Using sequence data from each of the 8 proteins studied phylogenetic
+trees were estimated. Initial model parameters such as evolutionary and
+codon-partitioning models were estimated by ModelFinder within IQTree2
+[@kalyaanamoorthy_2017aa,@minh_2020aa], and temporality was confirmed
+with TempEst [@rambaut_2016aa].
+
 ```{r}
 data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Model"=c("FLU+R4","FLU+R4","FLU+R5","FLU+R8","Q.mammal+R4","FLU+R5","Q.mammal+R3","HIVw+R6")) %>% kbl() %>% kable_styling(full_width = F, position="float_right")
 ```
-Maximum Likelihood trees were estimated with substitution models suggested by ModelFinder (Table X) and bootstrapped 1000 times for validation. 
 
-Phylogenetic models were first trialled on Maximum Likelihood trees with the use of BayesTraits v3.0 [@meade_2022aa]; in the R wrapper "btw" [@griffin_2018aa]. A discrete-trait analysis estimated the origin host of viruses and protein features were modelled as continuous traits. Trait analyses were first modelled using tips features and then ancestral trait reconstruction upon internal nodes, both using multi-state reverse-jump MCMC procedures. Initially, transition rates between discrete states (i.e. Host) were examined across each protein tree before the states of ancestral nodes were estimated. 
+Maximum Likelihood trees were estimated with substitution models
+suggested by ModelFinder (Table X) and bootstrapped 1000 times for
+validation.
 
-Specific nodes were selected for ancestral trait reconstruction due to known historical host-switching events. Recognised host switch events include: human viruses that originated from avian and swine reassortments in 1918, 1957 and 1968; emergence of swine viruses into human pandemic strains (H1N1pdm09); avian IAV into horses (H7N7 and H3N8) and the jump of equine H3N8 viruses into canine populations. 
+Phylogenetic models were first trialled on Maximum Likelihood trees with
+the use of BayesTraits v3.0 [@meade_2022aa]; in the R wrapper "btw"
+[@griffin_2018aa]. A discrete-trait analysis estimated the origin host
+of viruses and protein features were modelled as continuous traits.
+Trait analyses were first modelled using tips features and then
+ancestral trait reconstruction upon internal nodes, both using
+multi-state reverse-jump MCMC procedures. Initially, transition rates
+between discrete states (i.e. Host) were examined across each protein
+tree before the states of ancestral nodes were estimated.
 
+Specific nodes were selected for ancestral trait reconstruction due to
+known historical host-switching events. Recognised host switch events
+include: human viruses that originated from avian and swine
+reassortments in 1918, 1957 and 1968; emergence of swine viruses into
+human pandemic strains (H1N1pdm09); avian IAV into horses (H7N7 and
+H3N8) and the jump of equine H3N8 viruses into canine populations.
 
 ## Sequence Reconstruction
 
-RateAncestor: this variable can be set to 0 or 1. If RateAncestor = 1, the program is forced to do two additional analyses, which you can ignore if you do not need the results. First, under a model of variable rates across sites such as the gamma, RateAncestor = 1 forces the program to calculate rates for individual sites along the sequence (output that will be saved in the output rates file), using the empirical Bayes procedure (Yang and Wang 1995). Secondly, RateAncestor = 1 forces the program to perform the empirical Bayesian reconstruction of ancestral sequences (Yang et al. 1995b; Koshi and Goldstein 1996; [Yang 2006 pages 119-124(http://abacus.gene.ucl.ac.uk/CME/)]). Ancestral state reconstruction by parsimony (Fitch 1971; Hartigan 1973) is well known (i.e., it is implemented in the PAML program pamp). It can also be achieved using the likelihood/empirical Bayes approach. Often, the two approaches produce similar results, but the likelihood-based reconstruction has two advantages over parsimony: this method uses information from the branch lengths and the relative substitution rates between characters (nucleotides) and provides a measure of uncertainties in the form of posterior probabilities for reconstructed ancestral states.
+RateAncestor: this variable can be set to 0 or 1. If RateAncestor = 1,
+the program is forced to do two additional analyses, which you can
+ignore if you do not need the results. First, under a model of variable
+rates across sites such as the gamma, RateAncestor = 1 forces the
+program to calculate rates for individual sites along the sequence
+(output that will be saved in the output rates file), using the
+empirical Bayes procedure (Yang and Wang 1995). Secondly, RateAncestor =
+1 forces the program to perform the empirical Bayesian reconstruction of
+ancestral sequences (Yang et al. 1995b; Koshi and Goldstein 1996; [Yang
+2006 pages 119-124(<http://abacus.gene.ucl.ac.uk/CME/>)]). Ancestral
+state reconstruction by parsimony (Fitch 1971; Hartigan 1973) is well
+known (i.e., it is implemented in the PAML program pamp). It can also be
+achieved using the likelihood/empirical Bayes approach. Often, the two
+approaches produce similar results, but the likelihood-based
+reconstruction has two advantages over parsimony: this method uses
+information from the branch lengths and the relative substitution rates
+between characters (nucleotides) and provides a measure of uncertainties
+in the form of posterior probabilities for reconstructed ancestral
+states.
 
-The results are listed, by site, in the output file rst. You can also use the variable verbose to control how much information you want to be written in this output file. If verbose = 0, only the best nucleotide (the one with the highest posterior probability) at each node at each site is listed, while with verbose = 1 (try 2 if 1 does not work), the full posterior probability distribution from the marginal reconstruction is listed. If the model is homogenous (i.e., if nhomo = 0 or nhomo = 1 have been specified in the control file) and assumes one rate for all sites, both the joint and marginal ancestral reconstructions will be calculated. If the model assumes variable rates among sites like the gamma model, only the marginal reconstructions are calculated. More details about ancestral sequence reconstruction in the section below
+The results are listed, by site, in the output file rst. You can also
+use the variable verbose to control how much information you want to be
+written in this output file. If verbose = 0, only the best nucleotide
+(the one with the highest posterior probability) at each node at each
+site is listed, while with verbose = 1 (try 2 if 1 does not work), the
+full posterior probability distribution from the marginal reconstruction
+is listed. If the model is homogenous (i.e., if nhomo = 0 or nhomo = 1
+have been specified in the control file) and assumes one rate for all
+sites, both the joint and marginal ancestral reconstructions will be
+calculated. If the model assumes variable rates among sites like the
+gamma model, only the marginal reconstructions are calculated. More
+details about ancestral sequence reconstruction in the section below
 
-<span style="color:blue">In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not *have* sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants.
+[In order to test the models further, protein features of the internal
+nodes could be calculated. Of course, the majority of these internal
+nodes do not *have* sequences collected. To circumvent this, a further
+step of our analyses could be to reconstruct ancestral sequences. By
+estimating the sequence of an internal node, it can then be re-input
+into iFeaturesOmega. Then, if our hypothesis stands, the features of
+these inferred proteins ought to be an average of the two descendants.
+]{style="color:blue"}
 
-CodeML is suggested as a tool for reconstructing ancestral protein sequences.
-</span>
+[CodeML is suggested as a tool for reconstructing ancestral protein
+sequences.]{style="color:#003399"}
 
 # Results
 
 ## Dataset Curation
-In total 36,419 sequences were found eligible for study (14,682 avian and 21,737 mammalian).
+
+In total 36,419 sequences were found eligible for study (14,682 avian
+and 21,737 mammalian).
+
 ```{r}
 data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Avian"=c(338,303,282,1406,215,185,73,539),"Mammalian"=c(561,255,415,919,244,207,149,606)) %>% kbl() %>% kable_styling(full_width = F, position="float_right")
 ```
-The clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall, representing 4551 individual virus genomes. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4551 samples for each of the 8 proteins analysed, despite the high sequence homology between many of them. The number of representative proteins called by the clustering algorithm is shown in Table X and full lists of the associated accession codes are available in Supplementary X.
 
-<span style="color:blue">Note that some viruses had multiple proteins</span>
- 
+The clustering resulting from removing sequences with a 95% sequence
+identity left us with 6,697 protein sequences overall, representing 4,551
+individual virus genomes. To assist with building the model
+architecture, any virus genome that had at least one representative
+protein was analysed fully - hence 4,551 samples for each of the 8
+proteins analysed, despite the high sequence homology between many of
+them. The number of representative proteins called by the clustering
+algorithm is shown in Table X and full lists of the associated accession
+codes are available in Supplementary X.
+
+[Note that some viruses had multiple proteins]{style="color:blue"}
+
 ## Protein Models
 
-Confusion matrices made between known origin host and those predicted by the stack models were used to assess model predictive strength and find evidence of possible host shifts.
+Confusion matrices made between known origin host and those predicted by
+the stack models were used to assess model predictive strength and find
+evidence of possible host shifts.
+
 ```{r, Model stat table}
 data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"F1 micro"=round(c(0.8431141,0.8074284,0.8750299,0.7699953,0.8840125,0.7349682,0.8632233,0.909803),3),"F1 macro"=round(c(0.5176765,0.3840304,0.5749008,0.2947088,0.495701,0.332125,0.5168716,0.51886),3),"AUC"=percent(c(0.57,0.527,0.575,0.558,0.556,0.527,0.559,0.565),accuracy=0.01)) %>% kbl() %>% kable_styling(full_width = F, position="float_right")
 ```
-Counter-intuitively, a lower model accuracy implied greater evidence of adaptation to the host species; the mislabelling of proteins is indicative of host-specific adaptations to non-native hosts. For example, should a human-origin virus be incorrectly labelled as swine-origin by the model, this supports the hypothesis that the protein retains some signal of adaptation to swine hosts. Overall, confusion matrices were evaluated based on accuracy and F1 statistics (shown in Table Y).
+
+Counter-intuitively, a lower model accuracy implied greater evidence of
+adaptation to the host species; the mislabelling of proteins is
+indicative of host-specific adaptations to non-native hosts. For
+example, should a human-origin virus be incorrectly labelled as
+swine-origin by the model, this supports the hypothesis that the protein
+retains some signal of adaptation to swine hosts. Overall, confusion
+matrices were evaluated based on accuracy and F1 statistics (shown in
+Table Y).
+
 ```{r, ConfMatrix Performance}
 master_conf <- readRDS("Comp/ConfMatrix Multiclass Master.rds")
 
 master_conf$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+ geom_tile(colour="grey10")+
   geom_text(aes(label=ifelse(Freq<=0.01," ",percent(Freq/sum(master_conf$table),accuracy = 0.01))))+
   scale_fill_gradient(low="white",high="forestgreen",na.value = "grey50")+guides(fill=guide_legend(title="Freq %"))
-#ggsave("Mislabelling.pdf",width=33,height=19,units = "cm")
+#ggsave("Mislabelling.png",width=20,height=20,units = "cm")
 ```
-<span style="color:blue">This is a confidence matrix of the model performance overall. </span>
 
-- Consistency in names
-- Colour True Positives?
+[This is a confidence matrix of the model performance overall.
+]{style="color:blue"}
 
-Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were classified as swine (8.13%) than correctly identified (7.23%).
+-   Colour True Positives?
+
+Main outliers (\>1%) are pig-human-avian though maybe just caused by the
+relative proportion of these. The RF models do show good estimation of
+true-positives, especially for the most frequently appearing samples.
+Interestingly though, the biggest mistake that the model made was of
+misclassifying human-origin sequences as pig-origin. In fact, more of
+the human sequences were classified as swine (8.13%) than correctly
+identified (7.23%).
 
 ```{r}
 classes <- master_conf$byClass %>% as.data.frame() %>% rownames_to_column()
 classes$Host <- c("Avian","Dog","Horse","Human","Bat","Swine")
-m1 <- ggplot(classes,aes(Sensitivity,Specificity,colour=Host))+geom_point(size=3)+ylim(0,1)
+m1 <- ggplot(classes,aes(Sensitivity,Specificity,colour=Host))+geom_point(size=3)+ylim(0,1)+labs(title = "Model Performance")
 m2 <- ggplot(classes,aes(Host,Precision,colour=Host))+geom_point(size=3)+ylim(0,1)+theme(legend.position="none")
-m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+geom_point(size=3)+ylim(0,1)+geom_hline(yintercept = 0.5,linetype="longdash",colour="grey")+theme(legend.position="none")
+m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+ylim(0,1)+geom_hline(yintercept = 0.5,linetype="longdash",colour="grey")+geom_point(size=3)+theme(legend.position="none")
 m4 <- ggplot(classes,aes(`Pos Pred Value`,`Neg Pred Value`,colour=Host))+geom_point(size=3)+ylim(0,1)
-ggarrange(m1,m4,m3,m2,common.legend = T,legend="bottom",labels = "AUTO")
 
-#ggsave("Model Diag.pdf",width=33,height=19,units = "cm")
+ggarrange(m1,m4,m3,m2,common.legend = T, legend="bottom", labels="AUTO")
+#ggsave("Model Diag.png",width=20,height=20,units = "cm")
 ```
-A) all models have high spec but sens varies wildly
 
-B) again (maybe this is just repeating) high neg pred and varying pos pred
-  - weirdly bat seems to perform better than canine and equine, maybe the sparsity of dog/horse plus their two different subtypes throw things off more than the bats which are always off in their own world
-  
-C) Dog is the only time that the models are basically guessing randomly
+A)  all models have high spec but sens varies wildly
 
-Overall though, the models perform pretty well given how complex this is and the fact that it is just based on 1039 protein features alone
+B)  again (maybe this is just repeating) high neg pred and varying pos
+    pred
+
+-   weirdly bat seems to perform better than canine and equine, maybe
+    the sparsity of dog/horse plus their two different subtypes throw
+    things off more than the bats which are always off in their own
+    world
+
+C)  Dog is the only time that the models are basically guessing randomly
+
+Overall though, the models perform pretty well given how complex this is
+and the fact that it is just based on 1039 protein features alone
 
 ### Protein by Protein
 
-How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic? 
+[How do all these correlate to protein length? Is NS1 doing better purely
+because it is the shortest and therefore any difference in features is
+going to be proportionally more dramatic?]{style="color:blue"}
+
 ```{r,eval=FALSE}
   overall_2c <- c()
   byClass_2c <- c()
@@ -209,15 +397,29 @@ byClass_Mc$rowname <- byClass_Mc$rowname %>% str_split_i(":",2) %>% str_trim()
 
 ```{r}
 mc_byc <- read.csv("Comp/Multiclass breakdown.csv")
-ggplot(mc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point(alpha=0.8)+facet_wrap(~Host)
-ggplot(mc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()+facet_wrap(~Host)
+ggplot(mc_byc,aes(Sensitivity,Specificity,colour=Protein))+geom_point(alpha=0.8)+facet_wrap(~Host)+theme(legend.position = "bottom")
+#ggsave("HostDiag1.png",width=20,height=20,units = "cm")
+ggplot(mc_byc,aes(Pos.Pred.Value,Neg.Pred.Value,colour=Protein))+geom_point()+facet_wrap(~Host)+theme(legend.position = "bottom")
+#ggsave("HostDiag2.png",width=20,height=20,units = "cm")
 ```
-Aagin, not sure what this is showing that the previous graphs weren't. What is the different between pos pred and sens?
+
+[Again, not sure what this is showing that the previous graphs weren't. What is the different between pos pred and sens?]{style="color:blue"}
 
 ```{r}
-ggplot(mc_byc,aes(Host,Precision,colour=Protein))+geom_jitter(height=0,width=0.2)
-ggplot(mc_byc,aes(Host,F1,colour=Protein))+geom_jitter(height=0, width=0.2)
-ggplot(mc_byc,aes(Host,Balanced.Accuracy,colour=Protein))+geom_jitter(height=0, width=0.2)
+ggplot(mc_byc,aes(Host,Precision,colour=Protein))+geom_jitter(height=0,width=0.2,size=2)+labs(title="ML Protein Model Performance")
+#ggsave("Model Precision.png",width=20,height=20,units = "cm")
+```
+No obviously 'badly performing' protein
+
+```{r}
+ggplot(mc_byc,aes(Host,F1,colour=Protein))+geom_jitter(height=0, width=0.2,size=2)
+#ggsave("Model F1.png",width=20,height=20,units = "cm")
+```
+[No canines?]{style="color:blue"}
+
+```{r}
+ggplot(mc_byc,aes(Host,Balanced.Accuracy,colour=Protein))+geom_jitter(height=0, width=0.2,size=2)
+#ggsave("Model BalAcc.png",width=20,height=20,units = "cm")
 ```
 
 ```{r, eval=FALSE}
@@ -255,50 +457,66 @@ mismatches$PRT <- mismatches$PRT %>% str_replace_all("PB2","01PB2") %>% str_repl
 mismatches %>% group_by(PRT,Matched) %>% summarise(N=length(Matched)) %>% subset(!is.na(Matched)) %>% pivot_wider(names_from = Matched, values_from = N) %>% select(PRT,`TRUE`,`FALSE`) %>% kbl(col.names = c("Protein","Matched","Mismatched")) %>% kable_styling(full_width = F,position="float_left")
 ```
 
-When did the model predict things incorrectly? Was there any pattern to the mistakes? Not really...
+When did the model predict things incorrectly? Was there any pattern to
+the mistakes? [Not really...]{style="color:blue"}
 
 ## Protein Features
 
-This is the variable importance stuff, explain better how it was done and what the AUC loss means
+[This is the variable importance stuff, explain better how it was done
+and what the AUC loss means]{style="color:blue"}
 
+By running ML models and iteratively removing each protein feature, the model performance statistics can be used to infer which features cause performance to drop the greatest. Hence, taking out the features and re-running the model allows us assess the impact that feature had on model performance. 
 ```{r}
 var_imps <- read.csv("Varimp/VarImps.csv")
 
 # ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+ ylim(0,500)
 # ggplot(subset(var_imps,AUC_loss>0.001),aes(AUC_loss,colour = Protein))+ geom_density()
-#ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,AUC_loss>0),aes(AUC_loss,colour = Protein))+ geom_density()+facet_wrap(~str_split_i(var,"_",1))
+#ggsave("AUC Loss.png",width=20,height=20,units = "cm")
 ```
 
 ```{r, eval=FALSE}
 ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc2.lambda2")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="01PB2"|Protein=="03PA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc2.lambda2")
-#ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp1.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc1.Q")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="03PA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc1.Q")
-#ggsave("Figures & Presentables/VarImp2.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp2.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,var %>% startsWith("PAAC_Xc1.E")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="06NA"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="PAAC_Xc1.E")
-#ggsave("Figures & Presentables/VarImp3.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp3.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,var %>% startsWith("CTDD_hydrophobicity_ENGD860101.1.residue25")), aes(Protein,AUC_loss,colour = Protein,size=Protein=="05NP"|Protein=="07M1"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="CTDD_hydrophobicity_ENGD860101.1.residue25")
-#ggsave("Figures & Presentables/VarImp4.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp4.pdf",width=33,height=19,units = "cm")
 
 ggplot(subset(var_imps,var %>% startsWith("CTDC_normwaalsvolume.G2")),aes(Protein,AUC_loss,colour = Protein,size=Protein=="06NA"|Protein=="07M1"))+ geom_point()+geom_hline(yintercept = 0,colour="grey20",linetype="longdash")+ theme(legend.position = "none")+labs(title="CTDC_normwaalsvolume.G2")
-#ggsave("Figures & Presentables/VarImp5.pdf",width=33,height=19,units = "cm")
+##ggsave("Figures & Presentables/VarImp5.pdf",width=33,height=19,units = "cm")
 ```
 
 ## Phylogenetics
 
-Trees were estimated with IQTree2
+Alignments of each of the eight proteins were used to estimate trees using IQTree2. 
 
-Could also stick some quick diversity measures in for each alignment, to show what we're working with?
+Could also stick some quick diversity measures in for each alignment, to
+show what we're working with?
 
-How correclated are protein features, length and diversity?
+[How correlated are protein features, length and diversity?]{style="color:blue"}
+
+```{r, Diversity, eval=FALSE}
+for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
+  tree_temp <- read.alignment(paste0("Phylogenies/Alignments/",PRT,".nexus"))
+  tip <- as.phylo(tree_temp)$tip.label
+}
+
+pb2 <- read.alignment("Phylogenies/Alignments/PB2_alignment.fasta",format = 'fasta')
+```
 
 ### Protein Trees
 
-Is it worth adding bootstrap values? Or describing the tree (num of tips/nodes) just to clarify that some sequences were excluded from tree estimation?
+Is it worth adding bootstrap values? Or describing the tree (num of
+tips/nodes) just to clarify that some sequences were excluded from tree
+estimation?
 
 ```{r, eval=FALSE}
 for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
@@ -321,27 +539,42 @@ for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
 readRDS("Phylogenies/PB2_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PB2 Tree")
+#ggsave("PB2 Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/PB1_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PB1 Tree")
+#ggsave("PB1 Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/PA_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "PA Tree")
+#ggsave("PA Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/HA_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "HA Tree")
+#ggsave("HA Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/NP_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NP Tree")
+#ggsave("NP Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/NA_tree.rds") %>% ggtree(aes(colour=host))+ 
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NA Tree")
+#ggsave("NA Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/M1_tree.rds") %>% ggtree(aes(colour=host))+
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "M1 Tree")
+#ggsave("M1 Tree.png",width=10,height=10,units = "cm")
+
 readRDS("Phylogenies/NS1_tree.rds") %>% ggtree(aes(colour=host))+
   # geom_nodelab(aes(label = node), hjust = -0.5)+ geom_tiplab(hjust = -.1)+ geom_tippoint()+
   theme(legend.position = c(.05, .75))+labs(title = "NS1 Tree")
+#ggsave("NS1 Tree.png",width=10,height=10,units = "cm")
 ```
 
 ```{r}
@@ -380,15 +613,19 @@ ha <- full_join(ha,data.frame(label=td$V1,subtype=td$V13), by = 'label')
 p <- ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT charge.Tr1221", data=td, geom=geom_point, mapping=aes(x=V3))
 
 # ggtree(ha,aes(colour=subtype),branch.length = "none")+ geom_tiplab(aes(lable=subtype))+geom_nodelab(aes(label=node),hjust = -0.25)+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree")
-# ggsave("Phylogenies/iqtree/Annotations/HA_values.pdf",height=42)
+# #ggsave("Phylogenies/iqtree/Annotations/HA_values.pdf",height=42)
 
 subtype_block <- data.frame(node=c(2579,2569,3446,2008,3770,3186,3988,3429),
                             offset=0.003,offset.text=-0.001,extend=0.05,
                             label=c("H1","H2","H3","H5","H7","H9","H10","H11"))
 
 p + geom_cladelab(data=subtype_block, mapping = aes(node=node, label=label, offset=offset, offset.text=offset.text, extend=extend),barsize = 1,fontface = 3,align = TRUE)
+#ggsave("HA Tree with Feature.png",width=10,height=10,units = "cm")
 ```
-Is there correlation between charge and branch length/placement? Would need a nice branch-branch measurement like Faith's PD
+
+Is there correlation between charge and branch length/placement? Would
+need a nice branch-branch measurement like Faith's PD
+
 ```{r, fig.height=10, eval=FALSE}
 ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_point, mapping=aes(x=V4))+ geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_path, alpha=0.6, mapping=aes(x=V4))
 
@@ -407,7 +644,11 @@ ggtree(m1,aes(colour=host))+ geom_tiplab(hjust = -.1)+ theme(legend.position = c
 
 ### Trait Analyses
 
-Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host_1 to host_2?
+Transition rates between hosts, based on entire trees when the ONLY
+feature input to the phylogenetic model is host. i.e. given the
+distribution of hosts throughout the tree, what is the likelihood that
+any given branch will transition from host_1 to host_2?
+
 ```{r}
 traits <- data.frame()
 for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
@@ -424,29 +665,29 @@ trait_labs <- traits %>% group_by(Protein,Donor,Recip) %>% summarise(mRate=mean(
 # ggplot(trait_labs,aes(Donor,Recip,fill=mRate))+geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ 
 #   geom_text(aes(label=paste0(round(mRate,2),"\n±",round(sdRate,2))),size=2)+
 #   facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
-#ggsave("Host Transitions.pdf",width=33,height=19,units = "cm")
+##ggsave("Host Transitions.pdf",width=33,height=19,units = "cm")
 
-ggplot(subset(trait_labs,Protein %in% c("01PB2","02PB1","03PA","04HA")), aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ 
-  geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n±",round(sdRate,2)))),size=2)+
-  facet_wrap(~Protein,ncol=2)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
-#ggsave("Host Transitions - filtered.pdf",width=33,height=19,units = "cm")
+ggplot(subset(trait_labs,Protein %in% c("01PB2","02PB1","03PA","04HA")), aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n±",round(sdRate,2)))),size=2)+facet_wrap(~Protein,ncol=2)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
+#ggsave("Host Transitions 1.png",width=12,height=12,units = "cm")
 
-ggplot(subset(trait_labs,Protein %in% c("05NP","06NA","07M1","08NS1")), aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ 
-  geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n±",round(sdRate,2)))),size=2)+
-  facet_wrap(~Protein,ncol=2)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
-
+ggplot(subset(trait_labs,Protein %in% c("05NP","06NA","07M1","08NS1")), aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+  geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n±",round(sdRate,2)))),size=2)+facet_wrap(~Protein,ncol=2)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
+#ggsave("Host Transitions 2.png",width=12,height=12,units = "cm")
 # ggplot(trait_labs,aes(paste0(Donor,Recip),y=mRate,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0),ymax=mRate+sdRate,colour=Donor))+geom_pointrange(size=0.4)+facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "bottom")
 ```
 
-Interesting how rarely avian is estimated as the donor, considering reality
+Interesting how rarely avian is estimated as the donor, considering
+reality
 
-Wonder if the pig -> human values would drop if pdm_2009 were held as a separate group of sequences
+Wonder if the pig -> human values would drop if pdm_2009 were held as a
+separate group of sequences
 
 Nice horse-dog rates given how closely related they are
 
-Also interesting when matrices are asymmetrical, indicates a direction of transfer from the phylogenetic signal
+Also interesting when matrices are asymmetrical, indicates a direction
+of transfer from the phylogenetic signal
 
 ### Ancestral Reconstruction
+
 ```{r, eval=FALSE}
 transition_rates <- data.frame()
 RecNodes <- data.frame()
@@ -465,13 +706,12 @@ trat <- transition_rates %>% group_by(Protein,Transition=str_replace_all(Transit
 # trat$Stat <- rep(c("min","q25","med","q75","max"),210)
 ```
 
-Two new columns will be added to the output “RecNode P(D)” and “RecNode P(G)”, these
-represent the probability of reconstructing a D or a G at RecNode.
+Two new columns will be added to the output “RecNode P(D)” and “RecNode
+P(G)”, these represent the probability of reconstructing a D or a G at
+RecNode.
 
-Describe subtree selection:
-  - node number
-  - number of tips
-  - why were these subtrees selected
+Describe subtree selection: - node number - number of tips - why were
+these subtrees selected
 
 ```{r}
 ace_nodes <- list.files(path = "Phylogenies/iqtree/ACE",pattern = "Node",full.names = T)
@@ -508,11 +748,16 @@ NS1_node2 <- tree_subset(NS1_tree,1256,levels_back=0) %>% ggtree(aes(colour=host
   scale_colour_manual(values = c("#F8766D","#619CFF","#F564E3"),breaks = c("Avian","Human","Pig"))
 
 ggarrange(NS1_full,ggarrange(NS1_node1,NS1_node2,ncol=1),common.legend = T)
+#ggsave("NS1 Subtrees.png",width=12,height=12,units = "cm")
 ```
 
 ```{r}
-ggplot(NS1_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+ scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 1")
-ggplot(NS1_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label=round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 2")
+ns1_st1 <- ggplot(NS1_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+ scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 1")
+
+ns1_st2 <- ggplot(NS1_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label=round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="NS1 Node 2")
+
+ggarrange(ns1_st1,ns1_st2,nrow=1,common.legend = T)
+#ggsave("NS1 TrRates.png",width=12,height=12,units = "cm")
 ```
 
 ```{r PB2 subtrees, fig.height=10}
@@ -533,11 +778,15 @@ pb2_node2 <- tree_subset(PB2_tree,885,levels_back=0) %>% ggtree(aes(colour=host)
   scale_colour_manual(values = c("#2CBA37","#33BFC4","#F564E3"),breaks = c("Dog","Horse","Pig"))
 
 ggarrange(pb2_full,ggarrange(pb2_node1,pb2_node2,ncol=1),common.legend = T)
+#ggsave("PB2 Subtrees.png",width=12,height=12,units = "cm")
 ```
 
 ```{r}
-ggplot(PB2_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 1")
-ggplot(PB2_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 2")
+PB2_st1 <- ggplot(PB2_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+ geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 1")
+PB2_st2 <- ggplot(PB2_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="PB2 Node 2")
+
+ggarrange(PB2_st1,PB2_st2,nrow=1,common.legend = T)
+#ggsave("PB2 TrRates.png",width=12,height=12,units = "cm")
 ```
 
 ```{r HA subtrees, fig.height=10}
@@ -559,11 +808,15 @@ HA_node2 <- tree_subset(HA_tree,3493,levels_back=0) %>% ggtree(aes(colour=host))
   scale_colour_manual(values = c("#2CBA37","#619CFF","#F564E3"),breaks = c("Dog","Human","Pig"))
 
 ggarrange(HA_full,ggarrange(HA_node1,HA_node2,ncol=1),common.legend = T)
+#ggsave("HA Subtrees.png",width=12,height=12,units = "cm")
 ```
 
 ```{r}
-ggplot(HA_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 1")
-ggplot(HA_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 2")
+HA_st1 <- ggplot(HA_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 1")
+HA_st2 <- ggplot(HA_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 2")
+
+ggarrange(HA_st1,HA_st2,nrow=1,common.legend = T)
+#ggsave("HA TrRates.png",width=12,height=12,units = "cm")
 ```
 
 ```{r NA subtrees, fig.height=10}
@@ -586,4 +839,7 @@ NA_node2 <- tree_subset(NA_tree,690,levels_back=0) %>% ggtree(aes(colour=host))+
   scale_colour_manual(values = c("#F8766D","#619CFF","#F564E3"),breaks = c("Avian","Human","Pig"))+border()
 
 ggarrange(NA_full,ggarrange(NA_node1,NA_node2,ncol=1),common.legend = T)
+#ggsave("NA Subtrees.png",width=12,height=12,units = "cm")
 ```
+
+# References
