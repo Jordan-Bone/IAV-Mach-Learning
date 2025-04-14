@@ -58,7 +58,7 @@ The results are listed, by site, in the output file rst. You can also use the va
 
 In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not *have* sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants.
 
-CodeML is suggested as a tool for reconstructing ancestral protein sequences.
+CodeML is suggested as a tool for reconstructing ancestral protein sequences.`#0969DA`
 
 # Results
 
@@ -68,7 +68,8 @@ In total 36,419 sequences were found eligible for study (14,682 avian and 21,737
 
 The clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall, representing 4,551 individual virus genomes. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4,551 samples for each of the 8 proteins analysed, despite the high sequence homology between many of them. The number of representative proteins called by the clustering algorithm is shown in Table X and full lists of the associated accession codes are available in Supplementary X.
 
-[Note that some viruses had multiple proteins]{style="color:blue"}
+[!NOTE]
+[Note that some viruses had multiple proteins]{style="`#0969DA`"}
 
 ## Protein Models
 
@@ -78,19 +79,17 @@ Counter-intuitively, a lower model accuracy implied greater evidence of adaptati
 
 Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were classified as swine (8.13%) than correctly identified (7.23%).
 
-A)  all models have high spec but sens varies wildly
-
-B)  again (maybe this is just repeating) high neg pred and varying pos pred
-
+1. all models have high spec but sens varies wildly
+2. again (maybe this is just repeating) high neg pred and varying pos pred
   - weirdly bat seems to perform better than canine and equine, maybe the sparsity of dog/horse plus their two different subtypes throw things off more than the bats which are always off in their own world
-
-C)  Dog is the only time that the models are basically guessing randomly
+3. Dog is the only time that the models are basically guessing randomly
 
 Overall though, the models perform pretty well given how complex this is and the fact that it is just based on 1039 protein features alone
 
 ### Protein by Protein
 
-**How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?**
+[!NOTE]
+How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?
 
 No obviously 'badly performing' protein
 
