@@ -1,8 +1,8 @@
 # Introduction
 
-Influenza A viruses are notorious and exemplary pathogens that cross host-species boundaries. By no means exclusively, yet the potential for IAV cross-species emergence is one of the most keenly felt biological threats in the world. The proclivity of these viruses to circulate in multiple vertebrate species, including many of the species reared agriculturally, poses great importance on understanding how and when host-jumps may occur. In addition, huge amounts of resources are spent annually to try and predict whether IAV will jump between species, and what those consequences may entail. To make these predictions, many different angles of influenza virus biology are analysed from evolutionary history to ecological contact networks to structural/molecular modelling of host-pathogen protein interactions to name but a few. However, exploring these features independently can obfuscate patterns and/or lead to pseudo-replication - is he relationship between protein structures already accounted for by viral phylogenetic histories?
+Influenza A viruses are notorious and exemplary pathogens that cross host-species boundaries. By no means exclusively, yet the potential for IAV cross-species emergence is one of the most keenly felt biological threats in the world. The proclivity of these viruses to circulate in multiple vertebrate species, including many of the species reared agriculturally, poses great importance on understanding how and when host-jumps may occur. In addition, huge amounts of resources are spent annually to try and predict whether IAV will jump between species, and what those consequences may entail. To make these predictions, many different angles of influenza virus biology are analysed from evolutionary history to ecological contact networks to structural/molecular modelling of host-pathogen protein interactions to name but a few. However, exploring these features independently can obfuscate patterns and/or lead to pseudo-replication - is the relationship between protein structures already accounted for by viral phylogenetic histories?
 
-Our cross-specialisation approach first uses protein compositional features to train machine learning models on classifying the original host the virus was obtained from. - The features are x and show y, included them because z
+Our cross-specialisation approach first uses protein compositional features to train machine learning models on classifying the original host the virus was obtained from. _The features are x and show y, included them because z_
 
 Finally, we compared the results of both modelling and phylogenetic approaches to detect any overlap or, more interestingly, any inferences that were exclusive to only one method.
 
@@ -16,11 +16,11 @@ Samples from mammalian hosts were then retained only if the original host was wi
 
 Corresponding protein sequences were then obtained for each sample, most of which were available from the NCBI Virus Database. The few genomic sequences without matching proteins were translated locally using the 'ape' package in R [@paradis_2019aa].
 
-In the future, we would've clustered per host and also possibly split the birds up more instead of assuming that *all* birds are *always* the source of infection.
+In the future, we would've clustered per host and also possibly split the birds up more instead of assuming that **all** birds are **always** the source of infection.
 
 ## Clustering
 
-Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99), coverage of the sequences within each cluster (-c 0.5, 0.7, 0.8) and the way in which the coverage is calculated (--cov-mode 0, 1). Ultimately options were set to `--min-seq-id 0.95`, `-c 0.8` and `--cov-mode 1` in order to grant a representative number of samples without introducing redundancy. Ultimately, 6697 proteins were nominated leading to sequences from 4551 individual viruses.
+Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (*--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99*), coverage of the sequences within each cluster (*-c 0.5, 0.7, 0.8*) and the way in which the coverage is calculated (*--cov-mode 0, 1*). Ultimately options were set to *--min-seq-id 0.95*, *-c 0.8* and *--cov-mode 1* in order to grant a representative number of samples without introducing redundancy. Ultimately, 6,697 proteins were nominated leading to sequences from 4551 individual viruses.
 
 ## Protein Features
 
@@ -34,7 +34,7 @@ Six datasets of protein features were derived from the iFeatureOmega processing:
 
 Matrices of protein features were then used to create Random Forest classification models, to distinguish between the host from which viruses were sampled.
 
-In order to create test data, subtypes that appeared most frequently (\>20 times) were iteratively held out of model construction. In addition to these 23 subtypes, both bat-exclusive subtypes (H17N10 and H18N11) were held as test data. The remaining 70 subtypes comprised $\frac{308}{4551}$ (\~7%) sequences. Six Random Forest models were created from each of the feature datasets, for each holdout. These models were then stacked with the use of the 'caretEnsemble' package [@deane-mayer_2024aa]. Models were weighted in order to accommodate for disproportionate sizes of host groups by using the inverse of that group's proportion.
+In order to create test data, subtypes that appeared most frequently (>20 times) were iteratively held out of model construction. In addition to these 23 subtypes, both bat-exclusive subtypes (H17N10 and H18N11) were held as test data. The remaining 70 subtypes comprised $\frac{308}{4551}$ (~7%) sequences. Six Random Forest models were created from each of the feature datasets, for each holdout. These models were then stacked with the use of the 'caretEnsemble' package [@deane-mayer_2024aa]. Models were weighted in order to accommodate for disproportionate sizes of host groups by using the inverse of that group's proportion.
 
 These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the stacking algorithm by caret.
 
@@ -56,9 +56,9 @@ RateAncestor: this variable can be set to 0 or 1. If RateAncestor = 1, the progr
 
 The results are listed, by site, in the output file rst. You can also use the variable verbose to control how much information you want to be written in this output file. If verbose = 0, only the best nucleotide (the one with the highest posterior probability) at each node at each site is listed, while with verbose = 1 (try 2 if 1 does not work), the full posterior probability distribution from the marginal reconstruction is listed. If the model is homogenous (i.e., if nhomo = 0 or nhomo = 1 have been specified in the control file) and assumes one rate for all sites, both the joint and marginal ancestral reconstructions will be calculated. If the model assumes variable rates among sites like the gamma model, only the marginal reconstructions are calculated. More details about ancestral sequence reconstruction in the section below
 
-[In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not *have* sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants.]{style="color:blue"}
+In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not *have* sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants.
 
-[CodeML is suggested as a tool for reconstructing ancestral protein sequences.]{style="color:#003399"}
+CodeML is suggested as a tool for reconstructing ancestral protein sequences.
 
 # Results
 
@@ -76,13 +76,13 @@ Confusion matrices made between known origin host and those predicted by the sta
 
 Counter-intuitively, a lower model accuracy implied greater evidence of adaptation to the host species; the mislabelling of proteins is indicative of host-specific adaptations to non-native hosts. For example, should a human-origin virus be incorrectly labelled as swine-origin by the model, this supports the hypothesis that the protein retains some signal of adaptation to swine hosts. Overall, confusion matrices were evaluated based on accuracy and F1 statistics (shown in Table Y).
 
-Main outliers (\>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were classified as swine (8.13%) than correctly identified (7.23%).
+Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were classified as swine (8.13%) than correctly identified (7.23%).
 
 A)  all models have high spec but sens varies wildly
 
 B)  again (maybe this is just repeating) high neg pred and varying pos pred
 
--   weirdly bat seems to perform better than canine and equine, maybe the sparsity of dog/horse plus their two different subtypes throw things off more than the bats which are always off in their own world
+  - weirdly bat seems to perform better than canine and equine, maybe the sparsity of dog/horse plus their two different subtypes throw things off more than the bats which are always off in their own world
 
 C)  Dog is the only time that the models are basically guessing randomly
 
@@ -90,23 +90,17 @@ Overall though, the models perform pretty well given how complex this is and the
 
 ### Protein by Protein
 
-[How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?]{style="color:blue"}
-
-[Again, not sure what this is showing that the previous graphs weren't. What is the different between pos pred and sens?]{style="color:blue"}
+**How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?**
 
 No obviously 'badly performing' protein
 
-[No canines?]{style="color:blue"}
-
 ## Mismatches
 
-When did the model predict things incorrectly? Was there any pattern to the mistakes? [Not really...]{style="color:blue"}
+When did the model predict things incorrectly? There was little to no pattern to the misclassifications.
 
 ## Protein Features
 
-[This is the variable importance stuff, explain better how it was done and what the AUC loss means]{style="color:blue"}
-
-By running ML models and iteratively removing each protein feature, the model performance statistics can be used to infer which features cause performance to drop the greatest. Hence, taking out the features and re-running the model allows us assess the impact that feature had on model performance. 
+By running ML models and iteratively removing each protein feature, the model performance statistics can be used to infer which features cause performance to drop the greatest. Hence, taking out the features and re-running the model allows us assess the impact that feature had on model performance. The drop in AUC is used to assess the importance of each feature within each ML model.
 
 ## Phylogenetics
 
@@ -114,23 +108,23 @@ Alignments of each of the eight proteins were used to estimate trees using IQTre
 
 Could also stick some quick diversity measures in for each alignment, to show what we're working with?
 
-[How correlated are protein features, length and diversity?]{style="color:blue"}
+**How correlated are protein features, length and diversity?**
 
 ### Protein Trees
 
-Is it worth adding bootstrap values? Or describing the tree (num of tips/nodes) just to clarify that some sequences were excluded from tree estimation?
+**Is it worth adding bootstrap values? Or describing the tree (num of tips/nodes) just to clarify that some sequences were excluded from tree estimation?**
 
-Is there correlation between charge and branch length/placement? Would need a nice branch-branch measurement like Faith's PD
+**Is there correlation between charge and branch length/placement? Would need a nice branch-branch measurement e.g. Faith's PD**
 
 ### Trait Analyses
 
-Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host_1 to host_2?
+Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>?
 
 Interesting how rarely avian is estimated as the donor, considering reality
 
-Wonder if the pig -\> human values would drop if pdm_2009 were held as a separate group of sequences
+Wonder if the pig-to-human values would drop if pdm<sub>2009</sub> were held as a separate group of sequences
 
-Nice horse-dog rates given how closely related they are
+*Nice horse-dog rates given how closely related they are*
 
 Also interesting when matrices are asymmetrical, indicates a direction of transfer from the phylogenetic signal
 
