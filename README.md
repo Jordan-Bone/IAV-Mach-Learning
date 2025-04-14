@@ -117,7 +117,7 @@ Could also stick some quick diversity measures in for each alignment, to show wh
 
 ### Trait Analyses
 
-Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>? host <sub>1</sub> to host <sub>2</sub>
+Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>?
 
 Interesting how rarely avian is estimated as the donor, considering reality
 
@@ -129,4 +129,7 @@ Also interesting when matrices are asymmetrical, indicates a direction of transf
 
 ### Ancestral Reconstruction
 
-Describe subtree selection: - node number - number of tips - why were these subtrees selected
+Describe subtree selection: 
+- node number
+- number of tips
+- why were these subtrees selected
