@@ -22,6 +22,8 @@ In the future, we would've clustered per host and also possibly split the birds 
 
 Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20 resulting protein fasta files (two for each of the 10 major IAV proteins, one containing mammalian-origin viruses and the other avian-origin). These were then clustered using the linear algorithm 'easy-linclust' within the tool MMSeq2 [@steinegger_2018aa]. Three variables of the clustering algorithm were experimented with in optimising data downsampling: the percentage identity threshold required to delineate sequences from one another (`--min-seq-id 0.5, 0.75, 0.85, 0.9, 0.95, 0.99`), coverage of the sequences within each cluster (`-c 0.5, 0.7, 0.8`) and the way in which the coverage is calculated (`--cov-mode 0, 1`). Ultimately options were set to `--min-seq-id 0.95`, `-c 0.8` and `--cov-mode 1` in order to grant a representative number of samples without introducing redundancy. Ultimately, 6,697 proteins were nominated leading to sequences from 4551 individual viruses.
 
+![Frequency of subtypes](Figures%20&%20Presentables/Subtype%20Freqs.png)
+
 ## Protein Features
 
 Proteins from avian-origin and mammalian-origin viruses retained by MMSeq2 were then aligned into a single fasta file for each protein. Accessory proteins (PB1-F2 and PA-X) were then removed from the analyses as both lie within the coding regions of their respective genomic segments and thus the calculation of any features from sequence data would already include these regions. Similarly, those spliced from alternate reading frames (M2 and NEP) were excluded from any further analyses as they were too short and/or conserved to show patterns of adaptation
@@ -39,8 +41,6 @@ In order to create test data, subtypes that appeared most frequently (>20 times)
 These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the stacking algorithm by caret.
 
 ![Model assembly: One model was created for each parameter.](Figures%20&%20Presentables/Model%20Assembly.png)
-
-<iframe src="Figures%20&%20Presentables/Model%20Assembly.pdf" width="100%" height="500" frameborder="0" />
 
 ## Phylogenetics
 
