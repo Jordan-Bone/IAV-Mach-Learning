@@ -68,8 +68,8 @@ In total 36,419 sequences were found eligible for study (14,682 avian and 21,737
 
 The clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall, representing 4,551 individual virus genomes. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4,551 samples for each of the 8 proteins analysed, despite the high sequence homology between many of them. The number of representative proteins called by the clustering algorithm is shown in Table X and full lists of the associated accession codes are available in Supplementary X.
 
-[!NOTE]
-[Note that some viruses had multiple proteins]{style="`#0969DA`"}
+> [!NOTE]
+> Note that some viruses had multiple proteins
 
 ## Protein Models
 
