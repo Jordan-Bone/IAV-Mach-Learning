@@ -38,7 +38,7 @@ In order to create test data, subtypes that appeared most frequently (>20 times)
 
 These datasets were then used to train Random Forest models, leading to 2400 models in total: 8 proteins, 6 chemical and compositional features, 25 subtype holdouts and either two-class or multi-class models. Each models' training statistics were extracted for preliminary validation. Models for each protein and subtype were then compiled with the stacking algorithm by caret.
 
-![Model assembly: One model was created for each parameter.](Figures%20&%20Presentables/Model%20Assembly.png)
+![Model assembly: One model was created for each parameter.](Figures%20&%20Presentables/Model%20Assembly.pdf)
 
 ## Phylogenetics
 
