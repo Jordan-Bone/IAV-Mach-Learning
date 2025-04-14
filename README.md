@@ -71,9 +71,6 @@ The clustering resulting from removing sequences with a 95% sequence identity le
 > [!NOTE]
 > Note that some viruses had multiple proteins
 
-> [!NOTE]
-> Note that some viruses had multiple proteins
-
 ## Protein Models
 
 Confusion matrices made between known origin host and those predicted by the stack models were used to assess model predictive strength and find evidence of possible host shifts.
@@ -91,8 +88,8 @@ Overall though, the models perform pretty well given how complex this is and the
 
 ### Protein by Protein
 
-[!NOTE]
-How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?
+> [!NOTE]
+> How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?
 
 No obviously 'badly performing' protein
 
@@ -120,7 +117,7 @@ Could also stick some quick diversity measures in for each alignment, to show wh
 
 ### Trait Analyses
 
-Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>?
+Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>? host <sub>1</sub> to host <sub>2</sub>
 
 Interesting how rarely avian is estimated as the donor, considering reality
 
