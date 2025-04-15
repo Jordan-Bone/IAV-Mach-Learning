@@ -79,7 +79,11 @@ Confusion matrices made between known origin host and those predicted by the sta
 
 Counter-intuitively, a lower model accuracy implied greater evidence of adaptation to the host species; the mislabelling of proteins is indicative of host-specific adaptations to non-native hosts. For example, should a human-origin virus be incorrectly labelled as swine-origin by the model, this supports the hypothesis that the protein retains some signal of adaptation to swine hosts. Overall, confusion matrices were evaluated based on accuracy and F1 statistics (shown in Table Y).
 
+![Model Mismatches](Figures%20&%20Presentables/Mismatch.png)
+
 Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were classified as swine (8.13%) than correctly identified (7.23%).
+
+![Model Diagnostics](Figures%20&%20Presentables/Model%20Diag.png)
 
 1. all models have high spec but sens varies wildly
 2. again (maybe this is just repeating) high neg pred and varying pos pred
@@ -93,7 +97,17 @@ Overall though, the models perform pretty well given how complex this is and the
 > [!NOTE]
 > How do all these correlate to protein length? Is NS1 doing better purely because it is the shortest and therefore any difference in features is going to be proportionally more dramatic?
 
+![Model Diagnostics](Figures%20&%20Presentables/Host%20Diag1.png)
+
+![Model Diagnostics](Figures%20&%20Presentables/Host%20Diag2.png)
+
 No obviously 'badly performing' protein
+
+![Diagnostics](Figures%20&%20Presentables/Model%20Precision.png)
+
+![Diagnostics](Figures%20&%20Presentables/Model%20F1.png)
+
+![Diagnostics](Figures%20&%20Presentables/Model%20BalAcc.png)
 
 ## Mismatches
 
@@ -102,6 +116,8 @@ When did the model predict things incorrectly? There was little to no pattern to
 ## Protein Features
 
 By running ML models and iteratively removing each protein feature, the model performance statistics can be used to infer which features cause performance to drop the greatest. Hence, taking out the features and re-running the model allows us assess the impact that feature had on model performance. The drop in AUC is used to assess the importance of each feature within each ML model.
+
+![AUC Loss](Figures%20&%20Presentables/AUC%20Loss.png)
 
 ## Phylogenetics
 
@@ -117,7 +133,31 @@ Could also stick some quick diversity measures in for each alignment, to show wh
 
 **Is there correlation between charge and branch length/placement? Would need a nice branch-branch measurement e.g. Faith's PD**
 
+![PB2 Tree](Figures%20&%20Presentables/PB2%20Tree.png)
+
+![PB1 Tree](Figures%20&%20Presentables/PB1%20Tree.png)
+
+![PA Tree](Figures%20&%20Presentables/PA%20Tree.png)
+
+![HA Tree](Figures%20&%20Presentables/HA%20Tree.png)
+
+![NP Tree](Figures%20&%20Presentables/NP%20Tree.png)
+
+![NA Tree](Figures%20&%20Presentables/NA%20Tree.png)
+
+![M1 Tree](Figures%20&%20Presentables/M1%20Tree.png)
+
+![NS1 Tree](Figures%20&%20Presentables/NS1%20Tree.png)
+
+Examples of a tree/features plot
+
+![HA Feature Tree](Figures%20&%20Presentables/HA%20Tree%20with%20Feature.png)
+
 ### Trait Analyses
+
+![Host Transitions 1](Figures%20&%20Presentables/Host%20Transitions%201.png)
+
+![Host Transitions 2](Figures%20&%20Presentables/Host%20Transitions%202.png)
 
 Transition rates between hosts, based on entire trees when the ONLY feature input to the phylogenetic model is host. i.e. given the distribution of hosts throughout the tree, what is the likelihood that any given branch will transition from host<sub>1</sub> to host<sub>2</sub>?
 
@@ -135,3 +175,19 @@ Describe subtree selection:
 - node number
 - number of tips
 - why were these subtrees selected
+
+![NS1 Subtrees](Figures%20&%20Presentables/NS1%20Subtrees.png)
+
+![NS1 Transitions](Figures%20&%20Presentables/NS1%20TrRates.png)
+
+![PB2 Subtrees](Figures%20&%20Presentables/PB2%20Subtrees.png)
+
+![PB2 Transitions](Figures%20&%20Presentables/PB2%20TrRates.png)
+
+![HA Subtrees](Figures%20&%20Presentables/HA%20Subtrees.png)
+
+![HA Transitions](Figures%20&%20Presentables/HA%20TrRates.png)
+
+![NA Subtrees](Figures%20&%20Presentables/NA%20Subtrees.png)
+
+
