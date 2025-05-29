@@ -46,6 +46,17 @@ These datasets were then used to train Random Forest models, leading to 2400 mod
 
 Using sequence data from each of the 8 proteins studied phylogenetic trees were estimated. Initial model parameters such as evolutionary and codon-partitioning models were estimated by ModelFinder within IQTree2 [@kalyaanamoorthy_2017aa,@minh_2020aa], and temporality was confirmed with TempEst [@rambaut_2016aa].
 
+| Protein | Model |
+| ------------- | ------------- |
+| PB2  | FLU+R4 |
+| PB1  | FLU+R4 |
+| PA  | FLU+R5 |
+| HA  | FLU+R8 |
+| NP  | Q.mammal+R4 |
+| NA  | FLU+R5 |
+| M1  | Q.mammal+R3 |
+| NS1  | HIVw+R6 |
+
 Maximum Likelihood trees were estimated with substitution models suggested by ModelFinder (Table X) and bootstrapped 1000 times for validation.
 
 Phylogenetic models were first trialled on Maximum Likelihood trees with the use of BayesTraits v3.0 [@meade_2022aa]; in the R wrapper "btw" [@griffin_2018aa]. A discrete-trait analysis estimated the origin host of viruses and protein features were modelled as continuous traits. Trait analyses were first modelled using tips features and then ancestral trait reconstruction upon internal nodes, both using multi-state reverse-jump MCMC procedures. Initially, transition rates between discrete states (i.e. Host) were examined across each protein tree before the states of ancestral nodes were estimated.
@@ -70,6 +81,17 @@ In total 36,419 sequences were found eligible for study (14,682 avian and 21,737
 
 The clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall, representing 4,551 individual virus genomes. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4,551 samples for each of the 8 proteins analysed, despite the high sequence homology between many of them. The number of representative proteins called by the clustering algorithm is shown in Table X and full lists of the associated accession codes are available in Supplementary X.
 
+| Protein | Avian |  Mammalian | 
+| ------- | ----- |----------- |
+| PB2  | 338 | 561 |
+| PB1  | 303 | 255 |
+| PA  | 282 | 415 |
+| HA  | 1406 | 919 |
+| NP  | 215 | 244 |
+| NA  | 185 | 207 |
+| M1  | 73 | 149 |
+| NS1  | 539 | 606 |
+
 > [!NOTE]
 > Note that some viruses had multiple proteins
 
@@ -78,6 +100,17 @@ The clustering resulting from removing sequences with a 95% sequence identity le
 Confusion matrices made between known origin host and those predicted by the stack models were used to assess model predictive strength and find evidence of possible host shifts.
 
 Counter-intuitively, a lower model accuracy implied greater evidence of adaptation to the host species; the mislabelling of proteins is indicative of host-specific adaptations to non-native hosts. For example, should a human-origin virus be incorrectly labelled as swine-origin by the model, this supports the hypothesis that the protein retains some signal of adaptation to swine hosts. Overall, confusion matrices were evaluated based on accuracy and F1 statistics (shown in Table Y).
+
+| Protein | F1.micro | F1.macro | AUC |
+| ------- | -------- |--------- |-----|
+|PB2 | 0.8431 | 0.5177 | 0.570|
+|PB1 | 0.8074 | 0.3840 | 0.527|
+|PA | 0.8750 | 0.5749 | 0.575|
+|HA | 0.7699 | 0.2947 | 0.558|
+|NP | 0.8840 | 0.4957 | 0.556|
+|NA | 0.7349 | 0.3321 | 0.527|
+|M1 | 0.8632 | 0.5168 | 0.559|
+|NS1 | 0.9098 | 0.5188 | 0.565|
 
 ![Model Mismatches](Figures%20&%20Presentables/Mismatch.png)
 
@@ -111,6 +144,11 @@ No obviously 'badly performing' protein
 
 ## Mismatches
 
+|  | PB2 | PB1 | PB2 | PB1 | PB2 | PB1 | PB2 | PB1 | 
+| ------- | --- |---- | --- |---- | --- |---- | --- |---- |
+| Matched | 404 | 375 | 573 | 1760 | 219 | 316 | 145 | 1008 |
+| Mismatched | 145 | 179| 118 |240 | 173 |76 | 76 |90 |
+
 When did the model predict things incorrectly? There was little to no pattern to the misclassifications.
 
 ## Protein Features
@@ -133,22 +171,6 @@ Could also stick some quick diversity measures in for each alignment, to show wh
 
 **Is there correlation between charge and branch length/placement? Would need a nice branch-branch measurement e.g. Faith's PD**
 
-![PB2 Tree](Figures%20&%20Presentables/PB2%20Tree.png)
-
-![PB1 Tree](Figures%20&%20Presentables/PB1%20Tree.png)
-
-![PA Tree](Figures%20&%20Presentables/PA%20Tree.png)
-
-![HA Tree](Figures%20&%20Presentables/HA%20Tree.png)
-
-![NP Tree](Figures%20&%20Presentables/NP%20Tree.png)
-
-![NA Tree](Figures%20&%20Presentables/NA%20Tree.png)
-
-![M1 Tree](Figures%20&%20Presentables/M1%20Tree.png)
-
-![NS1 Tree](Figures%20&%20Presentables/NS1%20Tree.png)
-
 Examples of a tree/features plot
 
 ![HA Feature Tree](Figures%20&%20Presentables/HA%20Tree%20with%20Feature.png)
@@ -168,6 +190,8 @@ Wonder if the pig-to-human values would drop if pdm<sub>2009</sub> were held as 
 *Nice horse-dog rates given how closely related they are*
 
 Also interesting when matrices are asymmetrical, indicates a direction of transfer from the phylogenetic signal
+
+[VarImp Values.pdf](https://github.com/user-attachments/files/20502128/VarImp.Values.pdf)
 
 ### Ancestral Reconstruction
 
