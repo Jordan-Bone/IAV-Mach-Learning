@@ -191,7 +191,7 @@ Wonder if the pig-to-human values would drop if pdm<sub>2009</sub> were held as 
 
 Also interesting when matrices are asymmetrical, indicates a direction of transfer from the phylogenetic signal
 
-[VarImp Values.pdf](https://github.com/user-attachments/files/20502128/VarImp.Values.pdf)
+![VarImp Values](https://github.com/user-attachments/assets/a13fc157-7378-4a92-a205-00204a54ca3d)
 
 ### Ancestral Reconstruction
 
