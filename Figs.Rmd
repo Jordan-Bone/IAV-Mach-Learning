@@ -612,15 +612,15 @@ ha <- full_join(ha,data.frame(label=td$V1,subtype=td$V13), by = 'label')
 
 p <- ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT charge.Tr1221", data=td, geom=geom_point, mapping=aes(x=V3))
 
+ggplot(td,aes(V1,V3))+geom_point()+ scale_y_continuous(c(0.1,0.2))
+
 # ggtree(ha,aes(colour=subtype),branch.length = "none")+ geom_tiplab(aes(lable=subtype))+geom_nodelab(aes(label=node),hjust = -0.25)+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree")
 # #ggsave("Phylogenies/iqtree/Annotations/HA_values.pdf",height=42)
 
-subtype_block <- data.frame(node=c(2579,2569,3446,2008,3770,3186,3988,3429),
-                            offset=0.003,offset.text=-0.001,extend=0.05,
-                            label=c("H1","H2","H3","H5","H7","H9","H10","H11"))
+subtype_block <- data.frame(node=c(2579,2569,3446,2008,3770,3186,3988,3429), offset=0.003,offset.text=-0.001,extend=0.05, label=c("H1","H2","H3","H5","H7","H9","H10","H11"))
 
 p + geom_cladelab(data=subtype_block, mapping = aes(node=node, label=label, offset=offset, offset.text=offset.text, extend=extend),barsize = 1,fontface = 3,align = TRUE)
-#ggsave("HA Tree with Feature.png",width=10,height=10,units = "cm")
+#ggsave("Figures & Presentables/HA Tree with Feature.png",width=12,height=14,units = "cm")
 ```
 
 Is there correlation between charge and branch length/placement? Would
@@ -813,7 +813,9 @@ ggarrange(HA_full,ggarrange(HA_node1,HA_node2,ncol=1),common.legend = T)
 
 ```{r}
 HA_st1 <- ggplot(HA_1,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 1")
+ggsave("HA TrRates1.png",width=14,height=12,units = "cm")
 HA_st2 <- ggplot(HA_2,aes(Host,Feature,fill=mV))+geom_tile(colour="grey90")+geom_text(aes(label = round(mV,2)),colour="black")+scale_fill_gradient(low="white",high="forestgreen")+ labs(title="HA Node 2")
+ggsave("HA TrRates2.png",width=14,height=12,units = "cm")
 
 ggarrange(HA_st1,HA_st2,nrow=1,common.legend = T)
 #ggsave("HA TrRates.png",width=12,height=12,units = "cm")
