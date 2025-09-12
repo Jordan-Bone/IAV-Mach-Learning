@@ -20,11 +20,11 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/",fig.align = "center",fig.height=8,fig.width=10)
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning",fig.align = "center",fig.height=8,fig.width=10)
 source("MegaLibrary.R")
 library(TreeTools)
 
-reference_table <- read.csv("RefTable.csv")
+reference_table <- read_csv("RefTable.csv")
 rep_uids <- read.csv("USED UIDS.txt")
 uid_ref <- read.csv("USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()

@@ -192,3 +192,59 @@ ggsave("HA Holdouts.pdf",width=30,height=19,units = "cm")
 ha2324 <- subset(mostat,P=="ha"&N==2324&F=="2mer")$X
 
 ggplot(subset(mostat,F=="ctdd"&P=="ha"&N<2300),aes(str_replace_all(X,"ex",""),y=max(mostat$N)-N))+geom_point(alpha=0.9)+labs(x="Excluded Subtype",y="Number of Sequences")
+
+#######
+
+master_conf <- readRDS("Comp/ConfMatrix Multiclass Master.rds")
+
+# master_conf$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+ geom_tile(colour="grey10")+
+#   geom_text(aes(label=ifelse(Freq<=0.01," ",percent(Freq/sum(master_conf$table),accuracy = 0.01))))+
+#   scale_fill_gradient(low="white",high="forestgreen",na.value = "grey50")+guides(fill=guide_legend(title="Freq %"))
+#ggsave("Mislabelling.png",width=20,height=20,units = "cm")
+
+ML_confidence <- master_conf$table %>% as.data.frame() %>% mutate(FreqPercent=Freq/sum(master_conf$table))
+
+#master_conf$table %>% as.data.frame() %>% subset(Prediction==Reference) %>% select(Freq) %>% sum 
+# 28,118
+# 83.57% correctly predicted
+
+ML_confidence$Prediction <- ML_confidence$Prediction %>% str_replace_all("Canidae","Canine") %>% 
+  str_replace_all("Equidae","Equine") %>% str_replace_all("Hominidae","Human") %>% str_replace_all("Suidae","Swine") %>% str_replace_all("Phyllostomidae","Bat")
+ML_confidence$Reference <- ML_confidence$Reference %>% str_replace_all("Canidae","Canine") %>% 
+  str_replace_all("Equidae","Equine") %>% str_replace_all("Hominidae","Human") %>% str_replace_all("Suidae","Swine") %>% str_replace_all("Phyllostomidae","Bat")
+
+ggplot(ML_confidence,aes(Prediction,Reference,fill=log10(Freq)))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred",na.value = "white")+theme(legend.position="none")+geom_text(aes(label=ifelse(Freq>0,Freq,"")))+labs(title="Machine Learning",x="Actual",y="Predicted",subtitle = "n = 33,647 Viruses")
+ggsave("Figures & Presentables/ML Raw Results.pdf",width=7,height=7)
+
+ggplot(subset(ML_confidence,Prediction!=Reference),aes(Prediction,Reference,fill=log10(Freq)))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred",na.value = "white")+theme(legend.position="none")+geom_text(aes(label=ifelse(Freq>0,Freq,"")))+labs(title="Machine Learning",x="Actual",y="Predicted",subtitle = "n = 33,647 Viruses")
+ggsave("Figures & Presentables/ML Raw Mismatches.pdf",width=7,height=7)
+
+traits <- data.frame()
+for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
+  temp <- read.csv(paste0("Phylogenies/iqtree/Trait Analyses/",PRT," MultiState Trait Analysis.csv"))
+  trait_temp <- temp %>% pivot_longer(cols=4:length(temp),names_to = "Transition",values_to = "Rate") %>% mutate(Protein=PRT,Recip=Transition %>% str_replace_all("q","") %>% str_sub(1,1),Donor=Transition %>% str_replace_all("q","") %>% str_sub(2,2))
+  traits <- rbind(traits,trait_temp)
+}
+traits <- traits %>% select(-Tree.No)
+traits$Protein <- traits$Protein %>% str_replace_all("PB2","01PB2") %>% str_replace_all("PB1","02PB1") %>% str_replace_all("PA","03PA") %>% str_replace_all("HA","04HA") %>% str_replace_all("NP","05NP") %>% str_replace_all("NA","06NA") %>% str_replace_all("M1","07M1") %>% str_replace_all("NS1","08NS1")
+trait_labs <- traits %>% group_by(Protein,Donor,Recip) %>% summarise(mRate=mean(Rate),sdRate=sd(Rate))
+
+results_df1 <- data.frame(Donor=ML_confidence$Prediction,
+                          Recip=ML_confidence$Reference,
+                          Freq=round(ML_confidence$FreqPercent*100,2),Method="ML")
+
+
+trait_labs <- trait_labs %>% group_by(Donor,Recip) %>% summarise(FreqPercent=mean(mRate))
+results_df2 <- data.frame(Donor=trait_labs$Donor, Recip=trait_labs$Recip,
+                         Freq=trait_labs$FreqPercent, Method="Phylo")
+results_df2$Donor <- results_df2$Donor %>% str_replace_all("D","Canine") %>% 
+  str_replace_all("E","Equine") %>% str_replace_all("H","Human") %>% str_replace_all("P","Swine") %>% str_replace_all("B","Bat") %>% str_replace_all("A","Avian")
+results_df2$Recip <- results_df2$Recip %>% str_replace_all("D","Canine") %>% 
+  str_replace_all("E","Equine") %>% str_replace_all("H","Human") %>% str_replace_all("P","Swine") %>% str_replace_all("B","Bat") %>% str_replace_all("A","Avian")
+
+results_df <- rbind(results_df1,results_df2)
+
+a <- ggplot(results_df1,aes(Donor,Recip,fill=Freq))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred")+theme(legend.position="none")+geom_text(aes(label=ifelse(round(Freq,2)>0.001,round(Freq,2),"")))+labs(title="Machine Learning",x="Actual",y="Predicted")
+b <- ggplot(results_df2,aes(Donor,Recip,fill=Freq))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred")+theme(legend.position="none")+geom_text(aes(label=round(Freq,2)))+labs(title="Phylogenetic",x="Source",y="Spillover")
+ggarrange(a,b,labels = "AUTO")
+ggsave("Figures & Presentables/Final Comparison.pdf",width=13,height=8)
