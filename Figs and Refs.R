@@ -244,7 +244,7 @@ results_df2$Recip <- results_df2$Recip %>% str_replace_all("D","Canine") %>%
 
 results_df <- rbind(results_df1,results_df2)
 
-a <- ggplot(results_df1,aes(Donor,Recip,fill=Freq))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred")+theme(legend.position="none")+geom_text(aes(label=ifelse(round(Freq,2)>0.001,round(Freq,2),"")))+labs(title="Machine Learning",x="Actual",y="Predicted")
+a <- ggplot(subset(results_df1,Donor!=Recip),aes(Donor,Recip,fill=Freq))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred")+theme(legend.position="none")+geom_text(aes(label=ifelse(round(Freq,2)>0.001,round(Freq,2),"")))+labs(title="Machine Learning",x="Actual",y="Predicted")
 b <- ggplot(results_df2,aes(Donor,Recip,fill=Freq))+geom_tile(colour="grey20")+scale_fill_gradient(low="grey90",high="indianred")+theme(legend.position="none")+geom_text(aes(label=round(Freq,2)))+labs(title="Phylogenetic",x="Source",y="Spillover")
 ggarrange(a,b,labels = "AUTO")
 ggsave("Figures & Presentables/Final Comparison.pdf",width=13,height=8)
