@@ -21,14 +21,14 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, echo=FALSE, root.dir = "/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning",fig.align = "center",fig.height=8,fig.width=10)
-source("MegaLibrary.R")
+source("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/MegaLibrary.R")
 library(TreeTools)
 
-reference_table <- read_csv("RefTable.csv")
-rep_uids <- read.csv("USED UIDS.txt")
-uid_ref <- read.csv("USED UIDS.txt")
+reference_table <- read_csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/RefTable.csv")
+rep_uids <- read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/USED UIDS.txt")
+uid_ref <- read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/USED UIDS.txt")
 uid_ref <- inner_join(uid_ref,reference_table[,c(1,14,15)]) %>% distinct()
-varimps <- read.csv("Varimp/VarImp Refs.csv")
+varimps <- read.csv("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/Varimp/VarImp Refs.csv")
 ```
 
 # Introduction
@@ -111,19 +111,23 @@ without introducing redundancy. Ultimately, 6697 proteins were nominated
 leading to sequences from 4551 individual viruses.
 
 ```{r, Unique Subtypes}
-subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num,fill=Subtype %in% held_subtypes))+ geom_bar(stat="identity")+ geom_label(aes(x=20,y=200,label="23 of which appear\nmore than 25 times"),fill="#53CCCD")+ geom_segment(aes(x=70,xend=59.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+ 
-  geom_label(aes(75,1100,label="Σ = 4568"),fill="black",colour="white")+
-  geom_label(aes(50,430,label="Σ = 308"),fill="#F8766D")+
-  geom_label(aes(12,790,label="Σ = 4260"),fill="#53CCCD")+
-  geom_segment(aes(x=70,xend=79.5,y=310,yend=20),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="#53CCCD")+ geom_label(aes(x=70,y=300,label="Plus two bat\nsequences"),fill="#53CCCD")+theme(legend.position = "none",
-        text=element_text(size=32), #change font size of all text
-        axis.title=element_text(size=20), #change font size of axis titles
-        plot.title=element_text(size=20), #change font size of plot title
-        legend.text=element_text(size=20), #change font size of legend text
-        legend.title=element_text(size=20),
-        axis.text.x = element_text(size=10,angle = 90),axis.text.y = element_text(size=10))+
-  labs(title = "95 Unique IAV Subtypes",x="Subtypes",y="Quantity")
-##ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
+subset(uid_ref,!is.na(Subtype)) %>% group_by(Subtype) %>% summarise(Num=length(Subtype)) %>%  ggplot(aes(x=reorder(Subtype,-Num),y=Num+0.1,fill=Subtype %in% held_subtypes))+ geom_bar(stat="identity")+ geom_label(aes(x=17,y=250,label="23 subtypes appear\nmore than 25 times,\n(4260 samples)"),fill="#53CCCD",size=5)+
+  geom_label(aes(42,28,label="308 other samples are\ngrouped into the\n'Misc. Subtype' group"),fill="#F8766D",size=5)+
+  # geom_label(aes(12,790,label="Holdouts = 4260"),fill="#53CCCD",size=4)+
+  geom_segment(aes(x=64,xend=59.15,y=12,yend=2.2),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="black")+ 
+  geom_segment(aes(x=76,xend=79.85,y=15,yend=1.2),arrow = arrow(angle = 30, length = unit(0.2, "cm"), type = "closed"),colour="black")+
+ geom_label(aes(x=70,y=10,label="Two bat-specific\nsubtypes are included in\nthe 'Holdouts' group"),fill="#53CCCD",size=5)+
+  theme(legend.position = "none",
+        # text=element_text(size=42), #change font size of all text
+        axis.title=element_text(size=12), #change font size of axis titles
+        plot.title=element_text(size=14), #change font size of plot title
+        # legend.text=element_text(size=20), #change font size of legend text
+        # legend.title=element_text(size=20),
+        axis.text.x = element_text(size=10.5,angle = 90),axis.text.y = element_text(size=12))+scale_y_log10()+
+  labs(title = "4568 IAV Whole-Genome Sequences, Sorted by Subtype",x="Subtype",y="Quantity")
+ggsave("Used Subtypes.pdf",width=33,height=19,units = "cm")
+
+subset(uid_ref,!is.na(Subtype)) %>% mutate(Holdout=Subtype %in% held_subtypes) %>% group_by(Holdout) %>% summarise(N=length(Subtype))
 ```
 
 ```{r Sequence Diversity, include=FALSE}
@@ -222,7 +226,7 @@ reassortments in 1918, 1957 and 1968; emergence of swine viruses into
 human pandemic strains (H1N1pdm09); avian IAV into horses (H7N7 and
 H3N8) and the jump of equine H3N8 viruses into canine populations.
 
-## Sequence Reconstruction
+## Sequence Reconstruction 
 
 RateAncestor: this variable can be set to 0 or 1. If RateAncestor = 1,
 the program is forced to do two additional analyses, which you can
@@ -312,7 +316,7 @@ matrices were evaluated based on accuracy and F1 statistics (shown in
 Table Y).
 
 ```{r, ConfMatrix Performance}
-master_conf <- readRDS("Comp/ConfMatrix Multiclass Master.rds")
+master_conf <- readRDS("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/Comp/ConfMatrix Multiclass Master.rds")
 
 master_conf$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=Freq/sum(master_conf$table)))+ geom_tile(colour="grey10")+
   geom_text(aes(label=ifelse(Freq<=0.01," ",percent(Freq/sum(master_conf$table),accuracy = 0.01))))+
@@ -336,13 +340,13 @@ identified (7.23%).
 ```{r}
 classes <- master_conf$byClass %>% as.data.frame() %>% rownames_to_column()
 classes$Host <- c("Avian","Dog","Horse","Human","Bat","Swine")
-m1 <- ggplot(classes,aes(Sensitivity,Specificity,colour=Host))+geom_point(size=3)+ylim(0,1)+labs(title = "Model Performance")
-m2 <- ggplot(classes,aes(Host,Precision,colour=Host))+geom_point(size=3)+ylim(0,1)+theme(legend.position="none")
-m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+ylim(0,1)+geom_hline(yintercept = 0.5,linetype="longdash",colour="grey")+geom_point(size=3)+theme(legend.position="none")
-m4 <- ggplot(classes,aes(`Pos Pred Value`,`Neg Pred Value`,colour=Host))+geom_point(size=3)+ylim(0,1)
+m1 <- ggplot(classes,aes(Sensitivity,Specificity,colour=Host))+geom_point(size=3)+ylim(0,1)+labs(title = "Performance")
+m2 <- ggplot(classes,aes(Host,Precision,colour=Host))+geom_point(size=3)+xlim(0,1)+ylim(0,1)+theme(legend.position="none")+labs(title = "Precision")
+m3 <- ggplot(classes,aes(Host,`Balanced Accuracy`,colour=Host))+ylim(0,1)+geom_hline(yintercept = 0.5,linetype="longdash",colour="grey")+geom_point(size=3)+theme(legend.position="none")+labs(title = "Error Accuracy")
+m4 <- ggplot(classes,aes(`Pos Pred Value`,`Neg Pred Value`,colour=Host))+geom_point(size=3)+ylim(0,1)+labs(title = "Predictive Values",x="Positive Pred. Value",y="Negative Pred. Value")
 
 ggarrange(m1,m4,m3,m2,common.legend = T, legend="bottom", labels="AUTO")
-#ggsave("Model Diag.png",width=20,height=20,units = "cm")
+ggsave("Model Diag.png",width=20,height=20,units = "cm")
 ```
 
 A)  all models have high spec but sens varies wildly
@@ -655,12 +659,15 @@ any given branch will transition from host_1 to host_2?
 ```{r}
 traits <- data.frame()
 for (PRT in c("PB2","PB1","PA","HA","NP","NA","M1","NS1")){
-  temp <- read.csv(paste0("Phylogenies/iqtree/Trait Analyses/",PRT," MultiState Trait Analysis.csv"))
+  temp <- read.csv(paste0("/Users/jordanbone/Documents/GitHub/IAV-Mach-Learning/Phylogenies/iqtree/Trait Analyses/",PRT," MultiState Trait Analysis.csv"))
   trait_temp <- temp %>% pivot_longer(cols=4:length(temp),names_to = "Transition",values_to = "Rate") %>% mutate(Protein=PRT,Recip=Transition %>% str_replace_all("q","") %>% str_sub(1,1),Donor=Transition %>% str_replace_all("q","") %>% str_sub(2,2))
   traits <- rbind(traits,trait_temp)
 }
 traits <- traits %>% select(-Tree.No)
 traits$Protein <- traits$Protein %>% str_replace_all("PB2","01PB2") %>% str_replace_all("PB1","02PB1") %>% str_replace_all("PA","03PA") %>% str_replace_all("HA","04HA") %>% str_replace_all("NP","05NP") %>% str_replace_all("NA","06NA") %>% str_replace_all("M1","07M1") %>% str_replace_all("NS1","08NS1")
+traits$Recip <- traits$Recip %>% str_replace_all("A","Avian") %>% str_replace_all("B","Bat") %>% str_replace_all("D","Dog") %>% str_replace_all("H","Human") %>% str_replace_all("P","Pig") %>% str_replace_all("E","Horse")
+traits$Donor <- traits$Donor %>% str_replace_all("A","Avian") %>% str_replace_all("B","Bat") %>% str_replace_all("D","Dog") %>% str_replace_all("H","Human") %>% str_replace_all("P","Pig") %>% str_replace_all("E","Horse")
+
 trait_labs <- traits %>% group_by(Protein,Donor,Recip) %>% summarise(mRate=mean(Rate),sdRate=sd(Rate))
 ```
 
@@ -676,6 +683,16 @@ ggplot(subset(trait_labs,Protein %in% c("01PB2","02PB1","03PA","04HA")), aes(Don
 ggplot(subset(trait_labs,Protein %in% c("05NP","06NA","07M1","08NS1")), aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+  geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n±",round(sdRate,2)))),size=2)+facet_wrap(~Protein,ncol=2)+theme_bw()+theme(legend.position = "none")+labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits")
 #ggsave("Host Transitions 2.png",width=12,height=12,units = "cm")
 # ggplot(trait_labs,aes(paste0(Donor,Recip),y=mRate,ymin=ifelse(mRate-sdRate>0,mRate-sdRate,0),ymax=mRate+sdRate,colour=Donor))+geom_pointrange(size=0.4)+facet_wrap(~Protein,ncol=4)+theme_bw()+theme(legend.position = "bottom")
+
+ggplot(trait_labs,aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="forestgreen")+ geom_text(aes(label=ifelse(mRate<1,"",paste0(round(mRate,2),"\n(±",round(sdRate,2),")"))),size=2)+facet_wrap(~Protein,ncol=4)+theme_bw()+
+  theme(legend.position = "none",axis.text.x = element_text(size=8),axis.text.y = element_text(size=8))+
+  labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits",y="Recipient Host",x="Origin Host")
+ggsave("Host Transition Rate.pdf",width=26,height=12,units = "cm")
+
+ggplot(trait_labs,aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale_fill_gradient(low="grey90",high="limegreen")+ geom_text(aes(label=ifelse(mRate<1,"",round(mRate,2))),size=3)+facet_wrap(~Protein,ncol=4)+theme_bw()+
+  theme(legend.position = "none",axis.text.x = element_text(size=8),axis.text.y = element_text(size=8))+
+  labs(title = "Discrete Trait Transition Rates of IAV Proteins",subtitle = "Modelled by rjMCMC Multistate Estimation in BayesTraits",y="Recipient Host",x="Origin Host")
+ggsave("Host Transition Rate v2.pdf",width=26,height=12,units = "cm")
 ```
 
 Interesting how rarely avian is estimated as the donor, considering
