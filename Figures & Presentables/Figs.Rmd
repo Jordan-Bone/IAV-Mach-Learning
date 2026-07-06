@@ -2,6 +2,7 @@
 title: "Figs"
 author: "JBone"
 date: "2025-02-03"
+# output: word_document
 output:
   bookdown::html_document2:
     toc: true
@@ -84,15 +85,14 @@ Sequences were collected from NCBI Virus Database. This dataset was
 filtered to only include samples with: a) complete nucleotide sequences,
 missing no more than 10% of the average length for that segment; b)
 metadata containing the virus subtype and original host, at least up to
-the Class level (Aves or Mammalia) through preferably detailing all the
+the Class level (*Aves* or *Mammalia*) through preferably detailing all the
 way down to the Family or Species. Nucleotide sequences were then
 assigned a random identifier (between AAA-000-AAA and ZZZ-999-ZZZ) to
 associate with metadata throughout analyses. 14,682 avian and 21,737
 mammalian sequences were collated at this stage.
 
-Samples from mammalian
-hosts were then retained only if the original host was within the
-Canidae, Suidae, Equidae, Hominidae or Phyllostomidae (New World bats)
+Samples from mammalian hosts were then retained only if the original host was within the
+canine, swine, horse, human or New World bats (*Canidae*, *Suidae*, *Equidae*, *Hominidae* and *Phyllostomidae* respectively)
 families, as viruses within these hosts were expected to display clear
 examples of host-adaptation as well as having a history of cross-species
 transmission. Viral sequences of mammalian-origin were then reduced
@@ -109,15 +109,15 @@ family.
 Corresponding protein sequences were then obtained for each
 sample, most of which were available from the NCBI Virus Database. The
 few genomic sequences without matching proteins were translated locally
-using the ‘ape’ package in R (@paradis_2019aa).
+using the ‘ape’ package in R [@paradis_2019aa].
 
 ### Clustering
 
-Proteins were then aligned using MAFFT (@rozewicki_2019aa) into 20
+Proteins were then aligned using MAFFT [@rozewicki_2019aa] into 20
 resulting protein fasta files (two for each of the 10 major IAV
 proteins, one containing mammalian-origin viruses and the other
 avian-origin). These were then clustered using the linear algorithm
-`easy-linclust` within the tool MMSeq2 (@steinegger_2018aa).
+`easy-linclust` within the tool MMSeq2 [@steinegger_2018aa].
 Three variables of the clustering algorithm were experimented with in
 optimising data retention: the percentage identity threshold required to
 delineate sequences from one another
@@ -176,17 +176,10 @@ spliced from alternate reading frames (M2 and NEP) were excluded from
 any further analyses as they were too short and/or conserved to show
 patterns of adaptation.
 
-OmegaFeaturesCLI [@chen_2022aa] extracted matrices of protein
-compositional and physio-chemical properties from alignments with the
+Six datasets of protein features were obtained from OmegaFeaturesCLI [@chen_2022aa] which extracted matrices of protein compositional and physio-chemical properties from alignments with the
 ‘get_descriptor’ command. Features, and the associated command, are as
-follows: 2mers (‘DPC type 1’), Chou’s pseudo-amino acid composition
-(‘PseAAC’), conjoined triad (‘CTriad’), and finally Composition
-(‘CTDc’), Transition (‘CTDt’) & Distribution (‘CTDd’) values.
-
-Six datasets of protein features were derived from the iFeatureOmega
-processing: amino acid two-mers (DPC, 400 features), (CTDc, CTDd and
-CTDt, 39, 195 and 39 features respectively), paac (23 features) and
-triad (343 features). These were then annotated with the subtype of the
+follows: amino acid two-mers (`DPC type 1`, 400 features), Chou’s pseudo-amino acid composition
+(`PseAAC`, 23 features), conjoined triad (`CTriad`, 343 features), and finally Composition, Transition & Distribution values (`CTDc`, `CTDd` and `CTDt`, 39, 195 and 39 features respectively). These were then annotated with the subtype of the
 origin virus and labelled with the original host.
 
 ### Machine Learning Models
@@ -201,7 +194,7 @@ addition to these 23 subtypes, both bat-exclusive subtypes (H17N10 and
 H18N11) were held as test data. The remaining 70 subtypes comprised
 $\frac{308}{4551}$ (\~7%) sequences. Six Random Forest models were
 created from each of the feature datasets, for each holdout. These
-models were then stacked with the use of the 'caretEnsemble' package
+models were then stacked with the use of the `caretEnsemble` package
 [@deane-mayer_2024aa]. Models were weighted in order to accommodate for
 disproportionate sizes of host groups by using the inverse of that
 group's proportion.
@@ -220,11 +213,9 @@ sizes.](Model Assembly.png)
 
 ### Model Performance
 
-This measure of performance ($BA=\frac{TPR+TNR}{2}$) so the closer TPR+TNR is
-to 1, the worse the model. This is because the model is overestimating
-positive hits and is unable to distinguish reals from fakes – i.e. which
-is equivalent to the expected value of a random guess in a balanced data
-set.
+Models were assessed with common ML model comparison metrics: accuracy, precision, sensitivity & specificity and balanced accuracy (BA). All performance metrics were carried out courtesy of the `MLmetrics` package [@yan_2025aa].
+
+[This measure of performance ($BA=\frac{TPR+TNR}{2}$) so the closer TPR+TNR is to 1, the worse the model. This is because the model is overestimating positive hits and is unable to distinguish reals from fakes – i.e. which is equivalent to the expected value of a random guess in a balanced data set.]{style="color:blue"}
 
 ## Predictive Measures
 
@@ -233,7 +224,7 @@ set.
 Using sequence data from each of the 8 proteins studied phylogenetic
 trees were estimated. Initial model parameters such as evolutionary and
 codon-partitioning models were estimated by ModelFinder within IQTree2
-[@kalyaanamoorthy_2017aa,@minh_2020aa], and temporality was confirmed
+[@kalyaanamoorthy_2017aa; @minh_2020aa], and temporality was confirmed
 with TempEst [@rambaut_2016aa].
 
 ```{r}
@@ -266,21 +257,19 @@ features_ACE$Log$results %>% select(-c("No.Off.Parmeters","No.Off.Zero","Model.s
 
 ## Dataset Curation
 
-In total 36,419 sequences were found eligible for study (14,682 avian
-and 21,737 mammalian).
-
 ```{r}
-data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Avian"=c(338,303,282,1406,215,185,73,539),"Mammalian"=c(561,255,415,919,244,207,149,606)) %>% kbl(align='c') %>% kable_styling(full_width = F, position="float_right")
+data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"Avian"=c(338,303,282,1406,215,185,73,539),"Mammalian"=c(561,255,415,919,244,207,149,606)) %>% kbl(align='c',caption="Selected sequences") %>% kable_styling(full_width = F, position="float_right")
 ```
 
-The clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4,551 viruses were analysed, despite the high sequence homology between many of the proteins except for the selected representative protein. The number of representative proteins called by the clustering algorithm is shown in Table 2 and full lists of the associated accession codes are available in Supplementary 1.
+In total 36,419 sequences were found eligible for study (14,682 avian
+and 21,737 mammalian). Clustering resulting from removing sequences with a 95% sequence identity left us with 6,697 protein sequences overall. To assist with building the model architecture, any virus genome that had at least one representative protein was analysed fully - hence 4,551 viruses were analysed, despite the high sequence homology between many of the proteins except for the selected representative protein. The number of representative proteins called by the clustering algorithm is shown in Table 2 and full lists of the associated accession codes are available in Supplementary 1.
 
 ## Protein Models
 
 Confusion matrices were made on the known origin host and the host predicted by the machine learning models. Matrices were used to assess model predictive strength. Incorrectly labelled viruses were indicative of signal of possible adaptation to the host from which a virus originated.
 
 ```{r, Model stat table}
-data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"F1 micro"=round(c(0.8431141,0.8074284,0.8750299,0.7699953,0.8840125,0.7349682,0.8632233,0.909803),3),"F1 macro"=round(c(0.5176765,0.3840304,0.5749008,0.2947088,0.495701,0.332125,0.5168716,0.51886),3),"AUC"=percent(c(0.57,0.527,0.575,0.558,0.556,0.527,0.559,0.565),accuracy=0.01)) %>% kbl(align='c') %>% kable_styling(full_width = F, position="float_right")
+data.frame(Protein=c("PB2","PB1","PA","HA","NP","NA","M1","NS1"),"F1 micro"=round(c(0.8431141,0.8074284,0.8750299,0.7699953,0.8840125,0.7349682,0.8632233,0.909803),3),"F1 macro"=round(c(0.5176765,0.3840304,0.5749008,0.2947088,0.495701,0.332125,0.5168716,0.51886),3),"AUC"=percent(c(0.57,0.527,0.575,0.558,0.556,0.527,0.559,0.565),accuracy=0.01)) %>% kbl(align='c',caption="Model Validation") %>% kable_styling(full_width = F, position="float_right")
 ```
 
 Counter-intuitively, a lower model accuracy implied greater evidence of adaptation to the host species; the mislabelling of proteins is indicative of host-specific adaptations to non-native hosts. For example, should a human-origin virus be incorrectly labelled as swine-origin by the model, this supports the hypothesis that the protein retains some signal of adaptation to the original swine hosts. Overall, confusion matrices were evaluated based on accuracy and F1 statistics (shown in Table 3).
@@ -294,7 +283,7 @@ master_conf$table %>% as.data.frame() %>% ggplot(aes(Prediction,Reference,fill=F
   guides(fill=guide_legend(title="Freq %"))+labs(caption="Total confidence matrix of all 2400 models, averaged across each of the 8 proteins. Values greater than 0.01% are labelled to emphasise mismatches.")
 #ggsave("Mislabelling.png",width=20,height=20,units = "cm")
 ```
-Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were incorrectly classified as swine (8.13%) than correctly identified (7.23%).
+[Main outliers (>1%) are pig-human-avian though maybe just caused by the relative proportion of these. The RF models do show good estimation of true-positives, especially for the most frequently appearing samples. Interestingly though, the biggest mistake that the model made was of misclassifying human-origin sequences as pig-origin. In fact, more of the human sequences were incorrectly classified as swine (8.13%) than correctly identified (7.23%).]{style="color:blue"}
 
 ```{r}
 classes <- master_conf$byClass %>% as.data.frame() %>% rownames_to_column()
@@ -314,7 +303,7 @@ Again, high negative predictive and varying positive predictive values are likel
 
 In model performance, dog-origin viruses are the only time that the models are basically guessing randomly, reflected in the Balanced Accuracy.
 
-Overall though, the models perform pretty well given how complex this is and the fact that it is just based on 1039 protein features alone
+[Overall though, the models perform pretty well given how complex this is and the fact that it is just based on 1039 protein features alone]{style="color:blue"}
 
 ### Protein Features
 
@@ -400,13 +389,12 @@ mismatches$PRT <- mismatches$PRT %>% str_replace_all("PB2","01PB2") %>% str_repl
 
 mismatches %>% group_by(PRT,Matched) %>% summarise(N=length(Matched)) %>% subset(!is.na(Matched)) %>% pivot_wider(names_from = Matched, values_from = N) %>% 
   mutate(TP=percent(`TRUE`/(`TRUE`+`FALSE`)),FP=percent(`FALSE`/(`TRUE`+`FALSE`))) %>% 
-  select(PRT,`TRUE`,TP,`FALSE`,FP) %>% kbl(col.names = c("Protein","raw","%","raw","%"),align='c') %>% kable_styling(full_width = F,position="float_left") %>% add_header_above(c(" ", "Matched"=2, "Mismatched"=2))
+  select(PRT,`TRUE`,TP,`FALSE`,FP) %>% kbl(col.names = c("Protein","raw","%","raw","%"),align='c',caption="Mislabelled") %>% kable_styling(full_width = F,position="float_left") %>% add_header_above(c(" ", "Matched"=2, "Mismatched"=2))
 ```
 
-When did the model predict things incorrectly? Was there any pattern to
-the mistakes? [Not really...]{style="color:blue"}
+[When did the model predict things incorrectly? Was there any pattern to the mistakes? Not really...]{style="color:blue"}
 
-## Protein Features
+## Feature Importance
 
 [This is the variable importance stuff, explain better how it was done
 and what the AUC loss means]{style="color:blue"}
@@ -446,8 +434,8 @@ ggplot(subset(var_imps,var %>% startsWith("CTDC_normwaalsvolume.G2")),aes(Protei
 Alignments of each of the eight proteins were used to estimate trees
 using IQTree2.
 
-Could also stick some quick diversity measures in for each alignment, to
-show what we're working with?
+[Could also stick some quick diversity measures in for each alignment, to
+show what we're working with?]{style="color:blue"}
 
 [How correlated are protein features, length and
 diversity?]{style="color:blue"}
@@ -463,9 +451,9 @@ pb2 <- read.alignment("../Phylogenies/Alignments/PB2_alignment.fasta",format = '
 
 ### Protein Trees
 
-Is it worth adding bootstrap values? Or describing the tree (num of tips/nodes) just to clarify that some sequences were excluded from tree estimation?
+[Is it worth adding bootstrap values? Or describing the tree (num of tips/nodes) just to clarify that some sequences were excluded from tree estimation?]{style="color:blue"}
 
-Trees with Protein Features
+### Tree with Protein Features
 
 ```{r, eval=FALSE}
 for (PRT in c("PB2","PB1","PA","HA","NA","M1","NS1")){
@@ -575,8 +563,8 @@ p + geom_cladelab(data=subtype_block, mapping = aes(node=node, label=label, offs
 # ggsave("Figures & Presentables/HA Tree with Feature.png",width=12,height=14,units = "cm")
 ```
 
-Is there correlation between charge and branch length/placement? Would
-need a nice branch-branch measurement like Faith's PD
+[Is there correlation between charge and branch length/placement? Would
+need a nice branch-branch measurement like Faith's PD]{style="color:blue"}
 
 ```{r, fig.height=10, eval=FALSE}
 ggtree(ha,aes(colour=host))+ geom_tippoint()+ theme(legend.position = c(.05,.75))+ labs(title = "HA Tree") + geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_point, mapping=aes(x=V4))+ geom_facet(panel="CTDT secondarystruct.Tr1221", data=td, geom=geom_path, alpha=0.6, mapping=aes(x=V4))
@@ -643,20 +631,17 @@ ggplot(trait_labs,aes(Donor,Recip,fill=mRate))+ geom_tile(colour="white")+ scale
 ggsave("Host Transition Rate v2.pdf",width=26,height=12,units = "cm")
 ```
 
-Interesting how rarely avian is estimated as the donor, considering
-reality
+[Interesting how rarely avian is estimated as the donor, considering reality]{style="color:blue"}
 
-Wonder if the pig -\> human values would drop if pdm_2009 were held as a
-separate group of sequences
+[Wonder if the pig -\> human values would drop if pdm_2009 were held as a separate group of sequences]{style="color:blue"}
 
-Nice horse-dog rates given how closely related they are
+[Nice horse-dog rates given how closely related they are]{style="color:blue"}
 
-Also interesting when matrices are asymmetrical, indicates a direction
-of transfer from the phylogenetic signal
+[Also interesting when matrices are asymmetrical, indicates a direction of transfer from the phylogenetic signal]{style="color:blue"}
 
 ### Ancestral Reconstruction
 
-Describe subtree selection:
+[Describe subtree selection:]{style="color:blue"}
 
   - node number
 
@@ -701,10 +686,12 @@ for(i in 1:6){
 
 ```{r,fig.height=6}
 ace_example <- read.csv("../Phylogenies/iqtree/ACE/HA Node 1 Feature Reconstruction.csv")
-head(ace_example[,1:8])
+head(ace_example[,1:12])
 ggplot(ace_example,aes(Iteration,Lh))+geom_smooth(method="lm")+geom_point()+
   labs(y="Chain Likelihood",caption="This example of the chain likelihoods (taken from the BayesTraits output of node 1 from the HA tree) represent the performance of the trait analysis in this subtree.")
 ```
+
+### Trees & Subtrees
 
 ```{r NS1 subtrees, fig.height=10}
 NS1_tree <- readRDS("../Phylogenies/NS1_tree.rds")
@@ -831,9 +818,32 @@ The phylogenetic modelling rather calculates the transition rate of sequences be
 In the future, we would’ve clustered per host and also possibly split the birds up more into ‘waterfowl vs others’ instead of assuming that all birds are always the source of infection. Other potential subdivisions include the splitting of human H1N1 viruses into two distinct classes of pre- and post-2009 samples in order to distinguish already circulating viruses from those that emerged during the 2009 swine flu pandemic.
 
 ## Sequence Reconstruction
-In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not have sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants.
 
-CodeML is suggested as a tool for reconstructing ancestral protein sequences.
+In order to test the models further, protein features of the internal nodes could be calculated. Of course, the majority of these internal nodes do not have sequences collected. To circumvent this, a further step of our analyses could be to reconstruct ancestral sequences. By estimating the sequence of an internal node, it can then be re-input into iFeaturesOmega. Then, if our hypothesis stands, the features of these inferred proteins ought to be an average of the two descendants. CodeML is suggested as a tool for reconstructing ancestral protein sequences.
 
 
 # References
+
+<div id="refs"></div>
+
+# Appendix
+
+```{r}
+Clustering_Tests <- read_xlsx("../Sequences/Clustering Tests.xlsx",sheet = "Clustering Tests")
+Clustering_Tests$Identity <- Clustering_Tests$Identity %>% as.factor()
+totals <- Clustering_Tests %>% subset(Identity==100)
+totals$CoV <- "cov0"
+Clustering_Tests2 <- rbind(Clustering_Tests,totals) %>%
+  pivot_wider(names_from = c("Coverage","Identity"), values_from = Count) %>% 
+  select(order(colnames(.))) %>% relocate("Group") %>% relocate("Protein", .after="Group") %>% relocate("CoV", .after="Protein") %>% relocate("c80_100", .after = last_col())
+
+Clustering_Tests2 %>% subset(Group=="Avian", select=-1) %>% 
+  kbl(align='c',caption="Avian",col.names = c("Protein","Mode","75","85","90","95","99","75","85","90","95","99","75","85","90","95","99","Original")) %>% kable_styling() %>% collapse_rows(c(1,18)) %>% add_header_above(c(" "=1," "=1,"c50"=5,"c70"=5,"c80"=5," "=1))
+```
+
+
+```{r}
+Clustering_Tests2 %>% subset(Group=="Mammal", select=-1) %>%
+  kbl(align='c',caption="Mammal",col.names = c("Protein","Mode","75","85","90","95","99","75","85","90","95","99","75","85","90","95","99","Original")) %>% kable_styling() %>% collapse_rows(c(1,18)) %>% add_header_above(c(" "=1," "=1,"c50"=5,"c70"=5,"c80"=5," "=1))
+```
+
