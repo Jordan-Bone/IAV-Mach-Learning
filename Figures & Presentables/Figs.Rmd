@@ -2,15 +2,15 @@
 title: "Figs"
 author: "JBone"
 date: "2025-02-03"
-# output: word_document
-output:
-  bookdown::html_document2:
-    toc: true
-    toc_depth: 2
-    fig_width: 12
-    fig_height: 6
-    number_sections: TRUE
-    fig_caption: TRUE
+output: word_document
+# output:
+#   bookdown::html_document2:
+#     toc: true
+#     toc_depth: 2
+#     fig_width: 12
+#     fig_height: 6
+#     number_sections: TRUE
+#     fig_caption: TRUE
 biblio-style: apalike
 bibliography: refs.bib
 link-citations: yes
